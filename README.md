@@ -30,6 +30,9 @@ Only little knowledge in programming, you can run Twitter Bot.
 `WORK_DIR`: Botの作業用ディレクトリを指定(デフォルト: data)
 
 `LOG_DIR`: ログを保管する場所を指定(デフォルト: logs)
-###6.実行
+###6.5で設定したディレクトリをつくる
+`mkdir data`
+`mkdir logs`
+###7.実行
 `cd TwitterBot_Framework`
 `python Main.py &`
