@@ -1,5 +1,6 @@
 # TwitterBot_Framework
 Only little knowledge in programming, you can run Twitter Bot.
+
 プログラムの知識が疎い人でも、簡単にTwitter Botが自前で構築できるよう、設計されています。
 
 ##導入
@@ -15,12 +16,19 @@ Only little knowledge in programming, you can run Twitter Bot.
 初期状態では`setting.yaml`に設定を書き込んでください。ただし、タブを使用すると正しく認識されないのでご注意ください。
 
 `SCREEN_NAME`: Botのスクリーンネーム(@~)
+
 `CONSUMER_KEY`: 取得したConsumer Key
+
 `CONSUMER_SECRET`: 取得したConsumer Secret
+
 `ACCESS_TOKEN`: 4.のページで作成できるAccess Token
+
 `ACCESS_TOKEN_SECRET`: 4.のページで生成できるAccess Token Secret
+
 `PLUGIN_DIR`: プラグインの保管場所を指定(デフォルト: plugins)
+
 `WORK_DIR`: Botの作業用ディレクトリを指定(デフォルト: data)
+
 `LOG_DIR`: ログを保管する場所を指定(デフォルト: logs)
 ###6.実行
 `cd TwitterBot_Framework`
