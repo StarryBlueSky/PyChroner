@@ -4,7 +4,9 @@ Only little knowledge in programming, you can run Twitter Bot.
 プログラムの知識が疎い人でも、簡単にTwitter Botが自前で構築できるよう、設計されています。
 
 ##導入
-###1. Python 2.7.xのインストール
+###1. Pythonのインストール
+Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。
+
 最新のPython 2.7.11は[こちら](https://www.python.org/downloads/release/python-2711/)でダウンロードできます。
 ###2. パッケージ管理システム`pip`のインストール
 `sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python`
