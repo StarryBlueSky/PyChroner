@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import imp, re, urllib, json, threading, logging, random, os, datetime
+import imp, re, urllib, json, threading, logging, random, os, datetime, time
 import tweepy
 import yaml
 
@@ -21,15 +21,24 @@ def InitializePlugins():
 	"""pluginの種類を分類"""
 	for i in plugins:
 		plugin = plugins[i]
-		if plugin.TARGET == 'REPLY': #リプライに適用
+		if plugin.TARGET == 'REPLY':
 			reply_plugin.append(plugin)
-		elif plugin.TARGET == 'TIMELINE': #タイムライン全体に適用
+		elif plugin.TARGET == 'TIMELINE':
 			timeline_plugin.append(plugin)
-		elif plugin.TARGET == 'EVENT': #イベントに適用
+		elif plugin.TARGET == 'EVENT':
 			event_plugin.append(plugin)
-		elif plugin.TARGET == 'THREAD': #スレッド起動するプラグイン
+		elif plugin.TARGET == 'THREAD':
 			thread_plugin.append(plugin)
-	logging.info(u'プラグインの一覧:\nリプライプラグイン: %s\nタイムラインプラグイン: %s\nイベントプラグイン: %s\nスレッドプラグイン: %s' % (str(reply_plugin), str(timeline_plugin), str(event_plugin), str(thread_plugin)))
+		elif plugin.TARGET == 'REGULAR':
+			thread_plugin.append(plugin)
+	logging.info(u"""プラグインの一覧:
+						リプライプラグイン: %s
+						タイムラインプラグイン: %s
+						イベントプラグイン: %s
+						スレッドプラグイン: %s
+						定期実行プラグイン: %s
+						"""
+				 % (str(reply_plugin), str(timeline_plugin), str(event_plugin), str(thread_plugin), str(regular_plugin)))
 
 """プラグインの結果をツイートする関数"""
 def Post(text, stream, dm=False, lat=None, longs=None, in_reply_to_status_id=None, filename=None):
@@ -115,6 +124,7 @@ def ExecutePlugin(plugin, stream):
 			Post(text, stream)
 		logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
 
+"""tweepyのクラスを継承してUserStreamを受信するクラス"""
 class StreamListener(tweepy.StreamListener):
 	def on_data(self, raw):
 		if raw.startswith('{'):
@@ -131,6 +141,7 @@ class StreamListener(tweepy.StreamListener):
 	def on_error(self, status_code):
 		print(status_code)
 
+"""tweepyのクラスを継承してUserStreamの設定をするクラス"""
 class UserStream(tweepy.Stream):
 	def user_stream(self):
 		self.parameters = {"delimited": "length", "replies": "all", "filter_level": "none", "include_followings_activity": "True", "stall_warnings": "True", "with": "followings"}
@@ -141,6 +152,83 @@ class UserStream(tweepy.Stream):
 		self.body = urllib.urlencode(self.parameters)
 		self.timeout = None
 		self._start(False)
+
+"""定期実行するプラグインを実行するクラス"""
+class ScheduleTask(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+	def run(self):
+		while True:
+			wait_time = 60 - datetime.datetime.now().second
+			datetime_hour = datetime.datetime.now().hour
+			datetime_minute = datetime.datetime.now().minute
+			time.sleep(wait_time)
+			for plugin in regular_plugin:
+				if 'RATIO' in dir(plugin):
+					ratio = plugin.RATIO
+				else:
+					ratio = 1
+				if random.randint(1, ratio) != 1: #1/RATIOの確率でプラグイン実行
+					continue
+				if 'HOUR' in dir(plugin):
+					hour = plugin.HOUR
+				else:
+					hour = None
+				if 'MINUTE' in dir(plugin):
+					minute = plugin.MINUTE
+				else:
+					minute = None
+				if hour != None and minute != None:
+					if hour == datetime_hour and minute == datetime_minute: #時と分指定型
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
+				elif hour != None:
+					if hour == datetime_hour: #時だけ指定型(その時だけ毎分実行)
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
+				elif minute != None:
+					if minute == datetime_minute: #分だけ指定型(その分だけ毎時実行)
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
+				#ある倍数の時だけ実行する
+				if 'MULTIPLE_HOUR' in dir(plugin):
+					multiple_hour = plugin.MULTIPLE_HOUR
+				else:
+					multiple_hour = None
+				if 'MULTIPLE_MINUTE' in dir(plugin):
+					multiple_minute = plugin.MULTIPLE_MINUTE
+				else:
+					multiple_minute = None
+				if hour != None and minute != None:
+					if datetime_hour % hour == 0 and datetime_minute % minute == 0: #時と分の倍数指定型
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
+				elif hour != None:
+					if datetime_hour % hour == 0: #時だけ倍数指定型(その倍数時だけ毎分実行)
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
+				elif minute != None:
+					if datetime_minute % minute == 0: #分だけ倍数指定型(その倍数分だけ毎時実行)
+						try:
+							plugin.do()
+						except Exception as e:
+							logging.warning(u'プラグイン "%s" でエラーが発生しました\n詳細: %s' % plugin.NAME, e)
+						continue
 
 if __name__ == '__main__':
 	"""設定データを読み込み"""
@@ -164,6 +252,8 @@ if __name__ == '__main__':
 	event_plugin = []
 	global thread_plugin #スレッドで起動するプラグイン
 	thread_plugin = []
+	global regular_plugin #定期実行するプラグイン
+	regular_plugin = []
 
 	"""UserStreamに接続するアカウントの認証"""
 	auth = tweepy.OAuthHandler(setting['CONSUMER_KEY'], setting['CONSUMER_SECRET'])
@@ -177,6 +267,7 @@ if __name__ == '__main__':
 
 	"""別スレッドで処理するスレッドを起動"""
 	[x.do().start() for x in thread_plugin]
+	ScheduleTask().start()
 
 	"""UserStreamに接続"""
 	while True:
