@@ -1,6 +1,7 @@
 tmp/
 logs/
-assets/
+data/
+
 .settings/
 
 .DS_Store
@@ -12,13 +13,17 @@ assets/
 *.yaml
 
 plugins/seq.py
-
 plugins/krsw.py
-
 plugins/sum.py
-
 plugins/kinmosa.py
-
 plugins/guessseq.py
-
 plugins/eewbot.py
+
+Anime.py
+API.py
+Bot.py
+DetectStatus.py
+Function.py
+Lib.py
+Slack.py
+SLS.py
