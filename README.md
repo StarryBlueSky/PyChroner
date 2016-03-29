@@ -7,7 +7,7 @@ Only little knowledge in programming, you can run Twitter Bot.
 ###1. Python 2.7.xのインストール
 最新のPython 2.7.11は[こちら](https://www.python.org/downloads/release/python-2711/)でダウンロードできます。
 ###2. パッケージ管理システム`pip`のインストール
-`sudo curl -kL https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python`
+`sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python`
 ###3. TwitterBot_Frameworkで使用しているライブラリのインストール
 `pip install tweepy yaml`
 ###4. Twitterアプリケーション取得 (既存のConsumer Key/Secretを使う場合はスキップ)
