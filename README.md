@@ -40,3 +40,6 @@ mkdir logs
 cd TwitterBot_Framework
 python Main.py &
 ```
+
+##プラグイン開発
+プラグインの[ドキュメント](https://github.com/NephyProject/TwitterBot_Framework/wiki/%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E9%96%8B%E7%99%BA)をご覧ください。
