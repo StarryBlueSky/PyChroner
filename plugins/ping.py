@@ -1,3 +1,4 @@
+#! python3
 # -*- coding: utf-8 -*-
 import time
 
@@ -8,7 +9,7 @@ def getTime(status_id):
 	now = time.time()
 	return str(now - created)
 
-def do(stream):
+def do(stream, args):
 	if 'ping' in stream['text']:
 		text = '@%s Pong! Returned in %ss' % (stream['user']['screen_name'], getTime(stream['id']))
 		result = {"text": text, "in_reply_to": stream['id']}

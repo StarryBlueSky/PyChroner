@@ -1,3 +1,4 @@
+#! python3
 # -*- coding: utf-8 -*-
 import itertools, re, random
 import math
@@ -27,12 +28,12 @@ def ten_puzzle(inputs):
 										continue
 									if evaled == 10:
 										expression = re.sub('float\((\d+)?\)', r'\1', expression)
-										expression = re.sub('math.sqrt\( (\d+)? \)', ur'√\1', expression)
+										expression = re.sub('math.sqrt\( (\d+)? \)', r'√\1', expression)
 										expression = expression.replace('( ', '')
 										expression = expression.replace(' )', '')
 										result.append(expression)
 										found += 1
-	text = u'total %s ways (found %s patterns)' % (i, found)
+	text = 'total %s ways (found %s patterns)' % (i, found)
 	if len(result) > 0:
 		text = text + '\nFor example: %s, %s, %s' % (random.choice(result), random.choice(result), random.choice(result))
 	else:
@@ -42,6 +43,6 @@ def ten_puzzle(inputs):
 def do(stream):
 	if '10puzzle' in stream['text']:
 		inputs = stream['text'].split(' ')[2:]
-		text = u'@%s %s' % (stream['user']['screen_name'], ten_puzzle(inputs))
+		text = '@%s %s' % (stream['user']['screen_name'], ten_puzzle(inputs))
 		result = {"text": text, "in_reply_to": stream['id']}
 		return result
