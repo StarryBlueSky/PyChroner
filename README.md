@@ -1,13 +1,14 @@
 # TwitterBot_Framework
 Only little knowledge in programming, you can run Twitter Bot.
 
-プログラムの知識が疎い人でも、簡単にTwitter Botが自前で構築できるよう、設計されています。
+プログラミングの経験がない人やプログラムに疎い人でも、簡単にTwitter Botが自前で構築できるよう、設計されています。
 
 ##導入
 ###1. Pythonのインストール
-Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。
+<del>Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。</del><br>
+`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`からPython 3へ[完全移行](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2)しました。Python 2.7.x系では**動作しません**のでご注意ください。
 
-最新のPython 2.7.11は[こちら](https://www.python.org/downloads/release/python-2711/)でダウンロードできます。
+最新のPython 3.5.1は[こちら](https://www.python.org/downloads/release/python-351/)でダウンロードできます。
 ###2. パッケージ管理システム`pip`のインストール
 `sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python`
 ###3. TwitterBot_Frameworkで使用しているライブラリのインストール
