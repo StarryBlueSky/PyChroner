@@ -19,6 +19,8 @@ def InitializePlugins(init=True):
 				module.NAME = name
 				plugins[name] = module
 				logger.info('プラグイン「%s」は有効になりました。' % name)
+				if module.do.__code__.co_argcount == 2:
+					logger.info('プラグイン「%s」は`args`引数を要求しています。このプラグインが悪意のあるプラグインである場合、Twitterアカウントを乗っ取られたりキャッシュが破壊されたりする可能性があります。ご注意ください。' % name)
 			except Exception as e:
 				logger.warning('プラグイン「%s」は壊れています。有効にできませんでした。\nエラーログ: %s' % (name, e))
 	"""pluginの種類を分類"""
