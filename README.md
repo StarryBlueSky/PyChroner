@@ -1,8 +1,10 @@
-# TwitterBot_Framework
+# TwitterBotFramework (TBF)
 Only little knowledge in programming, you can run Twitter Bot.
 
-プログラミングの経験がない人やプログラムに疎い人でも、簡単にTwitter Botが自前で構築できるよう、設計されています。
+プログラミングの経験がない人やプログラムに疎い人でも、TBFを使えば、簡単にTwitter Botが自前で構築できるよう、設計されています。<br>
+また、TBFでは安易に機能を追加できます。末尾をご覧ください。
 
+TBFを導入するにあたり、以下の操作が必要です。
 ##導入
 ###1. Pythonのインストール
 <del>Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。</del><br>
@@ -46,5 +48,6 @@ cd TwitterBot_Framework
 python Main.py &
 ```
 
+TBFでは、簡単に機能を追加できます。プラグインの製作方法は以下を参照してください。
 ##プラグイン開発
 プラグインの[ドキュメント](https://github.com/NephyProject/TwitterBot_Framework/wiki/%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E9%96%8B%E7%99%BA)をご覧ください。
