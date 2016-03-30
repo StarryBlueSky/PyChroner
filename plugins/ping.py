@@ -9,7 +9,7 @@ def getTime(status_id):
 	now = time.time()
 	return str(now - created)
 
-def do(stream, args):
+def do(stream):
 	if 'ping' in stream['text']:
 		text = '@%s Pong! Returned in %ss' % (stream['user']['screen_name'], getTime(stream['id']))
 		result = {"text": text, "in_reply_to": stream['id']}

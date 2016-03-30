@@ -100,6 +100,7 @@ def ExecutePlugin(plugin, stream):
 								"logger": logger,
 								"api": API,
 								"auth": auth,
+								"cache": CACHE,
 								"path": {"script": __file__, "plugin_dir": PLUGIN_DIR, "cache": CACHE_PARH, "setting": SETTING_PATH, "work_dir": WORK_DIR, "log": LOG_PATH},
 								"plugin": {"reply": reply_plugin, "timeline": timeline_plugin, "event": event_plugin, "thread": thread_plugin, "regular": regular_plugin}
 								}
