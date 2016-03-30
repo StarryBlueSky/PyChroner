@@ -13,6 +13,7 @@ Only little knowledge in programming, you can run Twitter Bot.
 `sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python`
 ###3. TwitterBot_Frameworkで使用しているライブラリのインストール
 `pip install tweepy yaml watchdog`
+>複数のバージョンのPythonがインストールされている場合、`pip`ではなく`pip3.5`などのように`pip`の直後にバージョン番号が入ることがあります。
 ###4. Twitterアプリケーション取得 (既存のConsumer Key/Secretを使う場合はスキップ)
 [こちら](https://apps.twitter.com/app/new)で作成できます。ただし、携帯電話番号の登録が必要な模様。
 ###5. 設定を変更
