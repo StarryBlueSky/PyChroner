@@ -137,6 +137,10 @@ def ExecutePlugin(plugin, stream):
 			Post(text, stream)
 		logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 
+"""キャッシュを保存する関数"""
+def SaveCache():
+	open(CACHE_PARH, 'w').write(str(CACHE))
+
 """tweepyのクラスを継承してUserStreamを受信するクラス"""
 class StreamListener(tweepy.StreamListener):
 	def on_data(self, raw):
@@ -336,6 +340,7 @@ if __name__ == '__main__':
 	"""別スレッドで処理するスレッドを起動"""
 	[x.do().start() for x in thread_plugin]
 	ScheduleTask().start()
+	threading.Thread(name='SaveCache', target=SaveCache, args=()).start()
 
 	""""プラグインディレクトリを監視"""
 	event_handler = ChangeHandler()
