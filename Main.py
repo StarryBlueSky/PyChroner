@@ -1,3 +1,4 @@
+#! python3
 # -*- coding: utf-8 -*-
 import re, urllib, json, threading, logging, random, os, datetime, time
 from importlib import machinery
