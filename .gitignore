@@ -20,14 +20,15 @@ plugins/guessseq.py
 plugins/eewbot.py
 
 Anime.py
+AniTube.py
 API.py
 Bot.py
+Dic.py
 DetectStatus.py
 Function.py
 Lib.py
 Slack.py
 SLS.py
 SecureLib.py
-Timesale.py
 
 start.sh
