@@ -12,13 +12,6 @@ data/
 *.pyc
 *.yaml
 
-plugins/seq.py
-plugins/krsw.py
-plugins/sum.py
-plugins/kinmosa.py
-plugins/guessseq.py
-plugins/eewbot.py
-
 Anime.py
 AniTube.py
 API.py
@@ -28,7 +21,7 @@ DetectStatus.py
 Function.py
 Lib.py
 Slack.py
-SLS.py
+SLS_2.py
 SecureLib.py
 
 start.sh
