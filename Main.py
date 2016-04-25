@@ -71,8 +71,12 @@ def StreamLine(raw):
 	try:
 		if 'text' in stream:
 			stream['source'] = re.sub('<.*?>','', stream['source'])
-			#名前欄攻撃対策
+			#名前欄攻撃対策(@リプ爆撃防止)
 			stream['user']['name'] = stream['user']['name'].replace('@', '@​')
+			#スペースや改行を整形
+#			stream['text'] = stream['text'].replace('\n', ' ')
+#			stream['text'] = stream['text'].replace('　', ' ')
+#			stream['text'] = stream['text'].replace('  ', ' ')
 
 			if re.match('@%s\s' % SN, stream['text'], re.IGNORECASE):
 				for plugin in reply_plugin:
