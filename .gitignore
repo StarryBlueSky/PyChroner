@@ -1,27 +1,12 @@
 tmp/
 logs/
 data/
-
+compatible/
 .settings/
 
 .DS_Store
 .pydevproject
 .project
 
-*.log
 *.pyc
 *.yaml
-
-Anime.py
-AniTube.py
-API.py
-Bot.py
-Dic.py
-DetectStatus.py
-Function.py
-Lib.py
-Slack.py
-SLS_2.py
-SecureLib.py
-
-start.sh
