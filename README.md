@@ -13,7 +13,8 @@ There are a few operations to have to do. Operations are easy. Check below.
 ##導入 Introduction
 ###1. Pythonのインストール Installing Python
 <del>Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。</del><br>
-`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`からPython 3.x系へ[完全移行](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2)しました。Python 2.7.x系では**動作しません**のでご注意ください。
+`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`からPython 3.x系へ[完全移行](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2)しました。Python 2.7.x系では**動作しません**のでご注意ください。<br>
+
 <del>This code can be runable on Python 3.x, but you should install Python 2.7.x.</del><br>
 From `Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`[Link](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2), This TBF is fully compatible with Python 3.x. Be careful! No longer this TBF is incompatible with Python 2.7.x.
 
@@ -65,4 +66,4 @@ You can add features easily. You can learn about it below links.
 ##プラグイン開発 Developing Plugins
 プラグインの[仕様編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98) および [引数編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)をご覧ください。<br>
 Plugin's [API](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)<br>
-Plugin's [Argument](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)をご覧ください。
+Plugin's [Argument](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)
