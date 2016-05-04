@@ -1,11 +1,14 @@
 # TwitterBotFramework (TBF)
-基本理念: プログラムの知識の少ない人でも簡単にボットを建てられるようにする。
+基本理念: プログラムの知識の少ない人でも簡単にボットを建てられるようにする。<br>
 Basic Concept: Only little knowledge in programming, you can build Twitter-Bots.
+
+
 
 プログラミングの経験がない人やプログラムに疎い人でも、TBFを使えば、簡単にTwitter Botが自前で構築できるよう、設計されています。<br>
 This TBF is designed so that even people who are NOT familir with programming can build their own bots.<br>
 また、TBFでは安易に機能を追加できます。末尾をご覧ください。<br>
 And, this TBF allows you to add original features easily. Please check about it below this page.
+
 
 TBFを導入するにあたり、以下の操作が必要です。操作は簡単です。<br>
 There are a few operations to have to do. Operations are easy. Check below.
