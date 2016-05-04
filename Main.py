@@ -317,6 +317,13 @@ if __name__ == '__main__':
 	WORK_DIR = setting['WORK_DIR']
 	CACHE_PARH = WORK_DIR + '/cache.json'
 	LOG_PATH = setting['LOG_DIR']+'/' + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
+	#ディレクトリがない場合は生成
+	if not os.path.isdir(PLUGIN_DIR):
+		os.makedirs(PLUGIN_DIR)
+	if not os.path.isdir(WORK_DIR):
+		os.makedirs(WORK_DIR)
+	if not os.path.isdir(setting['LOG_DIR']):
+		os.makedirs(setting['LOG_DIR'])
 
 	"""ロガーを準備"""
 	global logger
