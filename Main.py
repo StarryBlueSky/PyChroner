@@ -180,6 +180,20 @@ class ScheduleTask(threading.Thread):
 		threading.Thread.__init__(self)
 	def run(self):
 		while True:
+			def do(plugin):
+				if plugin.do.__code__.co_argcount == 1:
+					#引数の数が1の場合、グローバル変数を渡す
+					gvars = {"setting": setting,
+								"logger": logger,
+								"api": API,
+								"auth": auth,
+								"cache": CACHE,
+								"path": {"script": __file__, "plugin_dir": PLUGIN_DIR, "cache": CACHE_PARH, "setting": SETTING_PATH, "work_dir": WORK_DIR, "log": LOG_PATH},
+								"plugin": {"reply": reply_plugin, "timeline": timeline_plugin, "event": event_plugin, "thread": thread_plugin, "regular": regular_plugin}
+					}
+					plugin.do(gvars)
+				else:
+					result = plugin.do()
 			wait_time = 60 - datetime.datetime.now().second
 			datetime_hour = datetime.datetime.now().hour
 			datetime_minute = datetime.datetime.now().minute
@@ -202,21 +216,21 @@ class ScheduleTask(threading.Thread):
 				if hour != None and minute != None:
 					if hour == datetime_hour and minute == datetime_minute: #時と分指定型
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
 				elif hour != None:
 					if hour == datetime_hour: #時だけ指定型(その時だけ毎分実行)
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
 				elif minute != None:
 					if minute == datetime_minute: #分だけ指定型(その分だけ毎時実行)
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
@@ -232,21 +246,21 @@ class ScheduleTask(threading.Thread):
 				if hour != None and minute != None:
 					if datetime_hour % hour == 0 and datetime_minute % minute == 0: #時と分の倍数指定型
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
 				elif hour != None:
 					if datetime_hour % hour == 0: #時だけ倍数指定型(その倍数時だけ毎分実行)
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
 				elif minute != None:
 					if datetime_minute % minute == 0: #分だけ倍数指定型(その倍数分だけ毎時実行)
 						try:
-							plugin.do()
+							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
