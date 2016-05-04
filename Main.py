@@ -243,22 +243,22 @@ class ScheduleTask(threading.Thread):
 					multiple_minute = plugin.MULTIPLE_MINUTE
 				else:
 					multiple_minute = None
-				if hour != None and minute != None:
-					if datetime_hour % hour == 0 and datetime_minute % minute == 0: #時と分の倍数指定型
+				if multiple_hour != None and multiple_minute != None:
+					if datetime_hour % multiple_hour == 0 and datetime_minute % multiple_minute == 0: #時と分の倍数指定型
 						try:
 							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
-				elif hour != None:
-					if datetime_hour % hour == 0: #時だけ倍数指定型(その倍数時だけ毎分実行)
+				elif multiple_hour != None:
+					if datetime_hour % multiple_hour == 0: #時だけ倍数指定型(その倍数時だけ毎分実行)
 						try:
 							do(plugin)
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
-				elif minute != None:
-					if datetime_minute % minute == 0: #分だけ倍数指定型(その倍数分だけ毎時実行)
+				elif multiple_minute != None:
+					if datetime_minute % multiple_minute == 0: #分だけ倍数指定型(その倍数分だけ毎時実行)
 						try:
 							do(plugin)
 						except Exception as e:
