@@ -264,6 +264,7 @@ class ScheduleTask(threading.Thread):
 						except Exception as e:
 							logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.NAME, e))
 						continue
+			time.sleep(5)
 
 """プラグインディレクトリを監視するハンドラ"""
 class ChangeHandler(FileSystemEventHandler):
