@@ -1,12 +1,10 @@
+data/log
 tmp/
-logs/
-data/
-compatible/
-.settings/
-
-.DS_Store
-.pydevproject
-.project
 
 *.pyc
 *.yaml
+.DS_Store
+
+TwitterBotFramework.iml
+.idea/
+
