@@ -1,13 +1,13 @@
 English readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
 
 
-# TwitterBotFramework (TBF)
+# TwitterBotFramework (TBFW)
 基本理念: プログラムの知識の少ない人でも簡単にボットを建てられるようにする。  
 
-プログラミングの経験がない人やプログラムに疎い人でも、TBFを使えば、簡単にTwitter Botが自前で構築できるよう、設計されています。  
-また、TBFでは安易に機能を追加できます。末尾をご覧ください。  
+プログラミングの経験がない人やプログラムに疎い人でも、TBFWを使えば、簡単にTwitter Botが自前で構築できるよう、設計されています。
+また、TBFWでは安易に機能を追加できます。末尾をご覧ください。
 
-TBFを導入するにあたり、以下の操作が必要です。操作は簡単です。  
+TBFWを導入するにあたり、以下の操作が必要です。操作は簡単です。
 
 ## 導入
 ### 1. Pythonのインストール
@@ -60,6 +60,6 @@ python Main.py &
 ```
 
 ## プラグイン開発
-TBFでは、簡単に機能を追加できます。プラグインの製作方法は以下を参照してください。  
+TBFWでは、簡単に機能を追加できます。プラグインの製作方法は以下を参照してください。
 プラグインの[仕様編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98) および [引数編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)をご覧ください。  
 

@@ -1,8 +1,8 @@
-# TwitterBotFramework (TBF)
+# TwitterBotFramework (TBFW)
 Basic Concept: Only little knowledge in programming, you can build Twitter-Bots.
 
-This TBF is designed so that even people who are NOT familir with programming can build their own bots.  
-And, this TBF allows you to add original features easily. Please check about it below this page.
+This TBFW is designed so that even people who are NOT familir with programming can build their own bots.
+And, this TBFW allows you to add original features easily. Please check about it below this page.
 
 
 There are a few operations to have to do. Operations are easy. Check below.
@@ -11,7 +11,7 @@ There are a few operations to have to do. Operations are easy. Check below.
 
 ### 1. Installing Python
 ~~This code can be runable on Python 3.x, but you should install Python 2.7.x.~~  
-From [`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2), This TBF is fully compatible with Python 3.x. Be careful! No longer this TBF is incompatible with Python 2.7.x.
+From [`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2), This TBFW is fully compatible with Python 3.x. Be careful! No longer this TBFW is incompatible with Python 2.7.x.
 
 Latest Python 3.5.1 is [here](https://www.python.org/downloads/release/python-351/).
 
