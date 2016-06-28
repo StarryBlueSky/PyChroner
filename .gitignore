@@ -5,6 +5,5 @@ tmp/
 *.yaml
 .DS_Store
 
-TwitterBotFramework.iml
 .idea/
 
