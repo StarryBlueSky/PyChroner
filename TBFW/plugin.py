@@ -1,10 +1,13 @@
 # coding=utf-8
-import TBFW.constant
-import TBFW.exceptions
-import re
-import os
 import logging
+import os
+import re
 from importlib import machinery
+
+from TBFW.constant import pluginTypes
+from TBFW.exceptions import InvalidPluginSyntaxError
+from TBFW.exceptions import InValidPluginFilenameError
+from TBFW.exceptions import InvalidPluginTargetError
 
 pluginFilePattern = re.compile("[^.].*\.py$")
 logger = logging.getLogger(__name__)
@@ -31,19 +34,19 @@ class Plugin:
 				loader = machinery.SourceFileLoader(self.pluginName, self.pluginPath)
 				plugin = loader.load_module(self.pluginName)
 
+				self.plugin = plugin
+				self.pluginTarget = plugin.TARGET
 				self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
 				self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
 				self.pluginRatio = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
-
-				self.plugin = plugin
 
 				logger.info("Plugin \"%s\"(%s) has been loaded successfully." % (self.pluginName, self.pluginPath))
 
 			except Exception as error:
 				logger.warning("Plugin \"%s\"(%s) could not be loaded. Error Detail:\n%s" % (self.pluginName, self.pluginPath, error))
-				raise TBFW.exceptions.InvalidPluginSyntaxError
+				raise InvalidPluginSyntaxError
 
-		raise TBFW.exceptions.InValidPluginFilenameError
+		raise InValidPluginFilenameError
 
 class PluginManager:
 	def __init__(self, pluginsDir):
@@ -55,7 +58,7 @@ class PluginManager:
 		self.initializePlugins()
 
 	def initializePlugins(self):
-		self.plugins = {plugin_type: [] for plugin_type in TBFW.constant.pluginTypes}
+		self.plugins = {plugin_type: [] for plugin_type in pluginTypes}
 
 	def searchAllPlugins(self):
 
