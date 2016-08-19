@@ -90,11 +90,7 @@ class Core:
 	def __scheduleRegularPlugins(self):
 		def _do(plugin):
 			try:
-				if plugin.do.__code__.co_argcount == 1:
-					# 引数の数が1の場合、グローバル変数を渡す
-					plugin.do(MakeArgsDic())
-				else:
-					regularPlugin.do()
+				plugin.code.do()
 				logger.info(messageSuccessExecutingRegularPlugin.format(plugin.attributeName))
 			except:
 				logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.attributeName, traceback.format_exc()))
