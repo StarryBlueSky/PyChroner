@@ -31,7 +31,9 @@ pluginAttributeMultipleHour = "MULTIPLE_HOUR"
 pluginAttributeMinute = "MINUTE"
 pluginAttributeMultipleMinute = "MULTIPLE_MINUTE"
 
+defaultAttributeValid = None
 defaultAttributePath = None
+defaultAttributeSize = None
 defaultAttributeName = None
 defaultAttributeTarget = None
 defaultAttributePriority = 0
@@ -41,3 +43,6 @@ defaultAttributeHour = None
 defaultAttributeMultipleHour = None
 defaultAttributeMinute = None
 defaultAttributeMultipleMinute = None
+
+oneHourMinutes = 60
+oneDayHours = 24
