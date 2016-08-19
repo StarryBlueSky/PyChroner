@@ -5,6 +5,6 @@ if __name__ == "__main__":
 	bot = TBFW.Core()
 	while True:
 		try:
-			bot.Start()
+			bot.run()
 		except TBFW.OutOfMemoryError:
 			pass
