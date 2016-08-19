@@ -1,10 +1,17 @@
 # coding=utf-8
+import os
 
+currentDir = os.getcwd()
 pathPluginsDir = "plugins"
+pluginsDir = currentDir + "/" + pathPluginsDir
 pathAssetsDir = "assets"
+assetsDir = currentDir + "/" + pathAssetsDir
 pathCacheDir = "cache"
+cacheDir = currentDir + "/" + pathCacheDir
 pathLogDir = "logs"
+logDir = currentDir + "/" + pathLogDir
 pathTmpDir = "tmp"
+tmpDir = currentDir + "/" + pathTmpDir
 
 pluginReply = "reply"
 pluginTimeline = "timeline"
