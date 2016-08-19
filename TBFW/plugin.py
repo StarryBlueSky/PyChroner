@@ -34,22 +34,23 @@ class Plugin:
 			try:
 				loader = machinery.SourceFileLoader(self.pluginName, self.pluginPath)
 				plugin = loader.load_module(self.pluginName)
-
-				self.plugin = plugin
-				if not hasattr(plugin, "TARGET"):
-					raise NotFoundPluginTargetError
-				if plugin.TARGET not in pluginTypes:
-					raise InvalidPluginTargetError
-				self.pluginTarget = plugin.TARGET
-				self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
-				self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
-				self.pluginRatio = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
-
-				logger.info("Plugin \"%s\"(%s) has been loaded successfully." % (self.pluginName, self.pluginPath))
-
 			except Exception as error:
-				logger.warning("Plugin \"%s\"(%s) could not be loaded. Error Detail:\n%s" % (self.pluginName, self.pluginPath, error))
+				logger.warning("Plugin \"%s\"(%s) could not be loaded. Error Detail:\n%s" % (
+				self.pluginName, self.pluginPath, error))
 				raise InvalidPluginSyntaxError
+
+			self.plugin = plugin
+
+			if not hasattr(plugin, "TARGET"):
+				raise NotFoundPluginTargetError
+			if plugin.TARGET not in pluginTypes:
+				raise InvalidPluginTargetError
+			self.pluginTarget = plugin.TARGET
+			self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
+			self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
+			self.pluginRatio = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
+
+			logger.info("Plugin \"%s\"(%s) has been loaded successfully." % (self.pluginName, self.pluginPath))
 
 		raise InValidPluginFilenameError
 
