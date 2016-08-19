@@ -21,5 +21,5 @@ class InvalidPluginSyntaxError(Exception):
 class InvalidPluginScheduleError(Exception):
 	raise NotImplementedError("TBFW could not load plugin because of unsupported `HOUR` and `MINUTE` and so on.")
 
-class TooManyArgmentsForPlugin(Exception):
+class TooManyArgmentsForPluginError(Exception):
 	raise NotImplementedError("TBFW could not load plugin because too many argments were required.")
