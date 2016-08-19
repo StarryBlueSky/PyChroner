@@ -130,14 +130,14 @@ class PluginManager:
 	def __init__(self, pluginsDir):
 		self.pluginsDir = pluginsDir
 		self.plugins = {}
-		self.initializePlugins()
+		self.__initializePlugins()
 
 		self.attachedStreamId = []
 
-	def initializePlugins(self):
+	def __initializePlugins(self):
 		self.plugins = {pluginType: [] for pluginType in pluginTypes}
 
-	def isNewPlugin(self, plugin):
+	def __isNewPlugin(self, plugin):
 		for pluginType, currentPlugins in self.plugins.items():
 			for anotherPlugin in currentPlugins:
 				if anotherPlugin.attributeId == plugin.attributeId:
@@ -149,7 +149,7 @@ class PluginManager:
 		if plugin.attributeAttachedStream not in self.attachedStreamId:
 			self.attachedStreamId.append(plugin.attributeAttachedStream)
 
-		if self.isNewPlugin(plugin):
+		if self.__isNewPlugin(plugin):
 			self.plugins[plugin.attributeType].append(plugin)
 		else:
 			for pluginType, currentPlugins in self.plugins.items():
@@ -160,7 +160,7 @@ class PluginManager:
 					i += 1
 
 	def searchAllPlugins(self):
-		self.initializePlugins()
+		self.__initializePlugins()
 
 		for pluginFile in os.listdir(self.pluginsDir):
 			pluginPath = self.pluginsDir + "/" + pluginFile
