@@ -2,6 +2,7 @@
 import logging
 import os
 import re
+import hashlib
 from importlib import machinery
 
 from TBFW.constant import *
@@ -12,12 +13,14 @@ logger = logging.getLogger(__name__)
 
 class Plugin:
 	def __init__(self, pluginPath):
-		self.plugin = None
+		self.code = None
+		self.attributeId = hashlib.sha512(pluginPath.encode()).hexdigest()
 		self.attributeValid = None
 		self.attributePath = pluginPath
 		self.attributeSize = None
 		self.attributeName = self.attributePath.split("/")[-1][:-3]
 		self.attributeTarget = None
+		self.attributeType = None
 		self.attributePriority = None
 		self.attributeAttachedStream = None
 		self.attributeRatio = None
@@ -46,26 +49,23 @@ class Plugin:
 				logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
 				raise InvalidPluginSyntaxError
 
-			self.plugin = plugin
+			self.code = plugin
 
 			if not hasattr(plugin, pluginAttributeTarget):
 				raise NotFoundPluginTargetError
 			if getattr(plugin, pluginAttributeTarget) not in pluginTypes:
 				raise InvalidPluginTargetError
 			self.attributeTarget = getattr(plugin, pluginAttributeTarget)
-			delattr(plugin, pluginAttributeTarget)
+			self.attributeType = self.attributeTarget.lower()
 
 			self.attributePriority = getattr(plugin, pluginAttributePriority) \
 				if hasattr(plugin, pluginAttributePriority) else defaultAttributePriority
-			delattr(plugin, pluginAttributePriority)
 
 			self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream) \
 				if hasattr(plugin, pluginAttributeAttachedStream) else defaultAttributeAttachedStream
-			delattr(plugin, pluginAttributeAttachedStream)
 
 			self.attributeRatio = getattr(plugin, pluginAttributeRatio) \
 				if hasattr(plugin, pluginAttributeRatio) else defaultAttributeRatio
-			delattr(plugin, pluginAttributeRatio)
 
 			if pluginAttributeTarget == pluginRegular:
 				hours = []
@@ -133,15 +133,32 @@ class PluginManager:
 		self.plugins = {}
 		self.initializePlugins()
 
-		self.usedStream = []
+		self.attachedStreamId = []
 
 	def initializePlugins(self):
 		self.plugins = {pluginType: [] for pluginType in pluginTypes}
 
+	def isNewPlugin(self, plugin):
+		for pluginType, currentPlugins in self.plugins.items():
+			for anotherPlugin in currentPlugins:
+				if anotherPlugin.attributeId == plugin.attributeId:
+					return False
+		return True
+
 	def appendPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
-		if plugin.attributeAttachedStream not in self.usedStream:
-			self.usedStream.append(plugin.attributeAttachedStream)
+		if plugin.attributeAttachedStream not in self.attachedStreamId:
+			self.attachedStreamId.append(plugin.attributeAttachedStream)
+
+		if self.isNewPlugin(plugin):
+			self.plugins[plugin.attributeType].append(plugin)
+		else:
+			for pluginType, currentPlugins in self.plugins.items():
+				i = 0
+				for anotherPlugin in currentPlugins:
+					if anotherPlugin.attributeId == plugin.attributeId:
+						self.plugins[pluginType][i] = plugin
+					i += 1
 
 	def searchAllPlugins(self):
 		self.initializePlugins()
@@ -150,25 +167,30 @@ class PluginManager:
 			pluginPath = self.pluginsDir + "/" + pluginFile
 			self.appendPlugin(pluginPath)
 
-		# プラグインを優先順位に並べる
-		for pluginType in pluginTypes:
-			self.plugins[pluginType] = [x for x in sorted(self.plugins[pluginType], key=lambda x: getattr(x, pluginAttributePriority), reverse=True)]
+		self.sortPluginsOrder()
 
-	def dumpPluginsList(self):
+	def sortPluginsOrder(self):
+		for pluginType in pluginTypes:
+			self.plugins[pluginType] = [
+				x for x in sorted(self.plugins[pluginType], key=lambda x: getattr(x, pluginAttributePriority), reverse=True)
+			]
+
+	def getPluginsList(self):
 		result = []
 		for pluginType, currentPlugins in self.plugins.items():
 			for plugin in currentPlugins:
 				tmp = {
+					"id": plugin.attributeId,
 					"path": plugin.attributePath,
 					"size": plugin.attributeSize,
-					"type": pluginType.lower(),
+					"type": plugin.attributeType,
 					"isValid": plugin.attributeValid,
 					"attachedStream": plugin.attributeAttachedStream,
 					"ratio": plugin.attributeRatio,
 					"name": plugin.attributeName
 				}
 				if pluginType == pluginRegular:
-					tmp["hours"] = plugin.attributeHour
-					tmp["minutes"] = plugin.attributeMinute
+					tmp["hours"] = plugin.attributeHours
+					tmp["minutes"] = plugin.attributeMinutes
 				result.append(tmp)
 		return result
