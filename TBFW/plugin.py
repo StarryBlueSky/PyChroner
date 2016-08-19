@@ -81,32 +81,32 @@ class Plugin:
 
 				if pluginHour != defaultAttributeHour:
 					if isinstance(pluginHour, list):
-						hours.extend(plugin.HOUR)
+						hours.extend(pluginHour)
 					elif isinstance(pluginHour, int):
-						hours.append(plugin.HOUR)
+						hours.append(pluginHour)
 					else:
 						raise InvalidPluginScheduleError
 
 				if pluginMinute != defaultAttributeMinute:
-					if isinstance(plugin.MINUTE, list):
-						minutes.extend(plugin.MINUTE)
+					if isinstance(pluginMinute, list):
+						minutes.extend(pluginMinute)
 					elif isinstance(pluginMinute, int):
-						minutes.append(plugin.MINUTE)
+						minutes.append(pluginMinute)
 					else:
 						raise InvalidPluginScheduleError
 
 				if pluginMultipleHour != defaultAttributeMultipleHour:
-					if isinstance(plugin.MULTIPLE_HOUR, int):
+					if isinstance(pluginMultipleHour, int):
 						hours.extend(
-							[i * plugin.MULTIPLE_HOUR for i in range(oneDayHours) if dayStartHour <= i * plugin.MULTIPLE_HOUR < oneDayHours]
+							[i * pluginMultipleHour for i in range(oneDayHours) if dayStartHour <= i * pluginMultipleHour < oneDayHours]
 						)
 					else:
 						raise InvalidPluginScheduleError
 
 				if pluginMultipleMinute != defaultAttributeMultipleMinute:
-					if isinstance(plugin.MULTIPLE_MINUTE, int):
+					if isinstance(pluginMultipleMinute, int):
 						minutes.extend(
-							[i * plugin.MULTIPLE_MINUTE for i in range(oneHourMinutes) if dayStartHour <= i * plugin.MULTIPLE_MINUTE < oneHourMinutes]
+							[i * pluginMultipleMinute for i in range(oneHourMinutes) if dayStartHour <= i * pluginMultipleMinute < oneHourMinutes]
 						)
 					else:
 						raise InvalidPluginScheduleError
