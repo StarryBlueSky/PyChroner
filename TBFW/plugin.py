@@ -1,5 +1,6 @@
 # coding=utf-8
 import TBFW.constant
+import TBFW.exceptions
 import re
 import os
 import logging
@@ -11,6 +12,13 @@ logger = logging.getLogger(__name__)
 class Plugin:
 	def __init__(self, pluginPath):
 		self.pluginPath = pluginPath
+		self.pluginName = self.pluginPath.split("/")[-1][:-3]
+
+		self.metadata = dict()
+		self.metadata["name"] = self.pluginName
+		self.metadata["priority"] = None
+		self.metadata["stream"] = None
+		self.metadata["ratio"] = None
 
 	def isValid(self):
 		if pluginFilePattern.match(self.pluginPath):
@@ -20,26 +28,24 @@ class Plugin:
 
 	def load(self):
 		if self.isValid():
-			pluginName = self.pluginPath.split("/")[-1][:-3]
 			try:
-				loader = machinery.SourceFileLoader(pluginName, self.pluginPath)
-				plugin = loader.load_module(pluginName)
-				# 属性値の定義
-				plugin.__METADATA__NAME__ = pluginName
-				if not hasattr(plugin, "PRIORITY"):
-					plugin.PRIORITY = 0
-				if not hasattr(plugin, "STREAM"):
-					plugin.STREAM = 1
-				if not hasattr(plugin, "RATIO"):
-					plugin.RATIO = 1
-				usedStream.append(plugin.STREAM)
-				plugins[plugin.TARGET.lower()].append(plugin)
-				logger.info("プラグイン \"%s\"(%s/%s)は有効になりました。" % (name, PLUGIN_DIR, plugin_file))
-			except Exception as e:
-				logger.warning('プラグイン \"%s\"(%s/%s)は有効にできませんでした。\nエラー詳細: %s' % (name, PLUGIN_DIR, plugin_file, e))
-		return False
+				loader = machinery.SourceFileLoader(self.pluginName, self.pluginPath)
+				plugin = loader.load_module(self.pluginName)
 
-	def do(self):
+				self.metadata["priority"] = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
+				self.metadata["stream"] = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
+				self.metadata["ratio"] = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
+
+				logger.info("プラグイン \"%s\"(%s)は有効になりました。" % (self.pluginName, self.pluginPath))
+				self.do = plugin.do
+
+			except Exception as error:
+				logger.warning('プラグイン \"%s\"(%s)は有効にできませんでした。\nエラー詳細: %s' % (self.pluginName, self.pluginPath, error))
+				raise TBFW.exceptions.InvalidPluginSyntaxError
+
+		raise TBFW.exceptions.InValidPluginFilenameError
+
+	def do(self, **kwargs):
 		pass
 
 class PluginManager:
@@ -61,6 +67,7 @@ class PluginManager:
 
 		for plugin_file in os.listdir(PLUGIN_DIR):
 			self.pluginsDir + "/" +
+			usedStream.append(plugin.STREAM)
 
 		# 定期実行プラグインで実行時間のパースをする
 		tmp = []
