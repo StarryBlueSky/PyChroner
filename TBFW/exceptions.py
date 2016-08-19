@@ -17,3 +17,6 @@ class InvalidPluginTargetError(Exception):
 
 class InvalidPluginSyntaxError(Exception):
 	raise SyntaxError("TBFW could not load plugin because of invalid syntax.")
+
+class InvalidPluginScheduleError(Exception):
+	raise NotImplementedError("TBFW could not load plugin because of unsupported `HOUR` and `MINUTE` and so on.")
