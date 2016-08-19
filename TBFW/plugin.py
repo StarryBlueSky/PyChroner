@@ -1,8 +1,7 @@
 # coding=utf-8
-import logging
+import hashlib
 import os
 import re
-import hashlib
 from importlib import machinery
 
 from TBFW.constant import *
