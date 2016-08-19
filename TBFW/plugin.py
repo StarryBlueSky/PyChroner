@@ -1,6 +1,6 @@
 # coding=utf-8
 import hashlib
-import os
+import json
 import re
 from importlib import machinery
 
@@ -127,8 +127,7 @@ class Plugin:
 
 
 class PluginManager:
-	def __init__(self, pluginsDir):
-		self.pluginsDir = pluginsDir
+	def __init__(self):
 		self.plugins = {}
 		self.__initializePlugins()
 
@@ -162,11 +161,12 @@ class PluginManager:
 	def searchAllPlugins(self):
 		self.__initializePlugins()
 
-		for pluginFile in os.listdir(self.pluginsDir):
-			pluginPath = self.pluginsDir + "/" + pluginFile
+		for pluginFile in os.listdir(pluginsDir):
+			pluginPath = pluginsDir + "/" + pluginFile
 			self.appendPlugin(pluginPath)
 
 		self.sortPluginsOrder()
+		self.dumpPluginsList()
 
 	def sortPluginsOrder(self):
 		for pluginType in pluginTypes:
@@ -193,3 +193,8 @@ class PluginManager:
 					tmp["minutes"] = plugin.attributeMinutes
 				result.append(tmp)
 		return result
+
+	def dumpPluginsList(self):
+		result = self.getPluginsList()
+		path = cacheDir + "/plugins.json"
+		json.dump(result, open(path, "w"))
