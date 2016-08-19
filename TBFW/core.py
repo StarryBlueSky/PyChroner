@@ -3,6 +3,8 @@ import os
 import gc
 import socket
 import urllib
+import tweepy
+import threading
 from datetime import datetime
 from TBFW.plugin import PluginManager
 from TBFW.constant import *
@@ -17,26 +19,22 @@ class Core:
 		opener.addheaders = [('User-Agent', userAgent), ('Accept-Language', acceptLanguage)]
 		urllib.request.install_opener(opener)
 
-		self.currentDir = os.getcwd()
-		self.pluginsDir = self.currentDir + "/" + pathPluginsDir
-		self.logDir = self.currentDir + "/" + pathLogDir
-
-		for directory in [self.pluginsDir, self.logDir]:
+		for directory in [pluginsDir, logDir]:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
-		PM = PluginManager(self.pluginsDir)
+		PM = PluginManager()
 		PM.searchAllPlugins()
 		self.plugins = PM.plugins
 		self.attachedStreamId = PM.attachedStreamId
 
-		self.logPath = self.logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
-		self.logger = self.getLogger()
+		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
+		self.logger = self.__getLogger()
 
 		self.boottime = datetime.now()
 		self.logger.info(messageSuccessInitialization.format(self.boottime))
 
-	def getLogger(self):
+	def __getLogger(self):
 		logger = getLogger()
 		handler = FileHandler(self.logPath, "w", encoding="utf-8")
 		formatter = Formatter(messageLogFormat)
@@ -70,7 +68,7 @@ class Core:
 
 		event_handler = ChangeHandler()
 		observer = Observer()
-		observer.schedule(event_handler, PLUGIN_DIR, recursive=False)
+		observer.schedule(event_handler, pluginsDir, recursive=False)
 		observer.start()
 
 		for n in self.attachedStreamId:
