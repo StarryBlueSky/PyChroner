@@ -4,7 +4,20 @@ import os
 import re
 from importlib import machinery
 
+from TBFW.constant import pluginAttributeTarget
+from TBFW.constant import pluginAttributePriority
+from TBFW.constant import pluginAttributeAttachedStream
+from TBFW.constant import pluginAttributeRatio
+from TBFW.constant import pluginAttributeHour
+from TBFW.constant import pluginAttributeMultipleHour
+from TBFW.constant import pluginAttributeMinute
+from TBFW.constant import pluginAttributeMultipleMinute
+from TBFW.constant import defaultAttributePriority
+from TBFW.constant import defaultAttributeAttachedStream
+from TBFW.constant import defaultAttributeRatio
 from TBFW.constant import pluginTypes
+from TBFW.constant import pluginReply, pluginTimeline, pluginEvent
+from TBFW.constant import pluginThread, pluginRegular, pluginOther
 from TBFW.exceptions import InvalidPluginSyntaxError
 from TBFW.exceptions import InValidPluginFilenameError
 from TBFW.exceptions import InvalidPluginTargetError
@@ -16,15 +29,19 @@ logger = logging.getLogger(__name__)
 class Plugin:
 	def __init__(self, pluginPath):
 		self.plugin = None
-		self.pluginPath = pluginPath
-		self.pluginName = self.pluginPath.split("/")[-1][:-3]
-		self.pluginTarget = None
-		self.pluginPriority = None
-		self.pluginAttachedStream = None
-		self.pluginRatio = None
+		self.attributePath = pluginPath
+		self.attributeName = self.attributePath.split("/")[-1][:-3]
+		self.attributeTarget = None
+		self.attributePriority = None
+		self.attributeAttachedStream = None
+		self.attributeRatio = None
+		self.attributeHour = None
+		self.attributeMultipleHour = None
+		self.attributeMinute = None
+		self.attributeMultipleMinute = None
 
 	def isValid(self):
-		if pluginFilePattern.match(self.pluginPath):
+		if pluginFilePattern.match(self.attributePath):
 			return True
 		else:
 			return False
@@ -32,71 +49,86 @@ class Plugin:
 	def load(self):
 		if self.isValid():
 			try:
-				loader = machinery.SourceFileLoader(self.pluginName, self.pluginPath)
-				plugin = loader.load_module(self.pluginName)
+				loader = machinery.SourceFileLoader(self.attributeName, self.attributePath)
+				plugin = loader.load_module(self.attributeName)
 			except Exception as error:
-				logger.warning("Plugin \"%s\"(%s) could not be loaded. Error Detail:\n%s" % (
-				self.pluginName, self.pluginPath, error))
+				logger.warning(
+					"Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
+						.format(self.attributeName, self.attributePath, error)
+				)
 				raise InvalidPluginSyntaxError
 
 			self.plugin = plugin
 
-			if not hasattr(plugin, "TARGET"):
+			if not hasattr(plugin, pluginAttributeTarget):
 				raise NotFoundPluginTargetError
-			if plugin.TARGET not in pluginTypes:
+			if getattr(plugin, pluginAttributeTarget) not in pluginTypes:
 				raise InvalidPluginTargetError
-			self.pluginTarget = plugin.TARGET
-			self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
-			self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
-			self.pluginRatio = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
+			self.attributeTarget = getattr(plugin, pluginAttributeTarget)
+			delattr(plugin, pluginAttributeTarget)
 
-			logger.info("Plugin \"%s\"(%s) has been loaded successfully." % (self.pluginName, self.pluginPath))
+			self.attributePriority = getattr(plugin, pluginAttributePriority) \
+				if hasattr(plugin, pluginAttributePriority) else defaultAttributePriority
+			delattr(plugin, pluginAttributePriority)
+
+			self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream) \
+				if hasattr(plugin, pluginAttributeAttachedStream) else defaultAttributeAttachedStream
+			delattr(plugin, pluginAttributeAttachedStream)
+
+			self.attributeRatio = getattr(plugin, pluginAttributeRatio) \
+				if hasattr(plugin, pluginAttributeRatio) else defaultAttributeRatio
+			delattr(plugin, pluginAttributeRatio)
+
+			logger.info(
+				"Plugin \"{0}\"({1}) has been loaded successfully."
+					.format(self.attributeName, self.attributePath)
+			)
 
 		raise InValidPluginFilenameError
+
 
 class PluginManager:
 	def __init__(self, pluginsDir):
 		self.pluginsDir = pluginsDir
 		self.plugins = {}
+		self.initializePlugins()
 
 		self.usedStream = []
-
-		self.initializePlugins()
 
 	def initializePlugins(self):
 		self.plugins = {plugin_type: [] for plugin_type in pluginTypes}
 
-	def searchAllPlugins(self):
+	def appendPlugin(self, pluginPath):
+		plugin = Plugin(pluginPath)
+		if plugin.attributeAttachedStream not in self.usedStream:
+			self.usedStream.append(plugin.attributeAttachedStream)
 
-	def LoadPlugin(self):
-		plugins = {
-			"reply": [], "timeline": [], "event": [], "thread": [], "regular": [], "other": []}
-		# PLUGIN_DIRから拡張機能読み込み
+	def searchAllPlugins(self):
+		self.initializePlugins()
 
 		for pluginFile in os.listdir(self.pluginsDir):
 			pluginPath = self.pluginsDir + "/" + pluginFile
-			plugin = Plugin(pluginPath)
-			self.usedStream.append(plugin.STREAM)
+			self.appendPlugin(pluginPath)
 
 		# 定期実行プラグインで実行時間のパースをする
 		tmp = []
-		for plugin in plugins["regular"]:
+		for plugin in self.plugins[pluginRegular]:
 			hours = []
 			minutes = []
-			if hasattr(plugin, "HOUR"):
+			if hasattr(plugin, pluginAttributeHour):
 				if isinstance(plugin.HOUR, list):
 					hours.extend(plugin.HOUR)
 				else:
 					hours.append(plugin.HOUR)
-			if hasattr(plugin, "MINUTE"):
+			if hasattr(plugin, pluginAttributeMinute):
 				if isinstance(plugin.MINUTE, list):
 					minutes.extend(plugin.MINUTE)
 				else:
 					minutes.append(plugin.MINUTE)
-			if hasattr(plugin, "MULTIPLE_HOUR"):
+			if hasattr(plugin, pluginAttributeMultipleHour):
 				if isinstance(plugin.MULTIPLE_HOUR, int):
 					hours.extend([i * plugin.MULTIPLE_HOUR for i in range(24) if 0 <= i * plugin.MULTIPLE_HOUR < 24])
-			if hasattr(plugin, "MULTIPLE_MINUTE"):
+			if hasattr(plugin, pluginAttributeMultipleMinute):
 				if isinstance(plugin.MULTIPLE_MINUTE, int):
 					minutes.extend([i * plugin.MULTIPLE_MINUTE for i in range(60) if 0 <= i * plugin.MULTIPLE_MINUTE < 60])
 			hours = sorted(list(set(hours)))
@@ -108,14 +140,15 @@ class PluginManager:
 			plugin._HOURS = hours
 			plugin._MINUTES = minutes
 			tmp.append(plugin)
-		plugins["regular"] = tmp
+
+		plugins[pluginRegular] = tmp
 		# プラグインを優先順位に並べる
-		plugins["reply"] = [x for x in sorted(plugins["reply"], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins["timeline"] = [x for x in sorted(plugins["timeline"], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins["event"] = [x for x in sorted(plugins["event"], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins["thread"] = [x for x in sorted(plugins["thread"], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins["regular"] = [x for x in sorted(plugins["regular"], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins["other"] = [x for x in sorted(plugins["other"], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginReply] = [x for x in sorted(plugins[pluginReply], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginTimeline] = [x for x in sorted(plugins[pluginTimeline], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginEvent] = [x for x in sorted(plugins[pluginEvent], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginThread] = [x for x in sorted(plugins[pluginThread], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginRegular] = [x for x in sorted(plugins[pluginRegular], key=lambda x: x.PRIORITY, reverse=True)]
+		plugins[pluginOther] = [x for x in sorted(plugins[pluginOther], key=lambda x: x.PRIORITY, reverse=True)]
 		# 読み込まれたプラグインの統計情報のJSONを出力
 		result = []
 		for type, _plugins in plugins.items():
