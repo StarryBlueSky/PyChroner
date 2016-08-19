@@ -28,6 +28,9 @@ messageSuccessInitialization = "Initialization Complate. Current time is {0}."
 messageErrorLoadingPlugin = "Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
 messageSuccessLoadingPlugin = "Plugin \"{0}\"({1}) has been loaded successfully."
 
+acceptLanguage = "ja;q=1.0"
+userAgent = "TwitterBotFramework/3.0 (Python 3)"
+
 pluginAttributeTarget = "TARGET"
 pluginAttributePriority = "PRIORITY"
 pluginAttributeAttachedStream = "STREAM"
