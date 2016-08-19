@@ -8,6 +8,7 @@ from TBFW.constant import pluginTypes
 from TBFW.exceptions import InvalidPluginSyntaxError
 from TBFW.exceptions import InValidPluginFilenameError
 from TBFW.exceptions import InvalidPluginTargetError
+from TBFW.exceptions import NotFoundPluginTargetError
 
 pluginFilePattern = re.compile("[^.].*\.py$")
 logger = logging.getLogger(__name__)
@@ -35,6 +36,10 @@ class Plugin:
 				plugin = loader.load_module(self.pluginName)
 
 				self.plugin = plugin
+				if not hasattr(plugin, "TARGET"):
+					raise NotFoundPluginTargetError
+				if plugin.TARGET not in pluginTypes:
+					raise InvalidPluginTargetError
 				self.pluginTarget = plugin.TARGET
 				self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
 				self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
