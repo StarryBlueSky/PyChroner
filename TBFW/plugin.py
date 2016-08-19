@@ -4,22 +4,22 @@ import os
 import re
 from importlib import machinery
 
-from TBFW.constant import pluginAttributeTarget
-from TBFW.constant import pluginAttributePriority
-from TBFW.constant import pluginAttributeAttachedStream
-from TBFW.constant import pluginAttributeRatio
-from TBFW.constant import pluginAttributeHour
-from TBFW.constant import pluginAttributeMultipleHour
-from TBFW.constant import pluginAttributeMinute
-from TBFW.constant import pluginAttributeMultipleMinute
-from TBFW.constant import defaultAttributePriority
 from TBFW.constant import defaultAttributeAttachedStream
+from TBFW.constant import defaultAttributePriority
 from TBFW.constant import defaultAttributeRatio
+from TBFW.constant import pluginAttributeAttachedStream
+from TBFW.constant import pluginAttributeHour
+from TBFW.constant import pluginAttributeMinute
+from TBFW.constant import pluginAttributeMultipleHour
+from TBFW.constant import pluginAttributeMultipleMinute
+from TBFW.constant import pluginAttributePriority
+from TBFW.constant import pluginAttributeRatio
+from TBFW.constant import pluginAttributeTarget
+from TBFW.constant import pluginRegular
 from TBFW.constant import pluginTypes
-from TBFW.constant import pluginReply, pluginTimeline, pluginEvent
-from TBFW.constant import pluginThread, pluginRegular, pluginOther
-from TBFW.exceptions import InvalidPluginSyntaxError
+from TBFW.constant import oneDayHours, oneHourMinutes
 from TBFW.exceptions import InValidPluginFilenameError
+from TBFW.exceptions import InvalidPluginSyntaxError
 from TBFW.exceptions import InvalidPluginTargetError
 from TBFW.exceptions import NotFoundPluginTargetError
 
@@ -29,21 +29,25 @@ logger = logging.getLogger(__name__)
 class Plugin:
 	def __init__(self, pluginPath):
 		self.plugin = None
+		self.attributeValid = None
 		self.attributePath = pluginPath
+		self.attributeSize = None
 		self.attributeName = self.attributePath.split("/")[-1][:-3]
 		self.attributeTarget = None
 		self.attributePriority = None
 		self.attributeAttachedStream = None
 		self.attributeRatio = None
 		self.attributeHour = None
-		self.attributeMultipleHour = None
 		self.attributeMinute = None
+		self.attributeMultipleHour = None
 		self.attributeMultipleMinute = None
 
 	def isValid(self):
 		if pluginFilePattern.match(self.attributePath):
+			self.attributeValid = True
 			return True
 		else:
+			self.attributeValid = False
 			return False
 
 	def load(self):
@@ -79,6 +83,34 @@ class Plugin:
 				if hasattr(plugin, pluginAttributeRatio) else defaultAttributeRatio
 			delattr(plugin, pluginAttributeRatio)
 
+			if pluginAttributeTarget == pluginRegular:
+				hours = []
+				minutes = []
+				if hasattr(plugin, pluginAttributeHour):
+					if isinstance(plugin.HOUR, list):
+						hours.extend(plugin.HOUR)
+					else:
+						hours.append(plugin.HOUR)
+				if hasattr(plugin, pluginAttributeMinute):
+					if isinstance(plugin.MINUTE, list):
+						minutes.extend(plugin.MINUTE)
+					else:
+						minutes.append(plugin.MINUTE)
+				if hasattr(plugin, pluginAttributeMultipleHour):
+					if isinstance(plugin.MULTIPLE_HOUR, int):
+						hours.extend([i * plugin.MULTIPLE_HOUR for i in range(oneDayHours) if 0 <= i * plugin.MULTIPLE_HOUR < oneDayHours])
+				if hasattr(plugin, pluginAttributeMultipleMinute):
+					if isinstance(plugin.MULTIPLE_MINUTE, int):
+						minutes.extend([i * plugin.MULTIPLE_MINUTE for i in range(oneHourMinutes) if 0 <= i * plugin.MULTIPLE_MINUTE < oneHourMinutes])
+				hours = sorted(list(set(hours)))
+				minutes = sorted(list(set(minutes)))
+				if hours == []:
+					hours = list(range(oneDayHours))
+				if minutes == []:
+					minutes = list(range(oneHourMinutes))
+				plugin._HOURS = hours
+				plugin._MINUTES = minutes
+
 			logger.info(
 				"Plugin \"{0}\"({1}) has been loaded successfully."
 					.format(self.attributeName, self.attributePath)
@@ -96,7 +128,7 @@ class PluginManager:
 		self.usedStream = []
 
 	def initializePlugins(self):
-		self.plugins = {plugin_type: [] for plugin_type in pluginTypes}
+		self.plugins = {pluginType: [] for pluginType in pluginTypes}
 
 	def appendPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
@@ -110,57 +142,25 @@ class PluginManager:
 			pluginPath = self.pluginsDir + "/" + pluginFile
 			self.appendPlugin(pluginPath)
 
-		# 定期実行プラグインで実行時間のパースをする
-		tmp = []
-		for plugin in self.plugins[pluginRegular]:
-			hours = []
-			minutes = []
-			if hasattr(plugin, pluginAttributeHour):
-				if isinstance(plugin.HOUR, list):
-					hours.extend(plugin.HOUR)
-				else:
-					hours.append(plugin.HOUR)
-			if hasattr(plugin, pluginAttributeMinute):
-				if isinstance(plugin.MINUTE, list):
-					minutes.extend(plugin.MINUTE)
-				else:
-					minutes.append(plugin.MINUTE)
-			if hasattr(plugin, pluginAttributeMultipleHour):
-				if isinstance(plugin.MULTIPLE_HOUR, int):
-					hours.extend([i * plugin.MULTIPLE_HOUR for i in range(24) if 0 <= i * plugin.MULTIPLE_HOUR < 24])
-			if hasattr(plugin, pluginAttributeMultipleMinute):
-				if isinstance(plugin.MULTIPLE_MINUTE, int):
-					minutes.extend([i * plugin.MULTIPLE_MINUTE for i in range(60) if 0 <= i * plugin.MULTIPLE_MINUTE < 60])
-			hours = sorted(list(set(hours)))
-			minutes = sorted(list(set(minutes)))
-			if hours == []:
-				hours = list(range(24))
-			if minutes == []:
-				minutes = list(range(60))
-			plugin._HOURS = hours
-			plugin._MINUTES = minutes
-			tmp.append(plugin)
-
-		plugins[pluginRegular] = tmp
 		# プラグインを優先順位に並べる
-		plugins[pluginReply] = [x for x in sorted(plugins[pluginReply], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins[pluginTimeline] = [x for x in sorted(plugins[pluginTimeline], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins[pluginEvent] = [x for x in sorted(plugins[pluginEvent], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins[pluginThread] = [x for x in sorted(plugins[pluginThread], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins[pluginRegular] = [x for x in sorted(plugins[pluginRegular], key=lambda x: x.PRIORITY, reverse=True)]
-		plugins[pluginOther] = [x for x in sorted(plugins[pluginOther], key=lambda x: x.PRIORITY, reverse=True)]
-		# 読み込まれたプラグインの統計情報のJSONを出力
+		for pluginType in pluginTypes:
+			self.plugins[pluginType] = [x for x in sorted(self.plugins[pluginType], key=lambda x: getattr(x, pluginAttributePriority), reverse=True)]
+
+	def dumpPluginsList(self):
 		result = []
-		for type, _plugins in plugins.items():
-			for plugin in _plugins:
-				path = Set["path"]["base"] + Set["path"]["plugin"] + "/" + plugin._NAME + ".py"
+		for pluginType, currentPlugins in self.plugins.items():
+			for plugin in currentPlugins:
 				tmp = {
-					"path": path, "size": os.path.getsize(path), "type": type, "isValid": True, "streamId": plugin.STREAM,
-					"ratio": plugin.RATIO, "streamScreenName": Set["twitterSecret"][plugin.STREAM]["screen_name"],
-					"name": plugin._NAME,}
-				if type == "regular":
-					tmp["hours"] = plugin._HOURS
-					tmp["minutes"] = plugin._MINUTES
+					"path": plugin.attributePath,
+					"size": os.path.getsize(plugin.attributePath),
+					"type": pluginType.lower(),
+					"isValid": plugin.attributeValid,
+					"attachedStream": plugin.attributeAttachedStream,
+					"ratio": plugin.attributeRatio,
+					"name": plugin.attributeName
+				}
+				if pluginType == pluginRegular:
+					tmp["hours"] = plugin.attributeHour
+					tmp["minutes"] = plugin.attributeMinute
 				result.append(tmp)
-		json.dump(result, open(Set["path"]["base"] + Set["path"]["json"] + "/plugins.json", "w"))
-		return plugins
+		return result
