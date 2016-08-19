@@ -48,6 +48,9 @@ class Plugin:
 				logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
 				raise InvalidPluginSyntaxError
 
+			if plugin.code.do.__code__.co_argcount != 0:
+				raise TooManyArgmentsForPluginError
+
 			self.code = plugin
 
 			if not hasattr(plugin, pluginAttributeTarget):
