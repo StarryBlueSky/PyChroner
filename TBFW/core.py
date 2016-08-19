@@ -1,19 +1,21 @@
 # coding=utf-8
 import gc
-import socket
-import threading
-import urllib
-import time
-import traceback
 import json
 import random
+import socket
+import threading
+import time
+import traceback
+import urllib
 from datetime import datetime
 from logging import getLogger, Formatter, FileHandler, INFO, CRITICAL
 
-import tweepy
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
+
 
 class Core:
 	def __init__(self):
@@ -62,12 +64,6 @@ class Core:
 		return logger
 
 	def run(self):
-		auth = tweepy.OAuthHandler(Set['twitterSecret'][0]['ck'], Set['twitterSecret'][0]['cs'])
-		auth.set_access_token(Set['twitterSecret'][0]['at'], Set['twitterSecret'][0]['ats'])
-		global API
-		API = tweepy.API(auth)
-		SN = Set['twitterSecret'][0]['screen_name']
-
 		for threadPlugin in self.plugins[pluginThread]:
 			t = threadPlugin.do()
 			t.setName(threadPlugin.attributeName)
@@ -122,3 +118,48 @@ class Core:
 					t.start()
 
 			time.sleep(15)
+
+class ChangeHandler(FileSystemEventHandler):
+	def on_created(self, event):
+		if event.is_directory:
+			return
+		if not event.src_path.endswith('.py'):
+			return
+		name = event.src_path[:-3].replace(PLUGIN_DIR+'/', '')
+		loader = machinery.SourceFileLoader(name, event.src_path)
+		try:
+			plugin = loader.load_module(name)
+			plugin._NAME = name
+			plugins[plugin.TARGET.lower()].append(plugin)
+			logger.info('プラグイン \"%s\"は有効になりました。' % name)
+		except Exception as e:
+			logger.warning('プラグイン \"%s\"は壊れています。有効にできませんでした。\nエラー詳細: %s' % (name, e))
+
+	def on_modified(self, event):
+		if event.is_directory:
+			return
+		if not event.src_path.endswith('.py'):
+			return
+		name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
+		loader = machinery.SourceFileLoader(name, event.src_path)
+		try:
+			plugin = loader.load_module(name)
+			plugin._NAME = name
+			i = 0
+			for old_plugin in plugins[plugin.TARGET.lower()]:
+				if old_plugin._NAME == name:
+					plugins[plugin.TARGET.lower()][i] = plugin
+				i += 1
+		except Exception as e:
+			logger.warning('プラグイン \"%s\"は壊れています。更新できませんでした。\nエラー詳細: %s' % (name, e))
+
+	def on_deleted(self, event):
+		if event.is_directory:
+			return
+		if not event.src_path.endswith('.py'):
+			return
+		name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
+		for kind, _plugins in plugins.items():
+			for plugin in _plugins:
+				if plugin._NAME == name:
+					plugins[kind].remove(plugin)
