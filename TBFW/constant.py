@@ -6,4 +6,5 @@ pluginTypes = [
 
 pluginsDir = "plugins"
 assetsDir = "assets"
+logDir = "logs"
 tmpDir = "tmp"
