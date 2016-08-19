@@ -1,9 +1,9 @@
-data/log
+assets/
+logs/
 tmp/
 
+# Developer
 *.pyc
-*.yaml
 .DS_Store
-
 .idea/
-
+Main1.5.py
