@@ -11,14 +11,13 @@ logger = logging.getLogger(__name__)
 
 class Plugin:
 	def __init__(self, pluginPath):
+		self.plugin = None
 		self.pluginPath = pluginPath
 		self.pluginName = self.pluginPath.split("/")[-1][:-3]
-
-		self.metadata = dict()
-		self.metadata["name"] = self.pluginName
-		self.metadata["priority"] = None
-		self.metadata["stream"] = None
-		self.metadata["ratio"] = None
+		self.pluginTarget = None
+		self.pluginPriority = None
+		self.pluginAttachedStream = None
+		self.pluginRatio = None
 
 	def isValid(self):
 		if pluginFilePattern.match(self.pluginPath):
@@ -32,26 +31,26 @@ class Plugin:
 				loader = machinery.SourceFileLoader(self.pluginName, self.pluginPath)
 				plugin = loader.load_module(self.pluginName)
 
-				self.metadata["priority"] = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
-				self.metadata["stream"] = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
-				self.metadata["ratio"] = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
+				self.pluginPriority = plugin.PRIORITY if not hasattr(plugin, "PRIORITY") else 0
+				self.pluginAttachedStream = plugin.STREAM if not hasattr(plugin, "STREAM") else 0
+				self.pluginRatio = plugin.RATIO if not hasattr(plugin, "RATIO") else 1
 
-				logger.info("プラグイン \"%s\"(%s)は有効になりました。" % (self.pluginName, self.pluginPath))
-				self.do = plugin.do
+				self.plugin = plugin
+
+				logger.info("Plugin \"%s\"(%s) has been loaded successfully." % (self.pluginName, self.pluginPath))
 
 			except Exception as error:
-				logger.warning('プラグイン \"%s\"(%s)は有効にできませんでした。\nエラー詳細: %s' % (self.pluginName, self.pluginPath, error))
+				logger.warning("Plugin \"%s\"(%s) could not be loaded. Error Detail:\n%s" % (self.pluginName, self.pluginPath, error))
 				raise TBFW.exceptions.InvalidPluginSyntaxError
 
 		raise TBFW.exceptions.InValidPluginFilenameError
-
-	def do(self, **kwargs):
-		pass
 
 class PluginManager:
 	def __init__(self, pluginsDir):
 		self.pluginsDir = pluginsDir
 		self.plugins = {}
+
+		self.usedStream = []
 
 		self.initializePlugins()
 
@@ -65,9 +64,10 @@ class PluginManager:
 			"reply": [], "timeline": [], "event": [], "thread": [], "regular": [], "other": []}
 		# PLUGIN_DIRから拡張機能読み込み
 
-		for plugin_file in os.listdir(PLUGIN_DIR):
-			self.pluginsDir + "/" +
-			usedStream.append(plugin.STREAM)
+		for pluginFile in os.listdir(self.pluginsDir):
+			pluginPath = self.pluginsDir + "/" + pluginFile
+			plugin = Plugin(pluginPath)
+			self.usedStream.append(plugin.STREAM)
 
 		# 定期実行プラグインで実行時間のパースをする
 		tmp = []
