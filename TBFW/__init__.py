@@ -12,6 +12,7 @@ from TBFW.core import Core
 from TBFW.database import DBProvider
 from TBFW.api import API
 from TBFW.plugin import Plugin, PluginManager
+from TBFW.configparser import ConfigParser
 from TBFW.exceptions import *
 from TBFW.constant import *
 
