@@ -4,24 +4,8 @@ import os
 import re
 from importlib import machinery
 
-from TBFW.constant import defaultAttributeAttachedStream
-from TBFW.constant import defaultAttributePriority
-from TBFW.constant import defaultAttributeRatio
-from TBFW.constant import pluginAttributeAttachedStream
-from TBFW.constant import pluginAttributeHour
-from TBFW.constant import pluginAttributeMinute
-from TBFW.constant import pluginAttributeMultipleHour
-from TBFW.constant import pluginAttributeMultipleMinute
-from TBFW.constant import pluginAttributePriority
-from TBFW.constant import pluginAttributeRatio
-from TBFW.constant import pluginAttributeTarget
-from TBFW.constant import pluginRegular
-from TBFW.constant import pluginTypes
-from TBFW.constant import oneDayHours, oneHourMinutes
-from TBFW.exceptions import InValidPluginFilenameError
-from TBFW.exceptions import InvalidPluginSyntaxError
-from TBFW.exceptions import InvalidPluginTargetError
-from TBFW.exceptions import NotFoundPluginTargetError
+from TBFW.constant import *
+from TBFW.exceptions import *
 
 pluginFilePattern = re.compile("[^.].*\.py$")
 logger = logging.getLogger(__name__)
@@ -41,25 +25,25 @@ class Plugin:
 		self.attributeMinute = None
 		self.attributeMultipleHour = None
 		self.attributeMultipleMinute = None
+		self.attributeHours = []
+		self.attributeMinutes = []
 
 	def isValid(self):
 		if pluginFilePattern.match(self.attributePath):
-			self.attributeValid = True
 			return True
 		else:
-			self.attributeValid = False
 			return False
 
 	def load(self):
 		if self.isValid():
+			self.attributeValid = True
+			self.attributeSize = os.path.getsize(self.attributePath)
+
 			try:
 				loader = machinery.SourceFileLoader(self.attributeName, self.attributePath)
 				plugin = loader.load_module(self.attributeName)
 			except Exception as error:
-				logger.warning(
-					"Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
-						.format(self.attributeName, self.attributePath, error)
-				)
+				logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
 				raise InvalidPluginSyntaxError
 
 			self.plugin = plugin
@@ -86,37 +70,61 @@ class Plugin:
 			if pluginAttributeTarget == pluginRegular:
 				hours = []
 				minutes = []
-				if hasattr(plugin, pluginAttributeHour):
-					if isinstance(plugin.HOUR, list):
+				pluginHour = getattr(plugin, pluginAttributeHour) \
+					if hasattr(plugin, pluginAttributeHour) else defaultAttributeHour
+				pluginMinute = getattr(plugin, pluginAttributeMinute) \
+					if hasattr(plugin, pluginAttributeMinute) else defaultAttributeMinute
+				pluginMultipleHour = getattr(plugin, pluginAttributeMultipleHour) \
+					if hasattr(plugin, pluginAttributeMultipleHour) else defaultAttributeMultipleHour
+				pluginMultipleMinute = getattr(plugin, pluginAttributeMultipleMinute) \
+					if hasattr(plugin, pluginAttributeMultipleMinute) else defaultAttributeMultipleMinute
+
+				if pluginHour != defaultAttributeHour:
+					if isinstance(pluginHour, list):
 						hours.extend(plugin.HOUR)
-					else:
+					elif isinstance(pluginHour, int):
 						hours.append(plugin.HOUR)
-				if hasattr(plugin, pluginAttributeMinute):
+					else:
+						raise InvalidPluginScheduleError
+
+				if pluginMinute != defaultAttributeMinute:
 					if isinstance(plugin.MINUTE, list):
 						minutes.extend(plugin.MINUTE)
-					else:
+					elif isinstance(pluginMinute, int):
 						minutes.append(plugin.MINUTE)
-				if hasattr(plugin, pluginAttributeMultipleHour):
+					else:
+						raise InvalidPluginScheduleError
+
+				if pluginMultipleHour != defaultAttributeMultipleHour:
 					if isinstance(plugin.MULTIPLE_HOUR, int):
-						hours.extend([i * plugin.MULTIPLE_HOUR for i in range(oneDayHours) if 0 <= i * plugin.MULTIPLE_HOUR < oneDayHours])
-				if hasattr(plugin, pluginAttributeMultipleMinute):
+						hours.extend(
+							[i * plugin.MULTIPLE_HOUR for i in range(oneDayHours) if dayStartHour <= i * plugin.MULTIPLE_HOUR < oneDayHours]
+						)
+					else:
+						raise InvalidPluginScheduleError
+
+				if pluginMultipleMinute != defaultAttributeMultipleMinute:
 					if isinstance(plugin.MULTIPLE_MINUTE, int):
-						minutes.extend([i * plugin.MULTIPLE_MINUTE for i in range(oneHourMinutes) if 0 <= i * plugin.MULTIPLE_MINUTE < oneHourMinutes])
+						minutes.extend(
+							[i * plugin.MULTIPLE_MINUTE for i in range(oneHourMinutes) if dayStartHour <= i * plugin.MULTIPLE_MINUTE < oneHourMinutes]
+						)
+					else:
+						raise InvalidPluginScheduleError
+
 				hours = sorted(list(set(hours)))
 				minutes = sorted(list(set(minutes)))
-				if hours == []:
+				if hours == list():
 					hours = list(range(oneDayHours))
-				if minutes == []:
+				if minutes == list():
 					minutes = list(range(oneHourMinutes))
-				plugin._HOURS = hours
-				plugin._MINUTES = minutes
+				self.attributeHours = hours
+				self.attributeMinutes = minutes
 
-			logger.info(
-				"Plugin \"{0}\"({1}) has been loaded successfully."
-					.format(self.attributeName, self.attributePath)
-			)
+			logger.info(messageSuccessLoadingPlugin.format(self.attributeName, self.attributePath))
 
-		raise InValidPluginFilenameError
+		else:
+			self.attributeValid = False
+			raise InValidPluginFilenameError
 
 
 class PluginManager:
@@ -152,7 +160,7 @@ class PluginManager:
 			for plugin in currentPlugins:
 				tmp = {
 					"path": plugin.attributePath,
-					"size": os.path.getsize(plugin.attributePath),
+					"size": plugin.attributeSize,
 					"type": pluginType.lower(),
 					"isValid": plugin.attributeValid,
 					"attachedStream": plugin.attributeAttachedStream,
