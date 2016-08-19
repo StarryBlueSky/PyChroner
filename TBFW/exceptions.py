@@ -3,14 +3,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class GeneralError(Exception):
-	raise Exception
-
 class OutOfMemoryError(Exception):
 	raise MemoryError("TBFW stoped because of out of memory.")
 
 class InValidPluginFilenameError(Exception):
-	raise GeneralError("TBFW does not support that plugin's extension. Please check plugin's extension.")
+	raise Exception("TBFW does not support that plugin's extension. Please check plugin's extension.")
+
+class InvalidPluginTargetError(Exception):
+	raise SyntaxError("TBFW could not load plugin because of unsupported target.")
 
 class InvalidPluginSyntaxError(Exception):
 	raise SyntaxError("TBFW could not load plugin because of invalid syntax.")
