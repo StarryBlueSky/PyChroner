@@ -1,61 +1,44 @@
 # coding=utf-8
-import TBFW.constant
+import os
+import gc
+from datetime import datetime
+from TBFW.constant import *
+from logging import getLogger, Formatter, FileHandler, INFO, CRITICAL
 
 class Core:
-	"""
-	The core of TBFW
-	"""
-	def __init__(self, root):
-		self.path = {
-			"current": root.rstrip("/") if root.endswith("/") else root,
-			"plugins": TBFW.constant.pluginsDir,
-			"assets": TBFW.constant.assetsDir,
-			"tmp": TBFW.constant.tmpDir
-		}
+	def __init__(self):
+		gc.enable()
 
-	def Start(self):
-		""""パスを読み込み"""
-		global PLUGIN_DIR, DATA_DIR
-		PLUGIN_DIR = Set['path']['base'] + Set['path']['plugin']
-		DATA_DIR = Set['path']['base'] + Set['path']['data']
-		# ディレクトリがない場合は生成
-		if not os.path.isdir(PLUGIN_DIR):
-			os.makedirs(PLUGIN_DIR)
-		if not os.path.isdir(DATA_DIR):
-			os.makedirs(DATA_DIR)
+		self.currentDir = os.getcwd()
+		self.pluginsDir = self.currentDir + "/" + pathPluginsDir
+		self.logDir = self.currentDir + "/" + pathLogDir
 
-		"""ロガーを準備"""
-		handler = FileHandler(Set['path']['base'] + Set['path']['log'] + '/logger/' + datetime.datetime.now().strftime(
-			'%Y-%m-%d_%H-%M-%S') + '.log', 'w', encoding='utf-8')
-		formatter = Formatter('[%(levelname)s]%(asctime)s - %(message)s')
+		for directory in [self.pluginsDir, self.logDir]:
+			if not os.path.isdir(directory):
+				os.mkdir(directory)
+
+		self.logPath = self.logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
+		self.logger = self.getLogger()
+
+		self.boottime = datetime.now()
+		self.logger.info(messageSuccessInitialization.format(self.boottime))
+
+	def getLogger(self):
+		logger = getLogger()
+		handler = FileHandler(self.logPath, "w", encoding="utf-8")
+		formatter = Formatter(messageLogFormat)
 		handler.setFormatter(formatter)
+
 		getLogger("requests").setLevel(CRITICAL)
 		getLogger("tweepy").setLevel(CRITICAL)
-		global logger
-		logger = getLogger()
+
 		logger.addHandler(handler)
 		logger.setLevel(INFO)
 
-		"""プラグインを格納するリストを定義"""
-		global reply_plugin, timeline_plugin, event_plugin, thread_plugin, regular_plugin, other_plugin
-		reply_plugin = []
-		timeline_plugin = []
-		event_plugin = []
-		thread_plugin = []
-		regular_plugin = []
-		other_plugin = []
-		global usedStream
-		usedStream = []
+		return logger
 
-		""""初期化"""
-		gc.enable()
-		boottime = datetime.datetime.now()
-		logger.info('現在の時刻は %s です。' % boottime)
-		logger.info('アカウントの可用性を確認しています。')
-		result = subprocess.run('python3 %sMain.py check' % Set['path']['base'], shell=True)
-		logger.info('初期化に成功しました。')
-
-		db['Set'].update_one({}, {"$set": {"lastrun": datetime.datetime.now()}})
+	def Start(self):
+		db['Set'].update_one({}, {"$set": {"lastrun": datetime.now()}})
 		db['Set'].update_one({}, {"$set": {"timed": 0, "threadc": 1, "minly": {"tweet": 0, "event": 0}}})
 		Set = db['Set'].find_one()
 
