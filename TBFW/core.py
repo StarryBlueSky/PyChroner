@@ -88,12 +88,14 @@ class Core:
 			time.sleep(60)
 
 	def __scheduleRegularPlugins(self):
+		logger = self.logger
+
 		def _do(plugin):
 			try:
 				plugin.code.do()
 				logger.info(messageSuccessExecutingRegularPlugin.format(plugin.attributeName))
 			except:
-				logger.warning('プラグイン "%s" でエラーが発生しました\n詳細: %s' % (plugin.attributeName, traceback.format_exc()))
+				logger.warning(messageErrorExecutingRegularPlugin.format(plugin.attributeName, traceback.format_exc()))
 
 		while True:
 			wait_time = 60 - datetime.now().second
@@ -103,9 +105,8 @@ class Core:
 			for regularPlugin in self.plugins["regular"]:
 				if random.randint(1, regularPlugin.attributeRatio) != 1:
 					continue
-				if datetime_hour in regularPlugin.attributeHours \
-						and datetime_minute in regularPlugin.attributeMinutes:
-					threading.Thread(name=regularPlugin.attributeName, target=_do, args=(regularPlugin,)).start()
+				if datetime_hour in regularPlugin.attributeHours and datetime_minute in regularPlugin.attributeMinutes:
+					threading.Thread(name=regularPlugin.attributeName, target=_do, args=(regularPlugin, )).start()
 			time.sleep(1)
 
 	def __watchThreadActivity(self):
