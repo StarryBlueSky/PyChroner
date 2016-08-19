@@ -1,10 +1,10 @@
 # coding=utf-8
 
-pluginsDir = "plugins"
-assetsDir = "assets"
-cacheDir = "cache"
-logDir = "logs"
-tmpDir = "tmp"
+pathPluginsDir = "plugins"
+pathAssetsDir = "assets"
+pathCacheDir = "cache"
+pathLogDir = "logs"
+pathTmpDir = "tmp"
 
 pluginReply = "reply"
 pluginTimeline = "timeline"
