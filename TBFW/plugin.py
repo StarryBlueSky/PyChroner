@@ -146,6 +146,17 @@ class PluginManager:
 					return False
 		return True
 
+	def deletePlugin(self, pluginPath):
+		plugin = Plugin(pluginPath)
+
+		for pluginType, currentPlugins in self.plugins.items():
+			i = 0
+			for anotherPlugin in currentPlugins:
+				if anotherPlugin.attributeId == plugin.attributeId:
+					del self.plugins[pluginType][i]
+					break
+				i += 1
+
 	def appendPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
 		if plugin.attributeAttachedStream not in self.attachedStreamId:
@@ -159,6 +170,7 @@ class PluginManager:
 				for anotherPlugin in currentPlugins:
 					if anotherPlugin.attributeId == plugin.attributeId:
 						self.plugins[pluginType][i] = plugin
+						break
 					i += 1
 
 	def searchAllPlugins(self):
