@@ -16,7 +16,6 @@ from watchdog.observers import Observer
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
 
-
 class Core:
 	def __init__(self):
 		gc.enable()
@@ -35,10 +34,10 @@ class Core:
 		self.plugins = PM.plugins
 		self.attachedStreamId = PM.attachedStreamId
 
-		#connect = MongoClient(DBInfo.Host)
-		#self.db = connect.bot
-		#self.db.authenticate(DBInfo.Username, DBInfo.Password, mechanism=DBInfo.Method)
-		#self.Set = db['Set'].find_one()
+		# connect = MongoClient(DBInfo.Host)
+		# self.db = connect.bot
+		# self.db.authenticate(DBInfo.Username, DBInfo.Password, mechanism=DBInfo.Method)
+		# self.Set = db['Set'].find_one()
 
 		# db['Set'].update_one({}, {"$set": {"lastrun": datetime.now()}})
 		# db['Set'].update_one({}, {"$set": {"timed": 0, "threadc": 1, "minly": {"tweet": 0, "event": 0}}})
