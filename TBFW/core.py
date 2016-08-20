@@ -10,7 +10,7 @@ import urllib
 from datetime import datetime
 from logging import getLogger, Formatter, FileHandler, INFO, CRITICAL
 
-from watchdog.events import FileSystemEventHandler
+from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
 
 from TBFW.constant import *
@@ -29,10 +29,10 @@ class Core:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
-		PM = PluginManager()
-		PM.searchAllPlugins()
-		self.plugins = PM.plugins
-		self.attachedStreamId = PM.attachedStreamId
+		self.PM = PluginManager()
+		self.PM.searchAllPlugins()
+		self.plugins = self.PM.plugins
+		self.attachedStreamId = self.PM.attachedStreamId
 
 		# connect = MongoClient(DBInfo.Host)
 		# self.db = connect.bot
@@ -70,9 +70,8 @@ class Core:
 		threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins, args=()).start()
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
 
-		event_handler = ChangeHandler()
 		observer = Observer()
-		observer.schedule(event_handler, pluginsDir, recursive=False)
+		observer.schedule(self.ChangeHandler(regexes="\.py$"), pluginsDir, recursive=False)
 		observer.start()
 
 		for n in self.attachedStreamId:
@@ -118,47 +117,35 @@ class Core:
 
 			time.sleep(15)
 
-class ChangeHandler(FileSystemEventHandler):
-	def on_created(self, event):
-		if event.is_directory:
-			return
-		if not event.src_path.endswith('.py'):
-			return
-		name = event.src_path[:-3].replace(PLUGIN_DIR+'/', '')
-		loader = machinery.SourceFileLoader(name, event.src_path)
-		try:
-			plugin = loader.load_module(name)
-			plugin._NAME = name
-			plugins[plugin.TARGET.lower()].append(plugin)
-			logger.info('プラグイン \"%s\"は有効になりました。' % name)
-		except Exception as e:
-			logger.warning('プラグイン \"%s\"は壊れています。有効にできませんでした。\nエラー詳細: %s' % (name, e))
+	class ChangeHandler(RegexMatchingEventHandler):
+		def on_created(self, event):
+			name = event.src_path[:-3].replace(PLUGIN_DIR+'/', '')
+			loader = machinery.SourceFileLoader(name, event.src_path)
+			try:
+				plugin = loader.load_module(name)
+				plugin._NAME = name
+				plugins[plugin.TARGET.lower()].append(plugin)
+				logger.info('プラグイン \"%s\"は有効になりました。' % name)
+			except Exception as e:
+				logger.warning('プラグイン \"%s\"は壊れています。有効にできませんでした。\nエラー詳細: %s' % (name, e))
 
-	def on_modified(self, event):
-		if event.is_directory:
-			return
-		if not event.src_path.endswith('.py'):
-			return
-		name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
-		loader = machinery.SourceFileLoader(name, event.src_path)
-		try:
-			plugin = loader.load_module(name)
-			plugin._NAME = name
-			i = 0
-			for old_plugin in plugins[plugin.TARGET.lower()]:
-				if old_plugin._NAME == name:
-					plugins[plugin.TARGET.lower()][i] = plugin
-				i += 1
-		except Exception as e:
-			logger.warning('プラグイン \"%s\"は壊れています。更新できませんでした。\nエラー詳細: %s' % (name, e))
+		def on_modified(self, event):
+			name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
+			loader = machinery.SourceFileLoader(name, event.src_path)
+			try:
+				plugin = loader.load_module(name)
+				plugin._NAME = name
+				i = 0
+				for old_plugin in plugins[plugin.TARGET.lower()]:
+					if old_plugin._NAME == name:
+						plugins[plugin.TARGET.lower()][i] = plugin
+					i += 1
+			except Exception as e:
+				logger.warning('プラグイン \"%s\"は壊れています。更新できませんでした。\nエラー詳細: %s' % (name, e))
 
-	def on_deleted(self, event):
-		if event.is_directory:
-			return
-		if not event.src_path.endswith('.py'):
-			return
-		name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
-		for kind, _plugins in plugins.items():
-			for plugin in _plugins:
-				if plugin._NAME == name:
-					plugins[kind].remove(plugin)
+		def on_deleted(self, event):
+			name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
+			for kind, _plugins in plugins.items():
+				for plugin in _plugins:
+					if plugin._NAME == name:
+						plugins[kind].remove(plugin)
