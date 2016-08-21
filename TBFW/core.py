@@ -40,8 +40,6 @@ class _Core:
 		self.plugins = self.PM.plugins
 		self.attachedStreamId = self.PM.attachedStreamId
 
-		self.TwitterAPI = TwitterAPI()
-
 		# connect = MongoClient(DBInfo.Host)
 		# self.db = connect.bot
 		# self.db.authenticate(DBInfo.Username, DBInfo.Password, mechanism=DBInfo.Method)
@@ -106,11 +104,11 @@ class _Core:
 			time.sleep(wait_time)
 			datetime_hour = datetime.now().hour
 			datetime_minute = datetime.now().minute
-			for regularPlugin in self.plugins[regularPlugin]:
-				if random.randint(1, regularPlugin.attributeRatio) != 1:
+			for currentRegularPlugin in self.plugins[pluginRegular]:
+				if random.randint(1, currentRegularPlugin.attributeRatio) != 1:
 					continue
-				if datetime_hour in regularPlugin.attributeHours and datetime_minute in regularPlugin.attributeMinutes:
-					threading.Thread(name=regularPlugin.attributeName, target=_do, args=(regularPlugin, )).start()
+				if datetime_hour in currentRegularPlugin.attributeHours and datetime_minute in currentRegularPlugin.attributeMinutes:
+					threading.Thread(name=currentRegularPlugin.attributeName, target=_do, args=(currentRegularPlugin, )).start()
 			time.sleep(1)
 
 	def __watchThreadActivity(self):
@@ -161,7 +159,7 @@ class Streaming:
 				self.__logger.info('@%sのUserStreamに接続しました。' % self.sn)
 				UserStream(auth, StreamListener(self.sn, self.streamId)).user_stream()
 			except:
-				self.__logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (sn, traceback.format_exc()))
+				self.__logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (self.sn, traceback.format_exc()))
 				time.sleep(reconnectUserStreamSeconds)
 
 	def _processStream(self, rawJson):
@@ -209,7 +207,7 @@ class Streaming:
 			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
 			if plugin.attributeTarger == 'REPLY' and "@" + self.sn in stream['text']:
 				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
-				API = TwitterAPI(account=self.streamId)
+				API = TwitterAPI(accountId=self.streamId)
 				Twitter.Post(text, stream=stream, tweetid=stream['id'])
 
 class StreamListener(tweepy.StreamListener):
