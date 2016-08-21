@@ -19,8 +19,6 @@ from TBFW.constant import *
 from TBFW.plugin import PluginManager
 
 class Core:
-	PM = PluginManager()
-
 	def __init__(self):
 		gc.enable()
 		socket.setdefaulttimeout(30)
@@ -33,6 +31,7 @@ class Core:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
+		self.PM = PluginManager()
 		self.PM.searchAllPlugins()
 		self.plugins = self.PM.plugins
 		self.attachedStreamId = self.PM.attachedStreamId
@@ -122,11 +121,17 @@ class Core:
 
 			time.sleep(15)
 
+	def __newPluginFound(self, pluginPath):
+		self.PM.addPlugin(pluginPath)
+
+	def __pluginDeleted(self, pluginPath):
+		self.PM.deletePlugin(pluginPath)
+
 	class ChangeHandler(RegexMatchingEventHandler):
 		def __init__(self, regexes):
 			super(RegexMatchingEventHandler, self).__init__()
 			self._regexes = [re.compile(r) for r in regexes]
-			self.PM = self.PM
+			self.
 
 		def on_created(self, event):
 			pluginPath = event.src_path
