@@ -7,18 +7,20 @@ import socket
 import threading
 import time
 import traceback
-import urllib
 import urllib.parse
 from datetime import datetime
 from logging import getLogger, captureWarnings, Formatter, INFO, CRITICAL
 from logging.handlers import RotatingFileHandler
 
+import tweepy
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
 
+from TBFW.configparser import ConfigParser
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
 from TBFW.twitterapi import TwitterAPI
+
 
 class _Core:
 	def __init__(self):
@@ -132,91 +134,96 @@ class _Core:
 		self.PM.deletePlugin(pluginPath)
 
 Core = _Core()
+__ConfigParser = ConfigParser()
+accounts = __ConfigParser.accounts
+muteClient = __ConfigParser.muteClient
+muteUser = __ConfigParser.muteUser
+muteDomain = __ConfigParser.muteDomain
 
-def StreamLine(raw, n, sn):
-	stream = json.loads(raw)
-	try:
-		if 'text' in stream:
-			# 禁止ユーザーとクライアントを拒否
-			stream['source'] = re.sub('<.*?>', '', stream['source'])
-			if stream['user']['screen_name'] in Set['ban']['screen_name'] or stream['source'] in Set['ban']['client']:
-				return
+class Streaming:
+	def __init__(self, sn, streamId):
+		self.sn = sn
+		self.streamId = streamId
 
-			# URLスパムを除去
-			if len(stream['entities']['urls']) > 0:
-				domain = re.sub('http.*?\/\/(.*?)\/.*$', r'\1', stream['entities']['urls'][0]['expanded_url'])
-				if domain in Set['ban']['domain']:
+		self.__ck = accounts[streamId]["ck"]
+		self.__cs = accounts[streamId]["cs"]
+		self.__at = accounts[streamId]["at"]
+		self.__ats = accounts[streamId]["ats"]
+
+		self.__logger = getLogger(__name__)
+
+	def startUserStream(self):
+		auth = tweepy.OAuthHandler(self.__ck, self.__cs)
+		auth.set_access_token(self.__at, self.__ats)
+
+		while True:
+			try:
+				self.__logger.info('@%sのUserStreamに接続しました。' % self.sn)
+				UserStream(auth, StreamListener(self.sn, self.streamId)).user_stream()
+			except:
+				self.__logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (sn, traceback.format_exc()))
+				time.sleep(reconnectUserStreamSeconds)
+
+	def _processStream(self, rawJson):
+		stream = json.loads(rawJson)
+		try:
+			if "text" in stream:
+				via = re.sub("<.*?>", "", stream['source'])
+				if stream['user']['screen_name'] in muteUser or via in muteClient:
 					return
-			# 名前欄攻撃対策(@リプ爆撃防止)
-			stream['user']['name'] = stream['user']['name'].replace('@', '@​')
-			# スペースや改行を整形
-			stream['text'] = stream['text'].replace('\n', ' ')
-			stream['text'] = stream['text'].replace('　', ' ')
-			stream['text'] = stream['text'].replace('  ', ' ')
+				if len(stream['entities']['urls']) > 0:
+					domain = re.sub('http(|s)://(.+?)/.*$', '\1', stream['entities']['urls'][0]['expanded_url'])
+					if domain in muteDomain:
+						return
 
-			if re.match('@%s\s' % sn, stream['text'], re.IGNORECASE):
-				for plugin in Core.plugins[pluginReply]:
-					if getattr(plugin, pluginAttributeAttachedStream) == n:
-						ExecutePlugin(plugin, stream)
-						break
-			for plugin in Core.plugins[pluginTimeline]:
-				if getattr(plugin, pluginAttributeAttachedStream) == n:
-					ExecutePlugin(plugin, stream)
+				stream['user']['name'] = stream['user']['name'].replace("@", "@​")
 
-		elif 'event' in stream:
-			for plugin in Core.plugins[pluginEvent]:
-				if getattr(plugin, pluginAttributeAttachedStream) == n:
-					ExecutePlugin(plugin, stream)
+				if re.match('@%s\s' % self.sn, stream['text'], re.IGNORECASE):
+					for plugin in Core.plugins[pluginReply]:
+						if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+							self.__executePlugin(plugin, stream)
+							break
+				for plugin in Core.plugins[pluginTimeline]:
+					if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+						self.__executePlugin(plugin, stream)
 
-		else:
-			for plugin in plugins["other"]:
-				if plugin.STREAM == n:
-					ExecutePlugin(plugin, stream)
+			elif 'event' in stream:
+				for plugin in Core.plugins[pluginEvent]:
+					if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+						self.__executePlugin(plugin, stream)
 
-	except Exception:
-		logger.warning('UserStream(%s, %s)でエラーが発生しました。\n詳細: %s' % (n, sn, traceback.format_exc()))
-
-"""プラグインを実行する関数"""
-def ExecutePlugin(plugin, stream):
-	try:
-		if random.randint(1, plugin.RATIO) == 1:  # 1/RATIOの確率でプラグイン実行
-			if plugin.do.__code__.co_argcount == 2:
-				# 引数の数が2の場合、グローバル変数を渡す
-				plugin.do(stream, MakeArgsDic())
 			else:
-				plugin.do(stream)
+				for plugin in Core.plugins["other"]:
+					if plugin.STREAM == self.streamId:
+						self.__executePlugin(plugin, stream)
 
-	except Exception as e:
-		CommonUtil.Report()
-		if plugin.TARGET == 'REPLY' and "@" + Set['twitterSecret'][0]['screen_name'] in stream['text']:
-			# リプライプラグインの時のみユーザーにエラーを知らせる
-			text = '@%s プラグイン "%s"でエラーが発生しました。申し訳ありませんが、しばらく経ってから再試行してください。問題が解決しない場合には、製作者までお問い合わせ下さい。\n\n詳細: %s' % (stream['user']['screen_name'], plugin._NAME, e[0:20])
-			Twitter.Post(text, stream=stream, tweetid=stream['id'])
+		except Exception:
+			self.__logger.exception(messageErrorProcessingStream.format(self.sn))
+
+	def __executePlugin(self, plugin, stream):
+		try:
+			if random.randint(1, plugin.attributeRatio) == 1:
+				plugin.code.do(stream)
+
+		except Exception as e:
+			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
+			if plugin.attributeTarger == 'REPLY' and "@" + self.sn in stream['text']:
+				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
+				Twitter.Post(text, stream=stream, tweetid=stream['id'])
 
 class StreamListener(tweepy.StreamListener):
-	def __init__(self, n, sn):
-		self.n = n
+	def __init__(self, sn, streamId):
 		self.sn = sn
+		self.streamId = streamId
+		self.__logger = getLogger(__name__)
 
-	def on_data(self, raw):
-		t = threading.Thread(target=StreamLine, name='StreamLine', args=(raw, self.n, self.sn))
+	def on_data(self, rawJson):
+		streaming = Streaming(self.sn, self.streamId)
+		t = threading.Thread(target=streaming._processStream, name="_processStream", args=(rawJson, ))
 		t.start()
 
 	def on_error(self, status_code):
-		logger.warning('Twitter APIエラーが発生しました\n詳細: HTTPステータスコード=%s' % status_code)
-
-class Streaming:
-	def startUserStream(self, n):
-		auth = tweepy.OAuthHandler(Set['twitterSecret'][n]['ck'], Set['twitterSecret'][n]['cs'])
-		auth.set_access_token(Set['twitterSecret'][n]['at'], Set['twitterSecret'][n]['ats'])
-		sn = Set['twitterSecret'][n]['screen_name']
-		while True:
-			try:
-				logger.info('@%sのUserStreamに接続しました。' % sn)
-				UserStream(auth, StreamListener(n, sn)).user_stream()
-			except:
-				logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (sn, traceback.format_exc()))
-				time.sleep(reconnectUserStreamSeconds)
+		self.__logger.warning(messageErrorConnectingTwitter.format(status_code))
 
 class ChangeHandler(RegexMatchingEventHandler):
 	def __init__(self, regexes):
