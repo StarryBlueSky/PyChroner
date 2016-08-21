@@ -48,9 +48,6 @@ class Plugin:
 				logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
 				raise InvalidPluginSyntaxError
 
-			if plugin.code.do.__code__.co_argcount != 0:
-				raise TooManyArgmentsForPluginError
-
 			self.code = plugin
 
 			if not hasattr(plugin, pluginAttributeTarget):
@@ -59,6 +56,13 @@ class Plugin:
 				raise InvalidPluginTargetError
 			self.attributeTarget = getattr(plugin, pluginAttributeTarget)
 			self.attributeType = self.attributeTarget.lower()
+
+			if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
+				maxArgs = 1
+			else:
+				maxArgs = 0
+			if plugin.code.do.__code__.co_argcount != maxArgs:
+				raise TooManyArgmentsForPluginError
 
 			self.attributePriority = getattr(plugin, pluginAttributePriority) \
 				if hasattr(plugin, pluginAttributePriority) else defaultAttributePriority
