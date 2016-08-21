@@ -1,9 +1,10 @@
 assets/
 logs/
+cache/
+json/
 tmp/
 
 # Developer
 *.pyc
 .DS_Store
 .idea/
-Main1.5.py
