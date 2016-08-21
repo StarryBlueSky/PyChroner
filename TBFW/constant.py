@@ -42,7 +42,11 @@ messageSuccessLoadingPlugin = "Plugin \"{0}\"({1}) has been loaded successfully.
 messageSuccessExecutingRegularPlugin = "Regular plugin \"{0}\" was executed successfully."
 messageErrorExecutingRegularPlugin = "Regular plugin \"{0}\" could not be executed. Error Detail:\n{1}"
 messageSuccessConnectingUserStream = "TBFW started @{0}'s streaming."
-messageErrorConnectingUserStream = ""
+messageErrorConnectingUserStream = "Error occured while connecting to @{0}'s stream."
+messageErrorProcessingStream = "Error occured while processing @{0}'s stream."
+messageErrorExecutingPlugin = "Error occured while executing plugin \"{0}\"."
+messageTweetErrorExecutingPlugin = "@{0} Error occured while executing plugin \"{1}\". Please retry in minutes.\n\n詳細: {2}"
+messageErrorConnectingTwitter = "Error occured while connecting to Twitter with HTTP Status Code {0}."
 
 reconnectUserStreamSeconds = 10
 
