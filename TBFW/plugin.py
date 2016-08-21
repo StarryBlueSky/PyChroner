@@ -211,5 +211,5 @@ class PluginManager:
 
 	def dumpPluginsList(self):
 		result = self.getPluginsList()
-		path = jsonDir + "/plugins.json"
+		path = apiDir + "/plugins.json"
 		json.dump(result, open(path, "w"))
