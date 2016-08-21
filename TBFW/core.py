@@ -1,5 +1,6 @@
 # coding=utf-8
 import gc
+import re
 import json
 import random
 import socket
@@ -8,7 +9,8 @@ import time
 import traceback
 import urllib
 from datetime import datetime
-from logging import getLogger, Formatter, FileHandler, INFO, CRITICAL
+from logging import getLogger, captureWarnings, Formatter, INFO, CRITICAL
+from logging.handlers import RotatingFileHandler
 
 from watchdog.events import RegexMatchingEventHandler
 from watchdog.observers import Observer
@@ -17,6 +19,8 @@ from TBFW.constant import *
 from TBFW.plugin import PluginManager
 
 class Core:
+	PM = PluginManager()
+
 	def __init__(self):
 		gc.enable()
 		socket.setdefaulttimeout(30)
@@ -29,7 +33,6 @@ class Core:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
-		self.PM = PluginManager()
 		self.PM.searchAllPlugins()
 		self.plugins = self.PM.plugins
 		self.attachedStreamId = self.PM.attachedStreamId
@@ -50,15 +53,17 @@ class Core:
 
 	def __getLogger(self):
 		logger = getLogger()
-		handler = FileHandler(self.logPath, "w", encoding="utf-8")
+		captureWarnings(True)
+
+		handler = RotatingFileHandler(self.logPath, maxBytes=20, encoding="utf-8")
 		formatter = Formatter(messageLogFormat)
 		handler.setFormatter(formatter)
 
 		getLogger("requests").setLevel(CRITICAL)
 		getLogger("tweepy").setLevel(CRITICAL)
 
-		logger.addHandler(handler)
 		logger.setLevel(INFO)
+		logger.addHandler(handler)
 
 		return logger
 
@@ -71,7 +76,7 @@ class Core:
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
 
 		observer = Observer()
-		observer.schedule(self.ChangeHandler(regexes="\.py$"), pluginsDir, recursive=False)
+		observer.schedule(self.ChangeHandler(regexes=["\.py$"]), pluginsDir, recursive=False)
 		observer.start()
 
 		for n in self.attachedStreamId:
@@ -118,16 +123,14 @@ class Core:
 			time.sleep(15)
 
 	class ChangeHandler(RegexMatchingEventHandler):
+		def __init__(self, regexes):
+			super(RegexMatchingEventHandler, self).__init__()
+			self._regexes = [re.compile(r) for r in regexes]
+			self.PM = self.PM
+
 		def on_created(self, event):
-			name = event.src_path[:-3].replace(PLUGIN_DIR+'/', '')
-			loader = machinery.SourceFileLoader(name, event.src_path)
-			try:
-				plugin = loader.load_module(name)
-				plugin._NAME = name
-				plugins[plugin.TARGET.lower()].append(plugin)
-				logger.info('プラグイン \"%s\"は有効になりました。' % name)
-			except Exception as e:
-				logger.warning('プラグイン \"%s\"は壊れています。有効にできませんでした。\nエラー詳細: %s' % (name, e))
+			pluginPath = event.src_path
+			self.
 
 		def on_modified(self, event):
 			name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
