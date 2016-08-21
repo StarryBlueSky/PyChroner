@@ -57,7 +57,7 @@ userAgent = "TwitterBotFramework/3.0 (Python 3)"
 
 pluginAttributeTarget = "TARGET"
 pluginAttributePriority = "PRIORITY"
-pluginAttributeAttachedStream = "STREAM"
+pluginAttributeAttachedStream = "ACCOUNT"
 pluginAttributeRatio = "RATIO"
 pluginAttributeHour = "HOUR"
 pluginAttributeMultipleHour = "MULTIPLE_HOUR"
