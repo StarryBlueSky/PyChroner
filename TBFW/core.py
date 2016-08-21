@@ -19,7 +19,7 @@ from watchdog.observers import Observer
 from TBFW.configparser import ConfigParser
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
-from TBFW.twitterapi import TwitterAPI
+from TBFW.twitterapi import TwitterAPI, UserStream
 
 
 class _Core:
@@ -106,7 +106,7 @@ class _Core:
 			time.sleep(wait_time)
 			datetime_hour = datetime.now().hour
 			datetime_minute = datetime.now().minute
-			for regularPlugin in self.plugins["regular"]:
+			for regularPlugin in self.plugins[regularPlugin]:
 				if random.randint(1, regularPlugin.attributeRatio) != 1:
 					continue
 				if datetime_hour in regularPlugin.attributeHours and datetime_minute in regularPlugin.attributeMinutes:
@@ -134,11 +134,11 @@ class _Core:
 		self.PM.deletePlugin(pluginPath)
 
 Core = _Core()
-__ConfigParser = ConfigParser()
-accounts = __ConfigParser.accounts
-muteClient = __ConfigParser.muteClient
-muteUser = __ConfigParser.muteUser
-muteDomain = __ConfigParser.muteDomain
+__Config = ConfigParser()
+accounts = __Config.accounts
+muteClient = __Config.muteClient
+muteUser = __Config.muteUser
+muteDomain = __Config.muteDomain
 
 class Streaming:
 	def __init__(self, sn, streamId):
@@ -209,6 +209,7 @@ class Streaming:
 			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
 			if plugin.attributeTarger == 'REPLY' and "@" + self.sn in stream['text']:
 				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
+				API = TwitterAPI(account=self.streamId)
 				Twitter.Post(text, stream=stream, tweetid=stream['id'])
 
 class StreamListener(tweepy.StreamListener):
