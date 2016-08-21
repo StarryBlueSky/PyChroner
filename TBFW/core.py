@@ -8,7 +8,6 @@ import threading
 import time
 import traceback
 import urllib
-import tweepy
 import urllib.parse
 from datetime import datetime
 from logging import getLogger, captureWarnings, Formatter, INFO, CRITICAL
@@ -30,7 +29,7 @@ class _Core:
 		opener.addheaders = [('User-Agent', userAgent), ('Accept-Language', acceptLanguage)]
 		urllib.request.install_opener(opener)
 
-		for directory in [pluginsDir, logDir]:
+		for directory in dirs:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
@@ -40,8 +39,6 @@ class _Core:
 		self.attachedStreamId = self.PM.attachedStreamId
 
 		self.TwitterAPI = TwitterAPI()
-
-		self.inspect = dict()
 
 		# connect = MongoClient(DBInfo.Host)
 		# self.db = connect.bot
@@ -62,7 +59,7 @@ class _Core:
 		captureWarnings(capture=True)
 
 		handler = RotatingFileHandler(self.logPath, maxBytes=20, encoding="utf-8")
-		formatter = Formatter(messageLogFormat)
+		formatter = Formatter(messageLogFormat, messageLogTimeFormat)
 		handler.setFormatter(formatter)
 
 		getLogger("requests").setLevel(CRITICAL)
@@ -117,7 +114,7 @@ class _Core:
 	def __watchThreadActivity(self):
 		while True:
 			result = [thread.name for thread in threading.enumerate()]
-			json.dump(result, open(jsonDir + "/thread.json", "w"), sort_keys=True)
+			json.dump(result, open(apiDir + "/thread.json", "w"), sort_keys=True)
 			# db['Set'].update_one({}, {"$set": {"threadc": len(result)}})
 
 			for threadPlugin in self.plugins[pluginThread]:
