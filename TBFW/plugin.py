@@ -134,7 +134,7 @@ class PluginManager:
 		self.plugins = {}
 		self.__initializePlugins()
 
-		self.attachedStreamId = []
+		self.attachedAccountId = []
 
 	def __initializePlugins(self):
 		self.plugins = {pluginType: [] for pluginType in pluginTypes}
@@ -159,8 +159,8 @@ class PluginManager:
 
 	def addPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
-		if plugin.attributeAttachedStream not in self.attachedStreamId:
-			self.attachedStreamId.append(plugin.attributeAttachedStream)
+		if plugin.attributeAttachedStream not in self.attachedAccountId:
+			self.attachedAccountId.append(plugin.attributeAttachedStream)
 
 		if self.__isNewPlugin(plugin):
 			self.plugins[plugin.attributeType].append(plugin)

@@ -19,8 +19,10 @@ from watchdog.observers import Observer
 from TBFW.configparser import ConfigParser
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
-from TBFW.twitterapi import TwitterAPI, UserStream
+from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
 
+
+Config = ConfigParser()
 
 class _Core:
 	def __init__(self):
@@ -38,7 +40,7 @@ class _Core:
 		self.PM = PluginManager()
 		self.PM.searchAllPlugins()
 		self.plugins = self.PM.plugins
-		self.attachedStreamId = self.PM.attachedStreamId
+		self.attachedAccountId = self.PM.attachedAccountId
 
 		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
 		self.__logger = self.__getLogger()
@@ -71,11 +73,12 @@ class _Core:
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
 
 		observer = Observer()
-		observer.schedule(ChangeHandler(regexes=["\.py$"]), pluginsDir, recursive=False)
+		observer.schedule(ChangeHandler(regexes=["\.py$"]), pluginsDir)
 		observer.start()
 
-		for n in self.attachedStreamId:
-			t = threading.Thread(name='Streaming for %s' % n, target=MakeUserStreamConnection, args=(n,))
+		for accountId in self.attachedAccountId:
+			streaming = Streaming(accountId)
+			t = threading.Thread(name="Streaming for %s" % Config.accounts[accountId]["sn"], target=streaming.startUserStream, args=(accountId,))
 			t.start()
 
 		while True:
@@ -123,34 +126,27 @@ class _Core:
 		self.PM.deletePlugin(pluginPath)
 
 Core = _Core()
-__Config = ConfigParser()
-accounts = __Config.accounts
-muteClient = __Config.muteClient
-muteUser = __Config.muteUser
-muteDomain = __Config.muteDomain
 
 class Streaming:
-	def __init__(self, sn, streamId):
-		self.sn = sn
-		self.streamId = streamId
-
-		self.__ck = accounts[streamId]["ck"]
-		self.__cs = accounts[streamId]["cs"]
-		self.__at = accounts[streamId]["at"]
-		self.__ats = accounts[streamId]["ats"]
+	def __init__(self, accountId):
+		self.accountId = accountId
+		self.sn = Config.accounts[accountId]["sn"]
 
 		self.__logger = getLogger(__name__)
 
-	def startUserStream(self):
-		auth = tweepy.OAuthHandler(self.__ck, self.__cs)
-		auth.set_access_token(self.__at, self.__ats)
+		self.accounts = Config.accounts
+		self.muteClient = Config.muteClient
+		self.muteUser = Config.muteUser
+		self.muteDomain = Config.muteDomain
 
+	def startUserStream(self):
+		auth = TwitterOAuth(self.accountId)
 		while True:
 			try:
-				self.__logger.info('@%sのUserStreamに接続しました。' % self.sn)
-				UserStream(auth, StreamListener(self.sn, self.streamId)).user_stream()
+				self.__logger.info(messageSuccessConnectingUserStream.format(self.sn))
+				UserStream(auth, StreamListener(self.accountId)).user_stream()
 			except:
-				self.__logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (self.sn, traceback.format_exc()))
+				self.__logger.exception(messageErrorConnectingUserStream.format(self.sn, reconnectUserStreamSeconds))
 				time.sleep(reconnectUserStreamSeconds)
 
 	def _processStream(self, rawJson):
@@ -158,32 +154,32 @@ class Streaming:
 		try:
 			if "text" in stream:
 				via = re.sub("<.*?>", "", stream['source'])
-				if stream['user']['screen_name'] in muteUser or via in muteClient:
+				if stream['user']['screen_name'] in self.muteUser or via in self.muteClient:
 					return
 				if len(stream['entities']['urls']) > 0:
-					domain = re.sub('http(|s)://(.+?)/.*$', '\1', stream['entities']['urls'][0]['expanded_url'])
-					if domain in muteDomain:
+					domain = re.sub("http(|s)://(.+?)/.*$", "\1", stream['entities']['urls'][0]['expanded_url'])
+					if domain in self.muteDomain:
 						return
 
 				stream['user']['name'] = stream['user']['name'].replace("@", "@​")
 
 				if re.match('@%s\s' % self.sn, stream['text'], re.IGNORECASE):
 					for plugin in Core.plugins[pluginReply]:
-						if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+						if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
 							self.__executePlugin(plugin, stream)
 							break
 				for plugin in Core.plugins[pluginTimeline]:
-					if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+					if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 			elif 'event' in stream:
 				for plugin in Core.plugins[pluginEvent]:
-					if getattr(plugin, pluginAttributeAttachedStream) == self.streamId:
+					if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 			else:
 				for plugin in Core.plugins["other"]:
-					if plugin.STREAM == self.streamId:
+					if plugin.STREAM == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 		except Exception:
@@ -198,17 +194,16 @@ class Streaming:
 			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
 			if plugin.attributeTarger == 'REPLY' and "@" + self.sn in stream['text']:
 				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
-				API = TwitterAPI(accountId=self.streamId)
-				Twitter.Post(text, stream=stream, tweetid=stream['id'])
+				API = TwitterAPI(accountId=self.accountId)
+				API.update_status(text, in_reply_to_status_id=stream["id"])
 
 class StreamListener(tweepy.StreamListener):
-	def __init__(self, sn, streamId):
-		self.sn = sn
-		self.streamId = streamId
+	def __init__(self, accountId):
+		self.accountId = accountId
 		self.__logger = getLogger(__name__)
 
 	def on_data(self, rawJson):
-		streaming = Streaming(self.sn, self.streamId)
+		streaming = Streaming(self.accountId)
 		t = threading.Thread(target=streaming._processStream, name="_processStream", args=(rawJson, ))
 		t.start()
 

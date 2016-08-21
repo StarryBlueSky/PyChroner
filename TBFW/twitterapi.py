@@ -8,13 +8,16 @@ from TBFW.configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
 
-def TwitterAPI(accountId):
+def TwitterOAuth(accountId):
 	Config = ConfigParser()
 	accounts = Config.accounts
 
 	auth = tweepy.OAuthHandler(accounts[accountId]["ck"], accounts[accountId]["cs"])
 	auth.set_access_token(accounts[accountId]["at"], accounts[accountId]["ats"])
-	return tweepy.API(auth)
+	return auth
+
+def TwitterAPI(accountId):
+	return tweepy.API(TwitterOAuth(accountId))
 
 class UserStream(tweepy.Stream):
 	def user_stream(self):
