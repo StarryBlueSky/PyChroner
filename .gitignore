@@ -1,7 +1,7 @@
 assets/
-logs/
+log/
 cache/
-json/
+api/
 tmp/
 
 # Developer
