@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 class InValidPluginFilenameError(Exception):
 	def __init__(self):
 		self.message = "TBFW does not support that plugin's extension. Please check plugin's extension."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
@@ -14,6 +15,7 @@ class InValidPluginFilenameError(Exception):
 class NotFoundPluginTargetError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because of lacking of `TARGET` variable."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
@@ -22,6 +24,7 @@ class NotFoundPluginTargetError(Exception):
 class InvalidPluginTargetError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because of unsupported target."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
@@ -30,6 +33,7 @@ class InvalidPluginTargetError(Exception):
 class InvalidPluginSyntaxError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because of invalid syntax."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
@@ -38,6 +42,7 @@ class InvalidPluginSyntaxError(Exception):
 class InvalidPluginScheduleError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because of unsupported `HOUR` and `MINUTE` and so on."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
@@ -46,6 +51,25 @@ class InvalidPluginScheduleError(Exception):
 class TooManyArgmentsForPluginError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because too many argments were required."
+		logger.exception(self.message)
+		Exception.__init__(self, self.message)
+
+	def __str__(self):
+		return self.message
+
+class InvalidConfigSyntax(Exception):
+	def __init__(self):
+		self.message = "TBFW could not start because config.json was invalid."
+		logger.exception(self.message)
+		Exception.__init__(self, self.message)
+
+	def __str__(self):
+		return self.message
+
+class NoAvailableAccountInConfig(Exception):
+	def __init__(self):
+		self.message = "TBFW could not start because there was no account in config."
+		logger.exception(self.message)
 		Exception.__init__(self, self.message)
 
 	def __str__(self):
