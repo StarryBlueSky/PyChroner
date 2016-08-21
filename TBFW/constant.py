@@ -2,6 +2,7 @@
 import os
 
 currentDir = os.getcwd()
+pathConfig = "config.json"
 pathPluginsDir = "plugins"
 pluginsDir = currentDir + "/" + pathPluginsDir
 pathAssetsDir = "assets"
