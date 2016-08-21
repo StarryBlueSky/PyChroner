@@ -141,9 +141,7 @@ def StreamLine(raw, n, sn):
 			stream['source'] = re.sub('<.*?>', '', stream['source'])
 			if stream['user']['screen_name'] in Set['ban']['screen_name'] or stream['source'] in Set['ban']['client']:
 				return
-			# RTは処理しない
-			if stream['text'].startswith('RT @'):
-				return
+
 			# URLスパムを除去
 			if len(stream['entities']['urls']) > 0:
 				domain = re.sub('http.*?\/\/(.*?)\/.*$', r'\1', stream['entities']['urls'][0]['expanded_url'])
@@ -157,17 +155,17 @@ def StreamLine(raw, n, sn):
 			stream['text'] = stream['text'].replace('  ', ' ')
 
 			if re.match('@%s\s' % sn, stream['text'], re.IGNORECASE):
-				for plugin in plugins["reply"]:
-					if plugin.STREAM == n:
+				for plugin in Core.plugins[pluginReply]:
+					if getattr(plugin, pluginAttributeAttachedStream) == n:
 						ExecutePlugin(plugin, stream)
 						break
-			for plugin in plugins["timeline"]:
-				if plugin.STREAM == n:
+			for plugin in Core.plugins[pluginTimeline]:
+				if getattr(plugin, pluginAttributeAttachedStream) == n:
 					ExecutePlugin(plugin, stream)
 
 		elif 'event' in stream:
-			for plugin in plugins["event"]:
-				if plugin.STREAM == n:
+			for plugin in Core.plugins[pluginEvent]:
+				if getattr(plugin, pluginAttributeAttachedStream) == n:
 					ExecutePlugin(plugin, stream)
 
 		else:
@@ -194,6 +192,31 @@ def ExecutePlugin(plugin, stream):
 			# リプライプラグインの時のみユーザーにエラーを知らせる
 			text = '@%s プラグイン "%s"でエラーが発生しました。申し訳ありませんが、しばらく経ってから再試行してください。問題が解決しない場合には、製作者までお問い合わせ下さい。\n\n詳細: %s' % (stream['user']['screen_name'], plugin._NAME, e[0:20])
 			Twitter.Post(text, stream=stream, tweetid=stream['id'])
+
+class StreamListener(tweepy.StreamListener):
+	def __init__(self, n, sn):
+		self.n = n
+		self.sn = sn
+
+	def on_data(self, raw):
+		t = threading.Thread(target=StreamLine, name='StreamLine', args=(raw, self.n, self.sn))
+		t.start()
+
+	def on_error(self, status_code):
+		logger.warning('Twitter APIエラーが発生しました\n詳細: HTTPステータスコード=%s' % status_code)
+
+class Streaming:
+	def startUserStream(self, n):
+		auth = tweepy.OAuthHandler(Set['twitterSecret'][n]['ck'], Set['twitterSecret'][n]['cs'])
+		auth.set_access_token(Set['twitterSecret'][n]['at'], Set['twitterSecret'][n]['ats'])
+		sn = Set['twitterSecret'][n]['screen_name']
+		while True:
+			try:
+				logger.info('@%sのUserStreamに接続しました。' % sn)
+				UserStream(auth, StreamListener(n, sn)).user_stream()
+			except:
+				logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (sn, traceback.format_exc()))
+				time.sleep(reconnectUserStreamSeconds)
 
 class ChangeHandler(RegexMatchingEventHandler):
 	def __init__(self, regexes):
