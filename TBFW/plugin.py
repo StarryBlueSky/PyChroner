@@ -157,7 +157,7 @@ class PluginManager:
 					break
 				i += 1
 
-	def appendPlugin(self, pluginPath):
+	def addPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
 		if plugin.attributeAttachedStream not in self.attachedStreamId:
 			self.attachedStreamId.append(plugin.attributeAttachedStream)
@@ -178,7 +178,7 @@ class PluginManager:
 
 		for pluginFile in os.listdir(pluginsDir):
 			pluginPath = pluginsDir + "/" + pluginFile
-			self.appendPlugin(pluginPath)
+			self.addPlugin(pluginPath)
 
 		self.sortPluginsOrder()
 		self.dumpPluginsList()
