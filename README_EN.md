@@ -1,69 +1,67 @@
-# TwitterBotFramework (TBFW)
-Basic Concept: Only little knowledge in programming, you can build Twitter-Bots.
+日本語のreadmeは[こちら](https://github.com/katabamia/TwitterBotFramework/blob/v2/README.md)
 
-This TBFW is designed so that even people who are NOT familir with programming can build their own bots.
-And, this TBFW allows you to add original features easily. Please check about it below this page.
+# TwitterBotFramework (TBFFW)
+Basic Concept: You can build your own Twitter-Bot in only little programming knowledge.
 
+## Feature
+### Easy to understand
+Are you having only little programming knowledge? or Are you noob to programming? No problem! If you are use "TBFW", you can run your own Twitter bot yourself!!
+AND "TBFW" WROTE IN PYTHON! COMPILE IS NOT NEEDED! JUST RUN!!
 
-There are a few operations to have to do. Operations are easy. Check below.
+### Useful
+TBFW has logging feature. This feature will helpful to you!(e.g. Plugin load status, Exception status...)
+<br>And. TBFW has JSON API too! json API will give to you internal status(e.g. Threads)
+<br>**If you Encountered to any bug, Please post your log to issue!**
 
-## Introduction
+### Many
+TBFW supporting multiple Twitter account.
+<br>TBFW working with multi-thread, this mean work independently each account.
 
-### 1. Installing Python
-~~This code can be runable on Python 3.x, but you should install Python 2.7.x.~~  
-From [`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2), This TBFW is fully compatible with Python 3.x. Be careful! No longer this TBFW is incompatible with Python 2.7.x.
+### Make it yourself
+TBFW can add any feature with plugin.
+<br>if you want make plugin, please see this [Wiki](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98) (Wiki is not l18n to English...)
 
-Latest Python 3.5.1 is [here](https://www.python.org/downloads/release/python-351/).
+### Freely
+This project published under MIT LICENSE.
+<br>You can use this with no cost, no limit!
+<br>For example, You can make bot using TBFW and publish the your code.
 
-### 2. Installing `pip` (Python Packageing System)
+## How to Install (on CentOS 7)
+TBFW working at Python 3.2 or higher.
+
+### 1. Clone Repository
 ```bash
-sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python
+cd ~
+git clone git@github.com:NephyProject/TwitterBotFramework.git
 ```
 
-### 3. Installing some libraries
+### 2. Install Library used by TBFW
 ```bash
-pip install tweepy pyYAML watchdog
+cd TwitterBotFramework
+pip install -r requirements.txt
 ```
 
->You may have to install libraries with `pip3.5`. This is because your system has Python 3.5.
+### 3. Create `Config.json`
+Copy `sample.config.json` and edit it.
 
-### 4. Creating OAuth Application
-You can create new application key from [here](https://apps.twitter.com/app/new).
+|Option Name|Description|Required?|Default value|
+|:-----------:|:------------:|:-----------:|:------------:|
+|accounts|Account array used by TBFW|Yes|-|
+|muteClient|Name of igone client(via). assign using array|No|[]|
+|muteUser|ScreenName of igone user. assign using array|No|[]|
+|muteDomain|Domain of igone URL. assign using array|No|[]|
 
-### 5. Changing the Config
-Default config file is `setting.yaml`. Do NOT use tab indent. Please use space indent.
+The following are options in `accounts` array.
 
-`SCREEN_NAME`: Bot's Twitter ScreenName (@~~)
-
-`CONSUMER_KEY`: Consumer Key
-
-`CONSUMER_SECRET`: Consumer Secret
-
-`ACCESS_TOKEN`: Access Token
-
-`ACCESS_TOKEN_SECRET`: Access Token Secret
-
-`PLUGIN_DIR`: The path of directory that has plugins. (Default: `plugins`)
-
-`WORK_DIR`: The path of directory that is used for temp files. (Default: `data`)
-
-`LOG_DIR`: The path of directory that logs are written. (Default: `logs`)
-
-### 6. Make dirs that you've set up
+|Option Name|Description|Required?|Default value|
+|:-----------:|:------------:|:-----------:|:------------:|
+|ck|Account's Consumer Key.|Yes|-|
+|cs|Account's Comsumer Secret.|Yes|-|
+|at|Account's Access Token.|Yes|-|
+|ats|Account's Access Token Secret.|Yes|-|
+|sn|Account's ScreenName.|Yes|-|
+### 4. Run
 ```bash
-mkdir data
-mkdir logs
+tmux -S tbfw
+python3 Main.py &
 ```
-### 7. Execute
-```bash
-cd TwitterBot_Framework
-python Main.py &
-```
-
-## Developing Plugins
-You can add features easily. You can learn about it below links.  
-(**Important!** Those documents are *not* l18n to English.)  
-
-Plugin's [API](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)  
-Plugin's [Argument](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)
-
