@@ -1,4 +1,4 @@
-English readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
+English readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/v2/README_EN.md).
 
 # TwitterBotFramework (TBFW)
 基本理念: **プログラムの知識の少ない人でも簡単にTwitter Botを運用できるようにする。**
