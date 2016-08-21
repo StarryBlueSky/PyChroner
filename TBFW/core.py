@@ -130,25 +130,12 @@ class Core:
 
 		def on_created(self, event):
 			pluginPath = event.src_path
-			self.
+			self.PM.addPlugin(pluginPath)
 
 		def on_modified(self, event):
-			name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
-			loader = machinery.SourceFileLoader(name, event.src_path)
-			try:
-				plugin = loader.load_module(name)
-				plugin._NAME = name
-				i = 0
-				for old_plugin in plugins[plugin.TARGET.lower()]:
-					if old_plugin._NAME == name:
-						plugins[plugin.TARGET.lower()][i] = plugin
-					i += 1
-			except Exception as e:
-				logger.warning('プラグイン \"%s\"は壊れています。更新できませんでした。\nエラー詳細: %s' % (name, e))
+			pluginPath = event.src_path
+			self.PM.addPlugin(pluginPath)
 
 		def on_deleted(self, event):
-			name = event.src_path[:-3].replace(PLUGIN_DIR + '/', '')
-			for kind, _plugins in plugins.items():
-				for plugin in _plugins:
-					if plugin._NAME == name:
-						plugins[kind].remove(plugin)
+			pluginPath = event.src_path
+			self.PM.deletePlugin(pluginPath)
