@@ -46,10 +46,10 @@ class Core:
 		# db['Set'].update_one({}, {"$set": {"timed": 0, "threadc": 1, "minly": {"tweet": 0, "event": 0}}})
 
 		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
-		self.logger = self.__getLogger()
+		self.__logger = self.__getLogger()
 
 		self.boottime = datetime.now()
-		self.logger.info(messageSuccessInitialization.format(self.boottime))
+		self.__logger.info(messageSuccessInitialization.format(self.boottime))
 
 	def __getLogger(self):
 		logger = getLogger()
@@ -87,7 +87,7 @@ class Core:
 			time.sleep(60)
 
 	def __scheduleRegularPlugins(self):
-		logger = self.logger
+		logger = self.__logger
 
 		def _do(plugin):
 			try:
