@@ -40,14 +40,6 @@ class _Core:
 		self.plugins = self.PM.plugins
 		self.attachedStreamId = self.PM.attachedStreamId
 
-		# connect = MongoClient(DBInfo.Host)
-		# self.db = connect.bot
-		# self.db.authenticate(DBInfo.Username, DBInfo.Password, mechanism=DBInfo.Method)
-		# self.Set = db['Set'].find_one()
-
-		# db['Set'].update_one({}, {"$set": {"lastrun": datetime.now()}})
-		# db['Set'].update_one({}, {"$set": {"timed": 0, "threadc": 1, "minly": {"tweet": 0, "event": 0}}})
-
 		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
 		self.__logger = self.__getLogger()
 
@@ -114,8 +106,7 @@ class _Core:
 	def __watchThreadActivity(self):
 		while True:
 			result = [thread.name for thread in threading.enumerate()]
-			json.dump(result, open(apiDir + "/thread.json", "w"), sort_keys=True)
-			# db['Set'].update_one({}, {"$set": {"threadc": len(result)}})
+			json.dump(result, open(apiDir + "/" + pathThreadApi, "w"), sort_keys=True)
 
 			for threadPlugin in self.plugins[pluginThread]:
 				if threadPlugin.attributeName not in result:
