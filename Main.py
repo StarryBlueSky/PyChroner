@@ -1,10 +1,10 @@
 # coding=utf-8
-import TBFW
+from TBFW.core import Core as Bot
+from TBFW import OutOfMemoryError
 
 if __name__ == "__main__":
-	bot = TBFW.Core()
 	while True:
 		try:
-			bot.run()
-		except TBFW.OutOfMemoryError:
+			Bot.run()
+		except OutOfMemoryError:
 			pass
