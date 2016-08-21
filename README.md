@@ -19,7 +19,7 @@ TBFWは 複数のTwitterアカウントに対応しています。
 
 ### おもいのままに
 TBFWは プラグインシステムを用いて簡単に機能を追加できます。
-<br>実際にプラグインを開発するには プラグインの[Wikiの仕様まとめ](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)をご覧ください。  
+<br>実際にプラグインを開発するには Wikiの[プラグインの仕様まとめ](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)をご覧ください。  
 
 ### じゆうに
 このプロジェクトは MITライセンスで公開されています。
