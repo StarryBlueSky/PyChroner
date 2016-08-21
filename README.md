@@ -1,65 +1,67 @@
 English readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
 
-
 # TwitterBotFramework (TBFW)
-基本理念: プログラムの知識の少ない人でも簡単にボットを建てられるようにする。  
+基本理念: **プログラムの知識の少ない人でも簡単にTwitter Botを運用できるようにする。**
 
-プログラミングの経験がない人やプログラムに疎い人でも、TBFWを使えば、簡単にTwitter Botが自前で構築できるよう、設計されています。
-また、TBFWでは安易に機能を追加できます。末尾をご覧ください。
+## 特徴
+### わかりやすく
+プログラミングの経験がない人や疎い人でも TBFWを使えば 簡単にTwitter Botが自前で構築できるよう、設計されています。
+<br>また、Pythonで書かれているため実行前にコンパイルは不要です。
 
-TBFWを導入するにあたり、以下の操作が必要です。操作は簡単です。
+### べんりに
+TBFWは ロギング機能を有しています。このため、プラグインのロード状況や 例外の発生などを容易に確認できます。
+<br>また、JSONにて内部の状況(スレッド等)を吐き出すAPIも整備されています。
+<br>バグを見つけたと思われる際にはissueにログを掲載してくださると助かります。
 
-## 導入
-### 1. Pythonのインストール
-~~Python 3.x系でも動作するコードですが、Python 2.7.x系の導入をおすすめします。~~   
-`Commit: e6c866be10ed435784d3ed94b79b73a2cbb8fcd2`からPython 3.x系へ[完全移行](https://github.com/NephyProject/TwitterBot_Framework/commit/e6c866be10ed435784d3ed94b79b73a2cbb8fcd2)しました。Python 2.7.x系では**動作しません**のでご注意ください。  
+### いっぱい
+TBFWは 複数のTwitterアカウントに対応しています。
+<br>TBFWは マルチスレッドで動作するのでそれぞれのアカウントが独立して処理されるため、動作に支障は出ません。
 
-執筆当時、最新のPython 3.5.1は[こちら](https://www.python.org/downloads/release/python-351/)でダウンロードできます。  
+### おもいのままに
+TBFWは プラグインシステムを用いて簡単に機能を追加できます。
+<br>実際にプラグインを開発するには プラグインの[Wikiの仕様まとめ](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)をご覧ください。  
 
-### 2. パッケージ管理システム`pip`のインストール Installing PIP (Python Packaging System)
+### じゆうに
+このプロジェクトは MITライセンスで公開されています。
+<br>したがって、だれでも無償で無制限に利用できます。
+<br>例えば、このTBFWを利用してBotを作成して 実際に稼働させたりそのソースコードを公開したりすることも自由にできます。
+
+## 導入方法 (CentOS 7での例)
+TBFWは Python 3.2以降で動作します。
+
+### 1. リポジトリのクローン
 ```bash
-sudo curl -kL https://bootstrap.pypa.io/get-pip.py | python
-```
-### 3. TwitterBot_Frameworkで使用しているライブラリのインストール
-```bash
-pip install tweepy pyYAML watchdog
-```
->複数のバージョンのPythonがインストールされている場合、`pip`ではなく`pip3.5`などのように`pip`の直後にバージョン番号が入ることがあります。
-
-### 4. Twitterアプリケーション取得 (既存のConsumer Key/Secretを使う場合はスキップ)
-[こちら](https://apps.twitter.com/app/new)で作成できます。ただし、携帯の電話番号の登録が必要である可能性があります。  
-
-### 5. 設定を変更
-初期状態では`setting.yaml`に設定を書き込んでください。ただし、全角スペースやタブを使用すると正しく認識されないのでご注意ください。代わりに半角スペースを使用してください。  
-
-`SCREEN_NAME`: Botのスクリーンネーム(@~~)
-
-`CONSUMER_KEY`: Consumer Key
-
-`CONSUMER_SECRET`: Consumer Secret
-
-`ACCESS_TOKEN`: Access Token
-
-`ACCESS_TOKEN_SECRET`: Access Token Secret
-
-`PLUGIN_DIR`: プラグインの保管場所を指定(デフォルト: plugins)
-
-`WORK_DIR`: Botの作業用ディレクトリを指定(デフォルト: data)
-
-`LOG_DIR`: ログを保管する場所を指定(デフォルト: logs)
-
-### 6. 5で設定したディレクトリをつくる
-```bash
-mkdir data
-mkdir logs
-```
-### 7. 実行
-```bash
-cd TwitterBot_Framework
-python Main.py &
+cd ~
+git clone git@github.com:NephyProject/TwitterBotFramework.git
 ```
 
-## プラグイン開発
-TBFWでは、簡単に機能を追加できます。プラグインの製作方法は以下を参照してください。
-プラグインの[仕様編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98) および [引数編](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E5%BC%95%E6%95%B0)をご覧ください。  
+### 2. TBFWで使用しているライブラリのインストール
+```bash
+cd TwitterBotFramework
+pip install -r requirements.txt
+```
 
+### 3. `config.json`の作成
+`sample.config.json`をコピーして編集してください。
+
+|オプション名|説明|必須?|デフォルト値|
+|:-----------:|:------------:|:-----------:|:------------:|
+|accounts|TBFWで使用するアカウントの配列です|Yes|-|
+|muteClient|無視するクライアント(via)の名称です。配列で指定します。|No|[]|
+|muteUser|無視するユーザーのスクリーンネームです。配列で指定します。|No|[]|
+|muteDomain|無視するドメインです。配列で指定します。|No|[]|
+
+以下は`accounts`配列内のオプションです。
+
+|オプション名|説明|必須?|デフォルト値|
+|:-----------:|:------------:|:-----------:|:------------:|
+|ck|アカウントのConsumer Keyです。|Yes|-|
+|cs|アカウントのComsumer Secretです。|Yes|-|
+|at|アカウントのAccess Tokenです。|Yes|-|
+|ats|アカウントのAccess Token Secretです。|Yes|-|
+|sn|アカウントのスクリーンネームです。|Yes|-|
+### 4. 実行
+```bash
+tmux -S tbfw
+python3 Main.py &
+```
