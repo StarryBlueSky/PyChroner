@@ -5,5 +5,5 @@ if __name__ == "__main__":
 	while True:
 		try:
 			Bot.run()
-		except TBFWError.OutOfMemoryError:
+		except TBFWError:
 			pass
