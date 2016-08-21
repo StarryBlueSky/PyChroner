@@ -9,10 +9,10 @@ __author__ = 'Nephy Project Team'
 __license__ = 'MIT'
 
 from TBFW.core import Core as Bot
-from TBFW.api import PluginAPI
+from TBFW.twitterapi import TwitterAPI
 import TBFW.exceptions as TBFWError
 
-__all__ = ["Bot", "PluginAPI"]
+__all__ = ["Bot", "TwitterAPI", "TBFWError"]
 
 import logging
 
