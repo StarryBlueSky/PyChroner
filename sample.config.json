@@ -1,0 +1,21 @@
+{
+  "accounts": [
+    {
+      "ck": "xxx",
+      "cs": "xxx",
+      "at": "xxx",
+      "ats": "xxx",
+      "sn": "TwitterBot"
+    },
+    {
+      "ck": "yyy",
+      "cs": "yyy",
+      "at": "yyy",
+      "ats": "yyy",
+      "sn": "TwitterBot2"
+    }
+  ],
+  "muteClient": ["twittbot.net"],
+  "muteUser": ["twitter"],
+  "muteDomain": ["facebook.com"]
+}
