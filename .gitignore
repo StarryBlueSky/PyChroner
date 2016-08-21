@@ -5,6 +5,7 @@ api/
 tmp/
 
 # Developer
+.idea/
 *.pyc
 .DS_Store
-.idea/
+config.json
