@@ -1,8 +1,8 @@
 # coding=utf-8
 import gc
-import re
 import json
 import random
+import re
 import socket
 import threading
 import time
@@ -18,7 +18,8 @@ from watchdog.observers import Observer
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
 
-class Core:
+
+class _Core:
 	def __init__(self):
 		gc.enable()
 		socket.setdefaulttimeout(30)
@@ -75,7 +76,7 @@ class Core:
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
 
 		observer = Observer()
-		observer.schedule(self.ChangeHandler(regexes=["\.py$"]), pluginsDir, recursive=False)
+		observer.schedule(ChangeHandler(regexes=["\.py$"]), pluginsDir, recursive=False)
 		observer.start()
 
 		for n in self.attachedStreamId:
@@ -121,26 +122,27 @@ class Core:
 
 			time.sleep(15)
 
-	def __newPluginFound(self, pluginPath):
+	def _newPluginFound(self, pluginPath):
 		self.PM.addPlugin(pluginPath)
 
-	def __pluginDeleted(self, pluginPath):
+	def _pluginDeleted(self, pluginPath):
 		self.PM.deletePlugin(pluginPath)
 
-	class ChangeHandler(RegexMatchingEventHandler):
-		def __init__(self, regexes):
-			super(RegexMatchingEventHandler, self).__init__()
-			self._regexes = [re.compile(r) for r in regexes]
-			self.
+Core = _Core()
 
-		def on_created(self, event):
-			pluginPath = event.src_path
-			self.PM.addPlugin(pluginPath)
+class ChangeHandler(RegexMatchingEventHandler):
+	def __init__(self, regexes):
+		super(RegexMatchingEventHandler, self).__init__()
+		self._regexes = [re.compile(r) for r in regexes]
 
-		def on_modified(self, event):
-			pluginPath = event.src_path
-			self.PM.addPlugin(pluginPath)
+	def on_created(self, event):
+		pluginPath = event.src_path
+		Core._newPluginFound(pluginPath)
 
-		def on_deleted(self, event):
-			pluginPath = event.src_path
-			self.PM.deletePlugin(pluginPath)
+	def on_modified(self, event):
+		pluginPath = event.src_path
+		Core._newPluginFound(pluginPath)
+
+	def on_deleted(self, event):
+		pluginPath = event.src_path
+		Core._pluginDeleted(pluginPath)
