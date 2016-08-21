@@ -31,7 +31,7 @@ pluginTypes = [
 	pluginOther
 ]
 
-messageLogFormat = "[%(levelname)s]%(asctime)s - %(message)s"
+messageLogFormat = "[%(asctime)s][%(threadName)s | %(name)s/%(levelname)s]: %(message)s"
 messageLogDatetimeFormat = "%Y-%m-%d_%H-%M-%S"
 messageSuccessInitialization = "Initialization Complate. Current time is {0}."
 messageErrorLoadingPlugin = "Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
