@@ -8,18 +8,14 @@ __version__ = '3.0.0'
 __author__ = 'Nephy Project Team'
 __license__ = 'MIT'
 
-from TBFW.core import Core
-from TBFW.database import DBProvider
-from TBFW.api import API
-from TBFW.plugin import Plugin, PluginManager
-from TBFW.configparser import ConfigParser
-from TBFW.exceptions import *
-from TBFW.constant import *
+from TBFW.core import Core as Bot
+from TBFW.api import PluginAPI
+import TBFW.exceptions as TBFWError
 
-__all__ = ["Core"]
+__all__ = ["Bot", "PluginAPI"]
 
 import logging
 
 if __name__ == "__main__":
 	logger = logging.getLogger(__name__)
-	logger.debug("Module has loaded.")
+	logger.debug("TBFW has loaded.")
