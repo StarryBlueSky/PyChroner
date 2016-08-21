@@ -1,4 +1,4 @@
-日本語のreadmeは[こちら](https://github.com/katabamia/TwitterBotFramework/blob/v2/README.md)
+日本語のreadmeは[こちら](https://github.com/NephyProject/TwitterBotFramework/blob/v2/README.md)
 
 # TwitterBotFramework (TBFFW)
 Basic Concept: You can build your own Twitter-Bot in only little programming knowledge.
