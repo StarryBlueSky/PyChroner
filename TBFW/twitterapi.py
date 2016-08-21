@@ -4,6 +4,7 @@ import time
 import threading
 import logging
 import urllib.parse
+from TBFW.constant import *
 logger = logging.getLogger(__name__)
 
 class TwitterAPI:
@@ -20,7 +21,7 @@ class TwitterAPI:
 				UserStream(auth, StreamListener(n, sn)).user_stream()
 			except:
 				logger.warning('@%sのUserStreamから切断されました。10秒後に再接続します。エラーログ: \n%s' % (sn, traceback.format_exc()))
-				time.sleep(10)
+				time.sleep(reconnectUserStreamSeconds)
 
 class StreamListener(tweepy.StreamListener):
 	def __init__(self, n, sn):
