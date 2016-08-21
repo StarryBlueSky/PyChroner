@@ -17,6 +17,8 @@ pathTmpDir = "tmp"
 tmpDir = currentDir + "/" + pathTmpDir
 dirs = [pluginsDir, logDir, apiDir, cacheDir, tmpDir, assetsDir]
 
+pathThreadApi = "thread.json"
+
 pluginReply = "reply"
 pluginTimeline = "timeline"
 pluginEvent = "event"
