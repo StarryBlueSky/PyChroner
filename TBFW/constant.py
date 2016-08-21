@@ -8,12 +8,13 @@ pathAssetsDir = "assets"
 assetsDir = currentDir + "/" + pathAssetsDir
 pathCacheDir = "cache"
 cacheDir = currentDir + "/" + pathCacheDir
-pathJsonDir = "json"
-jsonDir = currentDir + "/" + pathJsonDir
+pathApiDir = "api"
+apiDir = currentDir + "/" + pathApiDir
 pathLogDir = "logs"
 logDir = currentDir + "/" + pathLogDir
 pathTmpDir = "tmp"
 tmpDir = currentDir + "/" + pathTmpDir
+dirs = [pluginsDir, logDir, apiDir, cacheDir, tmpDir, assetsDir]
 
 pluginReply = "reply"
 pluginTimeline = "timeline"
@@ -31,13 +32,18 @@ pluginTypes = [
 	pluginOther
 ]
 
-messageLogFormat = "[%(asctime)s][%(threadName)s | %(name)s/%(levelname)s]: %(message)s"
+messageLogFormat = "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s"
+messageLogTimeFormat = "%H:%M:%S"
 messageLogDatetimeFormat = "%Y-%m-%d_%H-%M-%S"
 messageSuccessInitialization = "Initialization Complate. Current time is {0}."
 messageErrorLoadingPlugin = "Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
 messageSuccessLoadingPlugin = "Plugin \"{0}\"({1}) has been loaded successfully."
 messageSuccessExecutingRegularPlugin = "Regular plugin \"{0}\" was executed successfully."
 messageErrorExecutingRegularPlugin = "Regular plugin \"{0}\" could not be executed. Error Detail:\n{1}"
+messageSuccessConnectingUserStream = "TBFW started @{0}'s streaming."
+messageErrorConnectingUserStream = ""
+
+reconnectUserStreamSeconds = 10
 
 acceptLanguage = "ja;q=1.0"
 userAgent = "TwitterBotFramework/3.0 (Python 3)"
