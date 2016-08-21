@@ -1,6 +1,6 @@
 # coding=utf-8
 
-class API:
+class PluginAPI:
 	"""
 	Plugin base
 	"""
