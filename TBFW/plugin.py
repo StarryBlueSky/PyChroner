@@ -7,7 +7,6 @@ from importlib import machinery
 from TBFW.constant import *
 from TBFW.exceptions import *
 
-pluginFilePattern = re.compile("[^.].*\.py$")
 logger = logging.getLogger(__name__)
 
 class Plugin:
@@ -17,7 +16,8 @@ class Plugin:
 		self.attributeValid = None
 		self.attributePath = pluginPath
 		self.attributeSize = None
-		self.attributeName = self.attributePath.split("/")[-1][:-3]
+		self.attributeFileName = self.attributePath.split("/")[-1]
+		self.attributeName = self.attributeFileName.replace(".py", "")
 		self.attributeTarget = None
 		self.attributeType = None
 		self.attributePriority = None
@@ -31,7 +31,8 @@ class Plugin:
 		self.attributeMinutes = []
 
 	def isValid(self):
-		if pluginFilePattern.match(self.attributePath):
+		pluginFilePattern = re.compile("^.*\.py$")
+		if pluginFilePattern.match(self.attributeFileName):
 			return True
 		else:
 			return False
@@ -130,7 +131,6 @@ class Plugin:
 
 		else:
 			self.attributeValid = False
-			raise InValidPluginFilenameError
 
 
 class PluginManager:
