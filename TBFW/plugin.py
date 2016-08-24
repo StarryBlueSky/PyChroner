@@ -53,7 +53,7 @@ class Plugin:
 
 			if not hasattr(plugin, pluginAttributeTarget):
 				raise NotFoundPluginTargetError
-			if getattr(plugin, pluginAttributeTarget) not in pluginTypes:
+			if getattr(plugin, pluginAttributeTarget).lower() not in pluginTypes:
 				raise InvalidPluginTargetError
 			self.attributeTarget = getattr(plugin, pluginAttributeTarget)
 			self.attributeType = self.attributeTarget.lower()
@@ -164,6 +164,8 @@ class PluginManager:
 	def addPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
 		plugin.load()
+		if not plugin.attributeValid:
+			return
 		if plugin.attributeAttachedStream not in self.attachedAccountId:
 			self.attachedAccountId.append(plugin.attributeAttachedStream)
 
