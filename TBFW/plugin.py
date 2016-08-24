@@ -163,6 +163,7 @@ class PluginManager:
 
 	def addPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
+		plugin.load()
 		if plugin.attributeAttachedStream not in self.attachedAccountId:
 			self.attachedAccountId.append(plugin.attributeAttachedStream)
 
