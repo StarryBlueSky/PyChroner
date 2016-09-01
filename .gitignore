@@ -1,10 +1,11 @@
-data/log
+assets/
+logs/
+cache/
+api/
 tmp/
 
-*.pyc
-*.yaml
-.DS_Store
-
-TwitterBotFramework.iml
+# Developer
 .idea/
-
+*.pyc
+.DS_Store
+config.json
