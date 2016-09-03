@@ -1,7 +1,7 @@
 # coding=utf-8
 import time
 
-from ..TBFW import TwitterAPI
+from TBFW.twitterapi import TwitterAPI
 
 TARGET = "REPLY"
 ACCOUNT = 0
@@ -18,4 +18,3 @@ def do(stream):
 
 		API = TwitterAPI(accountId=ACCOUNT)
 		API.update_status("@{0} Pong in {1}s.".format(replyTo, ping))
-
