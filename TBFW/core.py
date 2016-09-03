@@ -80,7 +80,7 @@ class _Core:
 
 		for accountId in self.attachedAccountId:
 			streaming = Streaming(accountId)
-			t = threading.Thread(name="Streaming for %s" % Config.accounts[accountId]["sn"], target=streaming.startUserStream, args=(accountId,))
+			t = threading.Thread(name="Streaming for %s" % Config.accounts[accountId]["sn"], target=streaming.startUserStream)
 			t.start()
 
 		while True:
