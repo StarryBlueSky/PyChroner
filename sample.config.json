@@ -1,6 +1,7 @@
 {
   "accounts": [
     {
+      "id": 100000000,
       "ck": "xxx",
       "cs": "xxx",
       "at": "xxx",
@@ -8,6 +9,7 @@
       "sn": "TwitterBot"
     },
     {
+      "id": 200000000,
       "ck": "yyy",
       "cs": "yyy",
       "at": "yyy",
