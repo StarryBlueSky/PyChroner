@@ -21,7 +21,6 @@ from TBFW.constant import *
 from TBFW.plugin import PluginManager
 from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
 
-
 Config = ConfigParser()
 
 class _Core:
@@ -30,7 +29,10 @@ class _Core:
 		socket.setdefaulttimeout(30)
 
 		opener = urllib.request.build_opener()
-		opener.addheaders = [('User-Agent', userAgent), ('Accept-Language', acceptLanguage)]
+		opener.addheaders = [
+			('User-Agent', userAgent),
+			('Accept-Language', acceptLanguage)
+		]
 		urllib.request.install_opener(opener)
 
 		for directory in dirs:
