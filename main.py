@@ -5,5 +5,7 @@ if __name__ == "__main__":
 	while True:
 		try:
 			Bot.run()
-		except TBFWError:
+		except KeyboardInterrupt:
 			pass
+		except TBFWError as e:
+			print(e)
