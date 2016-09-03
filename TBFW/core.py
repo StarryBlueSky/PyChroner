@@ -9,7 +9,7 @@ import time
 import traceback
 import urllib.parse
 from datetime import datetime
-from logging import getLogger, captureWarnings, Formatter, INFO, CRITICAL
+from logging import getLogger, captureWarnings, Formatter, DEBUG, INFO, CRITICAL
 from logging.handlers import RotatingFileHandler
 
 import tweepy
@@ -24,7 +24,7 @@ from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
 Config = ConfigParser()
 
 class _Core:
-	def __init__(self):
+	def __init__(self, debug=False):
 		gc.enable()
 		socket.setdefaulttimeout(30)
 
@@ -44,6 +44,7 @@ class _Core:
 		self.plugins = self.PM.plugins
 		self.attachedAccountId = self.PM.attachedAccountId
 
+		self.debug = debug
 		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
 		self.__logger = self.__getLogger()
 
@@ -61,7 +62,7 @@ class _Core:
 		getLogger("requests").setLevel(CRITICAL)
 		getLogger("tweepy").setLevel(CRITICAL)
 
-		logger.setLevel(INFO)
+		logger.setLevel(DEBUG if self.debug else INFO)
 		logger.addHandler(handler)
 
 		return logger
