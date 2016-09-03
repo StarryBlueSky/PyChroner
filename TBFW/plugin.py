@@ -62,7 +62,7 @@ class Plugin:
 				maxArgs = 1
 			else:
 				maxArgs = 0
-			if plugin.code.do.__code__.co_argcount != maxArgs:
+			if plugin.do.__code__.co_argcount != maxArgs:
 				raise TooManyArgmentsForPluginError
 
 			self.attributePriority = getattr(plugin, pluginAttributePriority) \
@@ -193,7 +193,7 @@ class PluginManager:
 	def sortPluginsOrder(self):
 		for pluginType in pluginTypes:
 			self.plugins[pluginType] = [
-				x for x in sorted(self.plugins[pluginType], key=lambda x: getattr(x, pluginAttributePriority), reverse=True)
+				plugin for plugin in sorted(self.plugins[pluginType], key=lambda x: x.attributePriority, reverse=True)
 			]
 
 	def getPluginsList(self):
