@@ -168,16 +168,16 @@ class Streaming:
 
 				if re.match('@%s\s' % self.sn, stream['text'], re.IGNORECASE):
 					for plugin in Core.plugins[pluginReply]:
-						if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
+						if plugin.attributeAttachedStream == self.accountId:
 							self.__executePlugin(plugin, stream)
 							break
 				for plugin in Core.plugins[pluginTimeline]:
-					if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
+					if plugin.attributeAttachedStream == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 			elif 'event' in stream:
 				for plugin in Core.plugins[pluginEvent]:
-					if getattr(plugin, pluginAttributeAttachedStream) == self.accountId:
+					if plugin.attributeAttachedStream == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 			else:
