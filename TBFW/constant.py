@@ -19,6 +19,13 @@ dirs = [pluginsDir, logDir, apiDir, cacheDir, tmpDir, assetsDir]
 
 pathThreadApi = "thread.json"
 
+Reply = "REPLY"
+Timeline = "TIMELINE"
+Event = "EVENT"
+Other = "OTHER"
+Regular = "REGULAR"
+Thread = "THREAD"
+
 pluginReply = "reply"
 pluginTimeline = "timeline"
 pluginEvent = "event"
