@@ -1,17 +1,19 @@
-日本語のreadmeは[こちら](https://github.com/NephyProject/TwitterBotFramework/blob/v2/README.md)
+日本語版 Readmeは[こちら](https://github.com/NephyProject/TwitterBotFramework/blob/master/README.md)です。
 
-# TwitterBotFramework (TBFFW)
+# TwitterBotFramework (TBFW)
 Basic Concept: You can build your own Twitter-Bot in only little programming knowledge.
 
 ## Feature
 ### Easy to understand
-Are you having only little programming knowledge? or Are you noob to programming? No problem! If you are use "TBFW", you can run your own Twitter bot yourself!!
-AND "TBFW" WROTE IN PYTHON! COMPILE IS NOT NEEDED! JUST RUN!!
+Are you having only little programming knowledge? or Are you noob to programming?
+<br>No problem!
+<br>If you are use "TBFW", you can run your own Twitter bot yourself!!
+<br>And, "TBFW" WROTE IN PYTHON! COMPILE IS NOT NEEDED! JUST RUN!!
 
 ### Useful
-TBFW has logging feature. This feature will helpful to you!(e.g. Plugin load status, Exception status...)
-<br>And. TBFW has JSON API too! json API will give to you internal status(e.g. Threads)
-<br>**If you Encountered to any bug, Please post your log to issue!**
+TBFW has logging feature. This feature will helpful to you! (e.g. Plugin load status, Exception status...)
+<br>And, TBFW has JSON API too! Json API will give to you internal status (e.g. Threads)
+<br>**If you encountered to any bugs, Please post your log to issue if possible!**
 
 ### Many
 TBFW supporting multiple Twitter account.
@@ -55,6 +57,7 @@ The following are options in `accounts` array.
 
 |Option Name|Description|Required?|Default value|
 |:-----------:|:------------:|:-----------:|:------------:|
+|id|Account's Numeric ID.|Yes|-|
 |ck|Account's Consumer Key.|Yes|-|
 |cs|Account's Comsumer Secret.|Yes|-|
 |at|Account's Access Token.|Yes|-|
@@ -62,6 +65,5 @@ The following are options in `accounts` array.
 |sn|Account's ScreenName.|Yes|-|
 ### 4. Run
 ```bash
-tmux -S tbfw
-python3 Main.py &
+python3 main.py
 ```

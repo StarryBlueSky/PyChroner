@@ -1,4 +1,4 @@
-English readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/v2/README_EN.md).
+English Readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
 
 # TwitterBotFramework (TBFW)
 基本理念: **プログラムの知識の少ない人でも簡単にTwitter Botを運用できるようにする。**
@@ -27,7 +27,7 @@ TBFWは プラグインシステムを用いて簡単に機能を追加できま
 <br>例えば、このTBFWを利用してBotを作成して 実際に稼働させたりそのソースコードを公開したりすることも自由にできます。
 
 ## 導入方法 (CentOS 7での例)
-TBFWは Python 3.2以降で動作します。
+TBFWは Python 3.3以降で動作します。
 
 ### 1. リポジトリのクローン
 ```bash
@@ -55,6 +55,7 @@ pip install -r requirements.txt
 
 |オプション名|説明|必須?|デフォルト値|
 |:-----------:|:------------:|:-----------:|:------------:|
+|id|アカウントの数字IDです。|Yes|-|
 |ck|アカウントのConsumer Keyです。|Yes|-|
 |cs|アカウントのComsumer Secretです。|Yes|-|
 |at|アカウントのAccess Tokenです。|Yes|-|
@@ -62,6 +63,5 @@ pip install -r requirements.txt
 |sn|アカウントのスクリーンネームです。|Yes|-|
 ### 4. 実行
 ```bash
-tmux -S tbfw
-python3 Main.py &
+python3 main.py
 ```
