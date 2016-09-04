@@ -52,7 +52,7 @@ class _Core:
 		self.__logger.info(messageSuccessInitialization.format(self.boottime))
 
 		for initializerPlugin in self.plugins[pluginInitializer]:
-			initializerPlugin.do()
+			initializerPlugin.code.do()
 
 	def __getLogger(self):
 		logger = getLogger()
@@ -72,7 +72,7 @@ class _Core:
 
 	def run(self):
 		for threadPlugin in self.plugins[pluginThread]:
-			t = threadPlugin.do()
+			t = threadPlugin.code.do()
 			t.setName(threadPlugin.attributeName)
 			t.start()
 		threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins, args=()).start()
