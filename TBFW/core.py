@@ -39,14 +39,14 @@ class _Core:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)
 
+		self.debug = debug
+		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
+		self.__logger = self.__getLogger()
+
 		self.PM = PluginManager()
 		self.PM.searchAllPlugins()
 		self.plugins = self.PM.plugins
 		self.attachedAccountId = self.PM.attachedAccountId
-
-		self.debug = debug
-		self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
-		self.__logger = self.__getLogger()
 
 		self.boottime = datetime.now()
 		self.__logger.info(messageSuccessInitialization.format(self.boottime))
