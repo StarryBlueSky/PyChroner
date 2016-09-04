@@ -51,6 +51,9 @@ class _Core:
 		self.boottime = datetime.now()
 		self.__logger.info(messageSuccessInitialization.format(self.boottime))
 
+		for initializerPlugin in self.plugins[pluginInitializer]:
+			initializerPlugin.do()
+
 	def __getLogger(self):
 		logger = getLogger()
 		captureWarnings(capture=True)

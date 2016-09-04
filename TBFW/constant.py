@@ -25,6 +25,7 @@ Event = "EVENT"
 Other = "OTHER"
 Regular = "REGULAR"
 Thread = "THREAD"
+Initializer = "INITIALIZER"
 
 pluginReply = "reply"
 pluginTimeline = "timeline"
@@ -32,6 +33,7 @@ pluginEvent = "event"
 pluginThread = "thread"
 pluginRegular = "regular"
 pluginOther = "other"
+pluginInitializer = "initializer"
 
 pluginTypes = [
 	pluginReply,
@@ -39,7 +41,8 @@ pluginTypes = [
 	pluginEvent,
 	pluginThread,
 	pluginRegular,
-	pluginOther
+	pluginOther,
+	pluginInitializer
 ]
 
 messageLogFormat = "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s"
