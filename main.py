@@ -1,11 +1,9 @@
 # coding=utf-8
+import traceback
 from TBFW import Bot
 
 if __name__ == "__main__":
-	while True:
-		try:
-			Bot.run()
-		except KeyboardInterrupt:
-			break
-		except:
-			pass
+	try:
+		Bot.run()
+	except:
+		print(traceback.format_exc())
