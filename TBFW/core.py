@@ -13,7 +13,7 @@ from logging import getLogger, captureWarnings, Formatter, DEBUG, INFO, CRITICAL
 from logging.handlers import RotatingFileHandler
 
 import tweepy
-from watchdog.events import RegexMatchingEventHandler
+from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from TBFW.configparser import ConfigParser
@@ -76,7 +76,7 @@ class _Core:
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
 
 		observer = Observer()
-		observer.schedule(ChangeHandler(regexes=["\.py$"]), pluginsDir)
+		observer.schedule(ChangeHandler(), pluginsDir)
 		observer.start()
 
 		for accountId in self.attachedAccountId:
@@ -213,19 +213,21 @@ class StreamListener(tweepy.StreamListener):
 	def on_error(self, status_code):
 		self.__logger.warning(messageErrorConnectingTwitter.format(status_code))
 
-class ChangeHandler(RegexMatchingEventHandler):
-	def __init__(self, regexes):
-		super(RegexMatchingEventHandler, self).__init__()
-		self._regexes = [re.compile(r) for r in regexes]
-
+class ChangeHandler(FileSystemEventHandler):
 	def on_created(self, event):
+		if not event.src_path.endswith(".py"):
+			return
 		pluginPath = event.src_path
 		Core._newPluginFound(pluginPath)
 
 	def on_modified(self, event):
+		if not event.src_path.endswith(".py"):
+			return
 		pluginPath = event.src_path
 		Core._newPluginFound(pluginPath)
 
 	def on_deleted(self, event):
+		if not event.src_path.endswith(".py"):
+			return
 		pluginPath = event.src_path
 		Core._pluginDeleted(pluginPath)
