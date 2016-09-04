@@ -32,14 +32,15 @@ class Plugin:
 
 	def isValid(self):
 		pluginFilePattern = re.compile("^.*\.py$")
-		if pluginFilePattern.match(self.attributeFileName):
+		if pluginFilePattern.match(self.attributeFileName) and os.path.isfile(self.attributePath):
+			self.attributeValid = True
 			return True
 		else:
+			self.attributeValid = False
 			return False
 
 	def load(self):
 		if self.isValid():
-			self.attributeValid = True
 			self.attributeSize = os.path.getsize(self.attributePath)
 
 			try:
@@ -128,9 +129,6 @@ class Plugin:
 				self.attributeMinutes = minutes
 
 			logger.info(messageSuccessLoadingPlugin.format(self.attributeName, self.attributePath))
-
-		else:
-			self.attributeValid = False
 
 
 class PluginManager:
