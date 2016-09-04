@@ -72,11 +72,10 @@ class _Core:
 
 	def run(self):
 		for threadPlugin in self.plugins[pluginThread]:
-			t = threadPlugin.code.do()
-			t.setName(threadPlugin.attributeName)
+			t = threading.Thread(name=threadPlugin.attributeName, target=threadPlugin.code.do)
 			t.start()
-		threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins, args=()).start()
-		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity, args=()).start()
+		threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins).start()
+		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity).start()
 
 		observer = Observer()
 		observer.schedule(ChangeHandler(), pluginsDir)
@@ -88,7 +87,10 @@ class _Core:
 			t.start()
 
 		while True:
-			time.sleep(60)
+			try:
+				time.sleep(60)
+			except KeyboardInterrupt:
+				break
 
 	def __scheduleRegularPlugins(self):
 		logger = self.__logger

@@ -66,26 +66,18 @@ class Plugin:
 			if plugin.do.__code__.co_argcount != maxArgs:
 				raise TooManyArgmentsForPluginError
 
-			self.attributePriority = getattr(plugin, pluginAttributePriority) \
-				if hasattr(plugin, pluginAttributePriority) else defaultAttributePriority
+			self.attributePriority = getattr(plugin, pluginAttributePriority, defaultAttributePriority)
+			if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
+				self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream, defaultAttributeAttachedStream)
+			self.attributeRatio = getattr(plugin, pluginAttributeRatio, defaultAttributeRatio)
 
-			self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream) \
-				if hasattr(plugin, pluginAttributeAttachedStream) else defaultAttributeAttachedStream
-
-			self.attributeRatio = getattr(plugin, pluginAttributeRatio) \
-				if hasattr(plugin, pluginAttributeRatio) else defaultAttributeRatio
-
-			if pluginAttributeTarget == pluginRegular:
+			if self.attributeType == pluginRegular:
 				hours = []
 				minutes = []
-				pluginHour = getattr(plugin, pluginAttributeHour) \
-					if hasattr(plugin, pluginAttributeHour) else defaultAttributeHour
-				pluginMinute = getattr(plugin, pluginAttributeMinute) \
-					if hasattr(plugin, pluginAttributeMinute) else defaultAttributeMinute
-				pluginMultipleHour = getattr(plugin, pluginAttributeMultipleHour) \
-					if hasattr(plugin, pluginAttributeMultipleHour) else defaultAttributeMultipleHour
-				pluginMultipleMinute = getattr(plugin, pluginAttributeMultipleMinute) \
-					if hasattr(plugin, pluginAttributeMultipleMinute) else defaultAttributeMultipleMinute
+				pluginHour = getattr(plugin, pluginAttributeHour, defaultAttributeHour)
+				pluginMinute = getattr(plugin, pluginAttributeMinute, defaultAttributeMinute)
+				pluginMultipleHour = getattr(plugin, pluginAttributeMultipleHour, defaultAttributeMultipleHour)
+				pluginMultipleMinute = getattr(plugin, pluginAttributeMultipleMinute, defaultAttributeMultipleMinute)
 
 				if pluginHour != defaultAttributeHour:
 					if isinstance(pluginHour, list):
@@ -121,9 +113,9 @@ class Plugin:
 
 				hours = sorted(list(set(hours)))
 				minutes = sorted(list(set(minutes)))
-				if hours == list():
+				if not hours:
 					hours = list(range(oneDayHours))
-				if minutes == list():
+				if not minutes:
 					minutes = list(range(oneHourMinutes))
 				self.attributeHours = hours
 				self.attributeMinutes = minutes
@@ -165,7 +157,8 @@ class PluginManager:
 		if not plugin.attributeValid:
 			return
 		if plugin.attributeAttachedStream not in self.attachedAccountId:
-			self.attachedAccountId.append(plugin.attributeAttachedStream)
+			if plugin.attributeAttachedStream:
+				self.attachedAccountId.append(plugin.attributeAttachedStream)
 
 		if self.__isNewPlugin(plugin):
 			self.plugins[plugin.attributeType].append(plugin)
