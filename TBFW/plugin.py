@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class Plugin:
 	def __init__(self, pluginPath):
 		self.code = None
-		self.attributeId = hashlib.sha512(pluginPath.encode()).hexdigest()
+		self.attributeId = hashlib.sha256(pluginPath.encode()).hexdigest()
 		self.attributeValid = None
 		self.attributePath = pluginPath
 		self.attributeSize = None
