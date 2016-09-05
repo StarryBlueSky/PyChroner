@@ -187,7 +187,7 @@ class Streaming:
 
 			else:
 				for plugin in Core.plugins["other"]:
-					if plugin.STREAM == self.accountId:
+					if plugin.attributeAttachedStream == self.accountId:
 						self.__executePlugin(plugin, stream)
 
 		except Exception:
