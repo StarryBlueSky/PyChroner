@@ -156,9 +156,8 @@ class PluginManager:
 		plugin.load()
 		if not plugin.attributeValid:
 			return
-		if plugin.attributeAttachedStream not in self.attachedAccountId:
-			if plugin.attributeAttachedStream:
-				self.attachedAccountId.append(plugin.attributeAttachedStream)
+		if plugin.attributeAttachedStream not in self.attachedAccountId and isinstance(plugin.attributeAttachedStream, int):
+			self.attachedAccountId.append(plugin.attributeAttachedStream)
 
 		if self.__isNewPlugin(plugin):
 			self.plugins[plugin.attributeType].append(plugin)
