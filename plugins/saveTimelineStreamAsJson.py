@@ -1,9 +1,10 @@
 # coding=utf-8
 import json
-import os
+
+from TBFW.constant import apiDir
 
 TARGET = "TIMELINE"
 
 def do(stream):
-	with open("{}/api/stream_timeline.json".format(os.getcwd()), "w") as f:
+	with open("{}/stream_timeline.json".format(apiDir), "w") as f:
 		json.dump(stream, f)

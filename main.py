@@ -1,5 +1,6 @@
 # coding=utf-8
 import traceback
+
 from TBFW import Bot
 
 if __name__ == "__main__":

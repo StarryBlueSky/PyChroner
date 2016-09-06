@@ -31,8 +31,8 @@ class UserStream(tweepy.Stream):
 		}
 		self.headers['Content-type'] = "application/x-www-form-urlencoded"
 		self.scheme = "https"
-		self.host = 'userstream.twitter.com'
-		self.url = '/1.1/user.json'
+		self.host = "userstream.twitter.com"
+		self.url = "/1.1/user.json"
 		self.body = urllib.parse.urlencode(self.parameters)
 		self.timeout = None
 		self._start(False)
