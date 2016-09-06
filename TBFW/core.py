@@ -163,6 +163,14 @@ class Streaming:
 	def _processStream(self, rawJson):
 		stream = json.loads(rawJson)
 		try:
+			if "direct_message" in stream:
+				_stream = stream
+				stream = stream["direct_message"]
+				stream['user'] = stream["sender"]
+				stream['source'] = ""
+				stream['text'] = "@{0} {1}".format(self.sn, stream['text'])
+				stream["_"] = _stream
+
 			if "text" in stream:
 				via = re.sub("<.*?>", "", stream['source'])
 				if stream['user']['screen_name'] in self.muteUser or via in self.muteClient:
