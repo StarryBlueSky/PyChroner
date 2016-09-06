@@ -9,11 +9,11 @@ from TBFW.configparser import ConfigParser
 logger = logging.getLogger(__name__)
 
 def TwitterOAuth(accountId):
-	Config = ConfigParser()
-	accounts = Config.accounts
+	configparser = ConfigParser()
+	accounts = configparser.config.accounts
 
-	auth = tweepy.OAuthHandler(accounts[accountId]["ck"], accounts[accountId]["cs"])
-	auth.set_access_token(accounts[accountId]["at"], accounts[accountId]["ats"])
+	auth = tweepy.OAuthHandler(accounts[accountId].ck, accounts[accountId].cs)
+	auth.set_access_token(accounts[accountId].at, accounts[accountId].ats)
 	return auth
 
 def TwitterAPI(accountId):

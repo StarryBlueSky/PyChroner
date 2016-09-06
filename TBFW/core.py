@@ -21,7 +21,8 @@ from TBFW.constant import *
 from TBFW.plugin import PluginManager
 from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
 
-Config = ConfigParser()
+configparser = ConfigParser()
+config = configparser.config
 
 class _Core:
 	def __init__(self, debug=False):
@@ -83,7 +84,7 @@ class _Core:
 
 		for accountId in self.attachedAccountId:
 			streaming = Streaming(accountId)
-			t = threading.Thread(name="Streaming_for_%s" % Config.accounts[accountId]["sn"], target=streaming.startUserStream)
+			t = threading.Thread(name="Streaming_for_%s" % config.accounts[accountId].sn, target=streaming.startUserStream)
 			t.start()
 
 		while True:
@@ -111,7 +112,8 @@ class _Core:
 				if random.randint(1, currentRegularPlugin.attributeRatio) != 1:
 					continue
 				if datetime_hour in currentRegularPlugin.attributeHours and datetime_minute in currentRegularPlugin.attributeMinutes:
-					threading.Thread(name=currentRegularPlugin.attributeName, target=_do, args=(currentRegularPlugin, )).start()
+					t = threading.Thread(name=currentRegularPlugin.attributeName, target=_do, args=(currentRegularPlugin, ))
+					t.start()
 			time.sleep(1)
 
 	def __watchThreadActivity(self):
@@ -138,14 +140,15 @@ Core = _Core()
 class Streaming:
 	def __init__(self, accountId):
 		self.accountId = accountId
-		self.sn = Config.accounts[accountId]["sn"]
+
+		self.accounts = config.accounts
+		self.sn = self.accounts[accountId].sn
 
 		self.__logger = getLogger(__name__)
 
-		self.accounts = Config.accounts
-		self.muteClient = Config.muteClient
-		self.muteUser = Config.muteUser
-		self.muteDomain = Config.muteDomain
+		self.muteClient = config.muteClient
+		self.muteUser = config.muteUser
+		self.muteDomain = config.muteDomain
 
 	def startUserStream(self):
 		auth = TwitterOAuth(self.accountId)
