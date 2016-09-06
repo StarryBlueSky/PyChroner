@@ -3,6 +3,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class TBFWError(Exception):
+	def __init__(self, message):
+		self.message = message
+		logger.exception(self.message)
+		Exception.__init__(self, self.message)
+
+	def __str__(self):
+		return self.message
+
 class InValidPluginFilenameError(Exception):
 	def __init__(self):
 		self.message = "TBFW does not support that plugin's extension. Please check plugin's extension."
