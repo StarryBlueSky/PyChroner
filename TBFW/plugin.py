@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 class Plugin:
 	def __init__(self, pluginPath):
 		self.code = None
+		self.isLoaded = False
 		self.attributeId = hashlib.sha256(pluginPath.encode()).hexdigest()
 		self.attributeValid = None
 		self.attributePath = pluginPath
@@ -121,6 +122,7 @@ class Plugin:
 					self.attributeHours = hours
 					self.attributeMinutes = minutes
 
+				self.isLoaded = True
 				logger.info(messageSuccessLoadingPlugin.format(self.attributeName, self.attributePath))
 
 			except:
@@ -157,7 +159,7 @@ class PluginManager:
 	def addPlugin(self, pluginPath):
 		plugin = Plugin(pluginPath)
 		plugin.load()
-		if not plugin.attributeValid:
+		if not plugin.isLoaded:
 			return
 		if plugin.attributeAttachedStream not in self.attachedAccountId and isinstance(plugin.attributeAttachedStream, int):
 			self.attachedAccountId.append(plugin.attributeAttachedStream)
