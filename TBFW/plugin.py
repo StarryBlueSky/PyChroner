@@ -41,87 +41,90 @@ class Plugin:
 
 	def load(self):
 		if self.isValid():
-			self.attributeSize = os.path.getsize(self.attributePath)
-
 			try:
-				loader = machinery.SourceFileLoader(self.attributeName, self.attributePath)
-				plugin = loader.load_module(self.attributeName)
-			except Exception as error:
-				logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
-				raise InvalidPluginSyntaxError
+				self.attributeSize = os.path.getsize(self.attributePath)
 
-			self.code = plugin
+				try:
+					loader = machinery.SourceFileLoader(self.attributeName, self.attributePath)
+					plugin = loader.load_module(self.attributeName)
+				except Exception as error:
+					logger.warning(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath, error))
+					raise InvalidPluginSyntaxError
 
-			if not hasattr(plugin, pluginAttributeTarget):
-				raise NotFoundPluginTargetError
-			if getattr(plugin, pluginAttributeTarget).lower() not in pluginTypes:
-				raise InvalidPluginTargetError
-			self.attributeTarget = getattr(plugin, pluginAttributeTarget)
-			self.attributeType = self.attributeTarget.lower()
+				self.code = plugin
 
-			if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
-				maxArgs = 1
-			else:
-				maxArgs = 0
-			if plugin.do.__code__.co_argcount != maxArgs:
-				raise TooManyArgmentsForPluginError
+				if not hasattr(plugin, pluginAttributeTarget):
+					raise NotFoundPluginTargetError
+				if getattr(plugin, pluginAttributeTarget).lower() not in pluginTypes:
+					raise InvalidPluginTargetError
+				self.attributeTarget = getattr(plugin, pluginAttributeTarget)
+				self.attributeType = self.attributeTarget.lower()
 
-			self.attributePriority = getattr(plugin, pluginAttributePriority, defaultAttributePriority)
-			if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
-				self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream, defaultAttributeAttachedStream)
-			self.attributeRatio = getattr(plugin, pluginAttributeRatio, defaultAttributeRatio)
+				if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
+					maxArgs = 1
+				else:
+					maxArgs = 0
+				if plugin.do.__code__.co_argcount != maxArgs:
+					raise TooManyArgmentsForPluginError
 
-			if self.attributeType == pluginRegular:
-				hours = []
-				minutes = []
-				pluginHour = getattr(plugin, pluginAttributeHour, defaultAttributeHour)
-				pluginMinute = getattr(plugin, pluginAttributeMinute, defaultAttributeMinute)
-				pluginMultipleHour = getattr(plugin, pluginAttributeMultipleHour, defaultAttributeMultipleHour)
-				pluginMultipleMinute = getattr(plugin, pluginAttributeMultipleMinute, defaultAttributeMultipleMinute)
+				self.attributePriority = getattr(plugin, pluginAttributePriority, defaultAttributePriority)
+				if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
+					self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream, defaultAttributeAttachedStream)
+				self.attributeRatio = getattr(plugin, pluginAttributeRatio, defaultAttributeRatio)
 
-				if pluginHour != defaultAttributeHour:
-					if isinstance(pluginHour, list):
-						hours.extend(pluginHour)
-					elif isinstance(pluginHour, int):
-						hours.append(pluginHour)
-					else:
-						raise InvalidPluginScheduleError
+				if self.attributeType == pluginRegular:
+					hours = []
+					minutes = []
+					pluginHour = getattr(plugin, pluginAttributeHour, defaultAttributeHour)
+					pluginMinute = getattr(plugin, pluginAttributeMinute, defaultAttributeMinute)
+					pluginMultipleHour = getattr(plugin, pluginAttributeMultipleHour, defaultAttributeMultipleHour)
+					pluginMultipleMinute = getattr(plugin, pluginAttributeMultipleMinute, defaultAttributeMultipleMinute)
 
-				if pluginMinute != defaultAttributeMinute:
-					if isinstance(pluginMinute, list):
-						minutes.extend(pluginMinute)
-					elif isinstance(pluginMinute, int):
-						minutes.append(pluginMinute)
-					else:
-						raise InvalidPluginScheduleError
+					if pluginHour != defaultAttributeHour:
+						if isinstance(pluginHour, list):
+							hours.extend(pluginHour)
+						elif isinstance(pluginHour, int):
+							hours.append(pluginHour)
+						else:
+							raise InvalidPluginScheduleError
 
-				if pluginMultipleHour != defaultAttributeMultipleHour:
-					if isinstance(pluginMultipleHour, int):
-						hours.extend(
-							[i * pluginMultipleHour for i in range(oneDayHours) if dayStartHour <= i * pluginMultipleHour < oneDayHours]
-						)
-					else:
-						raise InvalidPluginScheduleError
+					if pluginMinute != defaultAttributeMinute:
+						if isinstance(pluginMinute, list):
+							minutes.extend(pluginMinute)
+						elif isinstance(pluginMinute, int):
+							minutes.append(pluginMinute)
+						else:
+							raise InvalidPluginScheduleError
 
-				if pluginMultipleMinute != defaultAttributeMultipleMinute:
-					if isinstance(pluginMultipleMinute, int):
-						minutes.extend(
-							[i * pluginMultipleMinute for i in range(oneHourMinutes) if dayStartHour <= i * pluginMultipleMinute < oneHourMinutes]
-						)
-					else:
-						raise InvalidPluginScheduleError
+					if pluginMultipleHour != defaultAttributeMultipleHour:
+						if isinstance(pluginMultipleHour, int):
+							hours.extend(
+								[i * pluginMultipleHour for i in range(oneDayHours) if dayStartHour <= i * pluginMultipleHour < oneDayHours]
+							)
+						else:
+							raise InvalidPluginScheduleError
 
-				hours = sorted(list(set(hours)))
-				minutes = sorted(list(set(minutes)))
-				if not hours:
-					hours = list(range(oneDayHours))
-				if not minutes:
-					minutes = list(range(oneHourMinutes))
-				self.attributeHours = hours
-				self.attributeMinutes = minutes
+					if pluginMultipleMinute != defaultAttributeMultipleMinute:
+						if isinstance(pluginMultipleMinute, int):
+							minutes.extend(
+								[i * pluginMultipleMinute for i in range(oneHourMinutes) if dayStartHour <= i * pluginMultipleMinute < oneHourMinutes]
+							)
+						else:
+							raise InvalidPluginScheduleError
 
-			logger.info(messageSuccessLoadingPlugin.format(self.attributeName, self.attributePath))
+					hours = sorted(list(set(hours)))
+					minutes = sorted(list(set(minutes)))
+					if not hours:
+						hours = list(range(oneDayHours))
+					if not minutes:
+						minutes = list(range(oneHourMinutes))
+					self.attributeHours = hours
+					self.attributeMinutes = minutes
 
+				logger.info(messageSuccessLoadingPlugin.format(self.attributeName, self.attributePath))
+
+			except:
+				logger.exception(messageErrorLoadingPlugin.format(self.attributeName, self.attributePath))
 
 class PluginManager:
 	def __init__(self):
