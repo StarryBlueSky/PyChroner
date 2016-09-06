@@ -21,6 +21,7 @@ pathThreadApi = "thread.json"
 
 Reply = "REPLY"
 Timeline = "TIMELINE"
+DM = "DM"
 Event = "EVENT"
 Other = "OTHER"
 Regular = "REGULAR"
@@ -29,6 +30,7 @@ Initializer = "INITIALIZER"
 
 pluginReply = "reply"
 pluginTimeline = "timeline"
+pluginDM = "dm"
 pluginEvent = "event"
 pluginThread = "thread"
 pluginRegular = "regular"
@@ -38,6 +40,7 @@ pluginInitializer = "initializer"
 pluginTypes = [
 	pluginReply,
 	pluginTimeline,
+	pluginDM,
 	pluginEvent,
 	pluginThread,
 	pluginRegular,

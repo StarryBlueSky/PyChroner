@@ -31,8 +31,8 @@ class _Core:
 
 		opener = urllib.request.build_opener()
 		opener.addheaders = [
-			('User-Agent', userAgent),
-			('Accept-Language', acceptLanguage)
+			("User-Agent", userAgent),
+			("Accept-Language", acceptLanguage)
 		]
 		urllib.request.install_opener(opener)
 
@@ -168,8 +168,8 @@ class Streaming:
 				stream = stream["direct_message"]
 				stream['user'] = stream["sender"]
 				stream['source'] = ""
+				stream["dm_obj"] = _stream
 				stream['text'] = "@{0} {1}".format(self.sn, stream['text'])
-				stream["_"] = _stream
 
 			if "text" in stream:
 				via = re.sub("<.*?>", "", stream['source'])
@@ -180,18 +180,23 @@ class Streaming:
 					if domain in self.muteDomain:
 						return
 
-				stream['user']['name'] = stream['user']['name'].replace("@", "@​")
+				stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
 
-				if re.match('@%s\s' % self.sn, stream['text'], re.IGNORECASE):
+				if re.match("@%s\s" % self.sn, stream["text"], re.IGNORECASE):
 					for plugin in Core.plugins[pluginReply]:
 						if plugin.attributeAttachedStream == self.accountId:
 							self.__executePlugin(plugin, stream)
 							break
+					if "dm_obj" in stream:
+						for plugin in Core.plugins[pluginDM]:
+							if plugin.attributeAttachedStream == self.accountId:
+								self.__executePlugin(plugin, stream)
+								break
 				for plugin in Core.plugins[pluginTimeline]:
 					if plugin.attributeAttachedStream == self.accountId:
 						self.__executePlugin(plugin, stream)
 
-			elif 'event' in stream:
+			elif "event" in stream:
 				for plugin in Core.plugins[pluginEvent]:
 					if plugin.attributeAttachedStream == self.accountId:
 						self.__executePlugin(plugin, stream)
@@ -211,7 +216,7 @@ class Streaming:
 
 		except Exception as e:
 			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
-			if plugin.attributeTarger == 'REPLY' and "@" + self.sn in stream['text']:
+			if plugin.attributeTarger == "REPLY" and "@" + self.sn in stream["text"]:
 				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
 				API = TwitterAPI(accountId=self.accountId)
 				API.update_status(text, in_reply_to_status_id=stream["id"])
