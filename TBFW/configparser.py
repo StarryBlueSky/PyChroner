@@ -27,3 +27,14 @@ class ConfigParser:
 		self.muteClient = config.get("muteClient", [])
 		self.muteUser = config.get("muteUser", [])
 		self.muteDomain = config.get("muteDomain", [])
+
+		self.config = Config()
+		[setattr(self.config, key, value) for key, value in config.items() if key != "accounts"]
+		self.config.accounts = []
+		for account in self.accounts:
+			cls = Config()
+			[setattr(cls, key, value) for key, value in account.items()]
+			self.config.accounts.append(cls)
+
+class Config:
+	pass
