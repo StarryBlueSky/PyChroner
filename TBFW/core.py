@@ -49,6 +49,8 @@ class _Core:
 		self.plugins = self.PM.plugins
 		self.attachedAccountId = self.PM.attachedAccountId
 
+		self.pluginThreads = []
+
 		self.boottime = datetime.now()
 		self.__logger.info(messageSuccessInitialization.format(self.boottime))
 
@@ -75,6 +77,7 @@ class _Core:
 		for threadPlugin in self.plugins[pluginThread]:
 			t = threading.Thread(name=threadPlugin.attributeName, target=threadPlugin.code.do)
 			t.start()
+			self.pluginThreads.append(t)
 		threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins).start()
 		threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity).start()
 
