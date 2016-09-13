@@ -10,9 +10,5 @@ __license__ = "MIT"
 
 from TBFW.core import Core as Bot
 from TBFW.twitterapi import TwitterAPI
-import TBFW.exceptions as TBFWError
 
-__all__ = ["Bot", "TwitterAPI", "TBFWError"]
-
-if __name__ == "__main__":
-	pass
+__all__ = ["Bot", "TwitterAPI"]
