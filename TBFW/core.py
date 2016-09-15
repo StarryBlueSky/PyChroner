@@ -152,6 +152,7 @@ class Streaming:
 		self.muteClient = config.muteClient
 		self.muteUser = config.muteUser
 		self.muteDomain = config.muteDomain
+		self.permissions = config.permissions
 
 	def startUserStream(self):
 		auth = TwitterOAuth(self.accountId)
@@ -216,6 +217,40 @@ class Streaming:
 		if plugin.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther, pluginDM]:
 			if plugin.attributeAttachedStream != self.accountId:
 				return
+
+		allow = True
+		api = TwitterAPI(self.accountId)
+		for permission in self.permissions:
+			if permission.plugin == plugin.attributeName:
+				if permission.action == "allow":
+					allow = False
+					if stream["user"]["screen_name"] in permission.users:
+						allow = True
+					if permission.domain:
+						for domain in permission.domain:
+							if "following" == domain:
+								if stream["user"]["id"] in api.friends_ids(count=5000):
+									allow = True
+							elif "follower" == domain:
+								if stream["user"]["id"] in api.followers_ids(count=5000):
+									allow = True
+
+				elif permission.action == "deny":
+					allow = True
+					if stream["user"]["screen_name"] in permission.users:
+						allow = False
+					if permission.domain:
+						for domain in permission.domain:
+							if "following" == domain:
+								if stream["user"]["id"] in api.friends_ids(count=5000):
+									allow = False
+							elif "follower" == domain:
+								if stream["user"]["id"] in api.followers_ids(count=5000):
+									allow = False
+
+		if not allow:
+			return
+
 		try:
 			if random.randint(1, plugin.attributeRatio) == 1:
 				plugin.code.do(stream)
