@@ -50,6 +50,7 @@ pip install -r requirements.txt
 |muteClient|無視するクライアント(via)の名称です。配列で指定します。|No|[]|
 |muteUser|無視するユーザーのスクリーンネームです。配列で指定します。|No|[]|
 |muteDomain|無視するドメインです。配列で指定します。|No|[]|
+|permissions|プラグインの実行権限を配列で指定します。|No|[]|
 
 以下は`accounts`配列内のオプションです。
 
@@ -61,7 +62,17 @@ pip install -r requirements.txt
 |at|アカウントのAccess Tokenです。|Yes|-|
 |ats|アカウントのAccess Token Secretです。|Yes|-|
 |sn|アカウントのスクリーンネームです。|Yes|-|
+
+以下は`permissions`配列内のオプションです。
+
+|オプション名|説明|必須?|デフォルト値|
+|:-----------:|:------------:|:-----------:|:------------:|
+|plugin|パーミッションを適用するプラグインの名前です。|Yes|-|
+|action|このパーミッションによって許可するならば`allow`を<br>拒否するならば`deny`を指定します。|Yes|-|
+|users|このパーミッションを適用するユーザーのスクリーンネームです。|No|[]|
+|domain|このパーミッションをフォローしているユーザーに適用するならば`following`を<br>フォロワーに適用するならば`follower`を配列で指定します。(複数指定可)|No|[]|
+
 ### 4. 実行
 ```bash
-python3 main.py
+python3.5 main.py
 ```
