@@ -187,22 +187,27 @@ class Streaming:
 
 				if re.match("@%s\s" % self.sn, stream["text"], re.IGNORECASE):
 					for plugin in Core.plugins[pluginReply]:
-						self.__executePlugin(plugin, stream)
+						t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
+						t.start()
 						break
 					if "dm_obj" in stream:
 						for plugin in Core.plugins[pluginDM]:
-							self.__executePlugin(plugin, stream)
+							t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
+							t.start()
 							break
 				for plugin in Core.plugins[pluginTimeline]:
-					self.__executePlugin(plugin, stream)
+					t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
+					t.start()
 
 			elif "event" in stream:
 				for plugin in Core.plugins[pluginEvent]:
-					self.__executePlugin(plugin, stream)
+					t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
+					t.start()
 
 			else:
 				for plugin in Core.plugins["other"]:
-					self.__executePlugin(plugin, stream)
+					t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
+					t.start()
 
 		except Exception:
 			self.__logger.exception(messageErrorProcessingStream.format(self.sn))
