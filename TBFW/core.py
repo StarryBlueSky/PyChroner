@@ -187,32 +187,30 @@ class Streaming:
 
 				if re.match("@%s\s" % self.sn, stream["text"], re.IGNORECASE):
 					for plugin in Core.plugins[pluginReply]:
-						if plugin.attributeAttachedStream == self.accountId:
-							self.__executePlugin(plugin, stream)
-							break
+						self.__executePlugin(plugin, stream)
+						break
 					if "dm_obj" in stream:
 						for plugin in Core.plugins[pluginDM]:
-							if plugin.attributeAttachedStream == self.accountId:
-								self.__executePlugin(plugin, stream)
-								break
+							self.__executePlugin(plugin, stream)
+							break
 				for plugin in Core.plugins[pluginTimeline]:
-					if plugin.attributeAttachedStream == self.accountId:
-						self.__executePlugin(plugin, stream)
+					self.__executePlugin(plugin, stream)
 
 			elif "event" in stream:
 				for plugin in Core.plugins[pluginEvent]:
-					if plugin.attributeAttachedStream == self.accountId:
-						self.__executePlugin(plugin, stream)
+					self.__executePlugin(plugin, stream)
 
 			else:
 				for plugin in Core.plugins["other"]:
-					if plugin.attributeAttachedStream == self.accountId:
-						self.__executePlugin(plugin, stream)
+					self.__executePlugin(plugin, stream)
 
 		except Exception:
 			self.__logger.exception(messageErrorProcessingStream.format(self.sn))
 
 	def __executePlugin(self, plugin, stream):
+		if plugin.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther, pluginDM]:
+			if plugin.attributeAttachedStream != self.accountId:
+				return
 		try:
 			if random.randint(1, plugin.attributeRatio) == 1:
 				plugin.code.do(stream)
