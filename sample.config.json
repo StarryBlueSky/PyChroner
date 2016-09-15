@@ -1,23 +1,31 @@
 {
   "accounts": [
     {
-      "id": 100000000,
-      "ck": "xxx",
-      "cs": "xxx",
-      "at": "xxx",
+      "id" : 100000000,
+      "ck" : "xxx",
+      "cs" : "xxx",
+      "at" : "xxx",
       "ats": "xxx",
-      "sn": "TwitterBot"
+      "sn" : "TwitterBot"
     },
     {
-      "id": 200000000,
-      "ck": "yyy",
-      "cs": "yyy",
-      "at": "yyy",
+      "id" : 200000000,
+      "ck" : "yyy",
+      "cs" : "yyy",
+      "at" : "yyy",
       "ats": "yyy",
-      "sn": "TwitterBot2"
+      "sn" : "TwitterBot2"
     }
   ],
-  "muteClient": ["twittbot.net"],
-  "muteUser": ["twitter"],
-  "muteDomain": ["facebook.com"]
+  "muteClient" : ["twittbot.net"],
+  "muteUser"   : ["twitter"],
+  "muteDomain" : ["facebook.com"],
+  "permissions": [
+    {
+      "plugin": "getPingByStatusID",
+      "action": "deny",
+      "users" : ["TwitterJP"],
+      "domain": ["following"]
+    }
+  ]
 }
