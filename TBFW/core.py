@@ -181,8 +181,7 @@ class Streaming:
 				if stream['user']['screen_name'] in self.muteUser or via in self.muteClient:
 					return
 				if len(stream['entities']['urls']) > 0:
-					domain = re.sub("http(|s)://(.+?)/.*$", "\1", stream['entities']['urls'][0]['expanded_url'])
-					if domain in self.muteDomain:
+					if urllib.parse.urlparse(stream['entities']['urls'][0]['expanded_url']).hostname in self.muteDomain:
 						return
 
 				stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
