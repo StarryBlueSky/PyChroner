@@ -20,7 +20,6 @@ from TBFW.configparser import ConfigParser
 from TBFW.constant import *
 from TBFW.plugin import PluginManager
 from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
-from TBFW.utils import getVariableForEachLocals
 
 configparser = ConfigParser()
 config = configparser.config
