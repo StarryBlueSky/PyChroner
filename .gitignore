@@ -1,11 +1,9 @@
+__pycache__/
+
 assets/
 logs/
 cache/
 api/
 tmp/
 
-# Developer
-.idea/
-*.pyc
-.DS_Store
 config.json
