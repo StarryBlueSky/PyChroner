@@ -29,7 +29,7 @@ This project published under MIT LICENSE.
 <br>For example, You can make bot using TBFW and publish the your code.
 
 ## How to Install (on CentOS 7)
-TBFW working at Python 3.x Series from 3.4 or higher.
+TBFW working at Python 3.x Series from 3.4 or higher but we recommend that you should run with latest Python 3.5.2.
 
 ### 1. Clone Repository
 ```bash
@@ -40,7 +40,7 @@ git clone https://github.com/NephyProject/TwitterBotFramework.git
 ### 2. Install Library used by TBFW
 ```bash
 cd TwitterBotFramework
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### 3. Create `Config.json`

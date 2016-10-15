@@ -27,7 +27,7 @@ TBFWは プラグインシステムを用いて簡単に機能を追加できま
 <br>例えば、このTBFWを利用してBotを作成して 実際に稼働させたりそのソースコードを公開したりすることも自由にできます。
 
 ## 導入方法 (CentOS 7での例)
-TBFWは Python 3.4以上のPython 3.x系で動作します。
+TBFWは Python 3.4以上のPython 3.x系で動作しますが、特に理由がない場合 最新(執筆時)のPython 3.5.2での利用を推奨します。
 
 ### 1. リポジトリのクローン
 ```bash
@@ -38,7 +38,7 @@ git clone https://github.com/NephyProject/TwitterBotFramework.git
 ### 2. TBFWで使用しているライブラリのインストール
 ```bash
 cd TwitterBotFramework
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### 3. `config.json`の作成
@@ -74,5 +74,5 @@ pip install -r requirements.txt
 
 ### 4. 実行
 ```bash
-python3.5 main.py
+python3 main.py
 ```
