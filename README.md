@@ -32,7 +32,7 @@ TBFWは Python 3.4以上のPython 3.x系で動作します。
 ### 1. リポジトリのクローン
 ```bash
 cd ~
-git clone git@github.com:NephyProject/TwitterBotFramework.git
+git clone https://github.com/NephyProject/TwitterBotFramework.git
 ```
 
 ### 2. TBFWで使用しているライブラリのインストール

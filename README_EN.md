@@ -34,7 +34,7 @@ TBFW working at Python 3.x Series from 3.4 or higher.
 ### 1. Clone Repository
 ```bash
 cd ~
-git clone git@github.com:NephyProject/TwitterBotFramework.git
+git clone https://github.com/NephyProject/TwitterBotFramework.git
 ```
 
 ### 2. Install Library used by TBFW
@@ -63,6 +63,7 @@ The following are options in `accounts` array.
 |at|Account's Access Token.|Yes|-|
 |ats|Account's Access Token Secret.|Yes|-|
 |sn|Account's ScreenName.|Yes|-|
+
 ### 4. Run
 ```bash
 python3 main.py
