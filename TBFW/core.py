@@ -125,7 +125,8 @@ class _Core:
 	def __watchThreadActivity(self):
 		while True:
 			result = [thread.name for thread in threading.enumerate()]
-			json.dump(result, open(apiDir + "/" + pathThreadApi, "w"), sort_keys=True, indent=4)
+			with open(apiDir + "/" + pathThreadApi, "w") as f:
+				json.dump(result, f, sort_keys=True, indent=4)
 
 			for threadPlugin in self.plugins[pluginThread]:
 				if threadPlugin.attributeName not in result:

@@ -8,10 +8,12 @@ from TBFW.exceptions import *
 class ConfigParser:
 	def __init__(self):
 		if not os.path.isfile(pathConfig):
-			json.dump({}, open(pathConfig, "w"))
+			with open(pathConfig, "w") as f:
+				json.dump({}, f)
 
 		try:
-			config = json.load(open(pathConfig))
+			with open(pathConfig) as f:
+				config = json.load(f)
 		except:
 			raise InvalidConfigSyntax
 
