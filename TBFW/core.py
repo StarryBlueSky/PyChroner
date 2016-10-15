@@ -107,12 +107,14 @@ class _Core:
 				logger.warning(messageErrorExecutingRegularPlugin.format(plugin.attributeName, traceback.format_exc()))
 
 		while True:
-			wait_time = 60 - datetime.now().second
-			time.sleep(wait_time)
-			datetime_hour = datetime.now().hour
-			datetime_minute = datetime.now().minute
+			now = datetime.now()
+			waitTime = 60.0 - now.second - now.microsecond / 1000000
+			willExecutePlugins = {currentRegularPlugin.attributeId: random.randint(1, currentRegularPlugin.attributeRatio) == 1 for currentRegularPlugin in self.plugins[pluginRegular]}
+			time.sleep(waitTime)
+			now = datetime.now()
+			datetime_hour, datetime_minute = now.hour, now.minute
 			for currentRegularPlugin in self.plugins[pluginRegular]:
-				if random.randint(1, currentRegularPlugin.attributeRatio) != 1:
+				if not willExecutePlugins[currentRegularPlugin.attributeId]:
 					continue
 				if datetime_hour in currentRegularPlugin.attributeHours and datetime_minute in currentRegularPlugin.attributeMinutes:
 					t = threading.Thread(name=currentRegularPlugin.attributeName, target=_do, args=(currentRegularPlugin, ))
