@@ -4,7 +4,6 @@ import json
 from TBFW.constant import *
 from TBFW.exceptions import *
 
-
 class ConfigParser:
 	def __init__(self):
 		if not os.path.isfile(pathConfig):
