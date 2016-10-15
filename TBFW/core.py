@@ -65,8 +65,9 @@ class _Core:
 		formatter = Formatter(messageLogFormat, messageLogTimeFormat)
 		handler.setFormatter(formatter)
 
-		getLogger("requests").setLevel(CRITICAL)
-		getLogger("tweepy").setLevel(CRITICAL)
+		if not self.debug:
+			getLogger("requests").setLevel(CRITICAL)
+			getLogger("tweepy").setLevel(CRITICAL)
 
 		logger.setLevel(DEBUG if self.debug else INFO)
 		logger.addHandler(handler)
