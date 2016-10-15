@@ -1,0 +1,3 @@
+[submodule "lib/twispy"]
+    path = lib/twispy
+    url = https://github.com/NephyProject/Twispy
