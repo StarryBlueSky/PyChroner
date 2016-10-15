@@ -29,13 +29,6 @@ class _Core:
 		gc.enable()
 		socket.setdefaulttimeout(30)
 
-		opener = urllib.request.build_opener()
-		opener.addheaders = [
-			("User-Agent", userAgent),
-			("Accept-Language", acceptLanguage)
-		]
-		urllib.request.install_opener(opener)
-
 		for directory in dirs:
 			if not os.path.isdir(directory):
 				os.mkdir(directory)

@@ -65,9 +65,6 @@ messageErrorConnectingTwitter = "Error occured while connecting to Twitter with 
 
 reconnectUserStreamSeconds = 10
 
-acceptLanguage = "ja;q=1.0"
-userAgent = "TwitterBotFramework/3.0 (Python 3)"
-
 pluginAttributeTarget = "TARGET"
 pluginAttributePriority = "PRIORITY"
 pluginAttributeAttachedStream = "ACCOUNT"
