@@ -29,7 +29,7 @@ This project published under MIT LICENSE.
 <br>For example, You can make bot using TBFW and publish the your code.
 
 ## How to Install (on CentOS 7)
-TBFW working at Python 3.x up to 3.5.1 or higher.
+TBFW working at Python 3.x Series from 3.4 or higher.
 
 ### 1. Clone Repository
 ```bash
