@@ -39,6 +39,15 @@ class InvalidPluginTargetError(Exception):
 	def __str__(self):
 		return self.message
 
+class InvalidPluginRatioError(Exception):
+	def __init__(self):
+		self.message = "TBFW could not load plugin because of not int type of RATIO."
+		logger.exception(self.message)
+		Exception.__init__(self, self.message)
+
+	def __str__(self):
+		return self.message
+
 class InvalidPluginSyntaxError(Exception):
 	def __init__(self):
 		self.message = "TBFW could not load plugin because of invalid syntax."

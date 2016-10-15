@@ -72,6 +72,8 @@ class Plugin:
 				if self.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther]:
 					self.attributeAttachedStream = getattr(plugin, pluginAttributeAttachedStream, defaultAttributeAttachedStream)
 				self.attributeRatio = getattr(plugin, pluginAttributeRatio, defaultAttributeRatio)
+				if type(self.attributeRatio).__name__ != "int":
+					raise InvalidPluginRatioError
 
 				if self.attributeType == pluginRegular:
 					hours = []
