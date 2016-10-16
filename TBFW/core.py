@@ -253,7 +253,7 @@ class Streaming:
 
 		except Exception as e:
 			self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
-			if plugin.attributeTarger == "REPLY" and "@" + self.sn in stream["text"]:
+			if plugin.attributeTarget == "REPLY" and "@" + self.sn in stream["text"]:
 				text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
 				API = TwitterAPI(accountId=self.accountId)
 				API.update_status(text, in_reply_to_status_id=stream["id"])
