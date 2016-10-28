@@ -54,7 +54,7 @@ class _Core:
 		logger = getLogger()
 		captureWarnings(capture=True)
 
-		handler = RotatingFileHandler(self.logPath, maxBytes=2 ** 20, backupCount=10, encoding="utf-8")
+		handler = RotatingFileHandler(self.logPath, maxBytes=2 ** 20, backupCount=10000, encoding="utf-8")
 		formatter = Formatter(messageLogFormat, messageLogTimeFormat)
 		handler.setFormatter(formatter)
 
