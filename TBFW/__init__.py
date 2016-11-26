@@ -7,8 +7,3 @@ TBFW library
 __version__ = "2.0.0"
 __author__ = "Nephy Project Team"
 __license__ = "MIT"
-
-from TBFW.core import Core as Bot
-from TBFW.twitterapi import TwitterAPI
-
-__all__ = ["Bot", "TwitterAPI"]

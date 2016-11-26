@@ -1,7 +1,7 @@
 # coding=utf-8
 import traceback
 
-from TBFW import Bot
+from TBFW.core import Core as Bot
 
 if __name__ == "__main__":
 	try:
