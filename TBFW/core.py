@@ -153,10 +153,11 @@ class Streaming:
 
 	def startUserStream(self):
 		auth = TwitterOAuth(self.accountId)
+		connection = UserStream(auth, StreamListener(self.accountId))
 		while True:
 			try:
 				self.__logger.info(messageSuccessConnectingUserStream.format(self.sn))
-				UserStream(auth, StreamListener(self.accountId)).user_stream()
+				connection.user_stream()
 			except:
 				self.__logger.exception(messageErrorConnectingUserStream.format(self.sn, reconnectUserStreamSeconds))
 				time.sleep(reconnectUserStreamSeconds)
