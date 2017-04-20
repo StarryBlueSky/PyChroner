@@ -19,35 +19,6 @@ dirs = [pluginsDir, logDir, apiDir, cacheDir, tmpDir, assetsDir]
 
 pathThreadApi = "thread.json"
 
-Reply = "REPLY"
-Timeline = "TIMELINE"
-DM = "DM"
-Event = "EVENT"
-Other = "OTHER"
-Regular = "REGULAR"
-Thread = "THREAD"
-Initializer = "INITIALIZER"
-
-pluginReply = "reply"
-pluginTimeline = "timeline"
-pluginDM = "dm"
-pluginEvent = "event"
-pluginThread = "thread"
-pluginRegular = "regular"
-pluginOther = "other"
-pluginInitializer = "initializer"
-
-pluginTypes = [
-	pluginReply,
-	pluginTimeline,
-	pluginDM,
-	pluginEvent,
-	pluginThread,
-	pluginRegular,
-	pluginOther,
-	pluginInitializer
-]
-
 messageLogFormat = "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s"
 messageLogTimeFormat = "%H:%M:%S"
 messageLogDatetimeFormat = "%Y-%m-%d_%H-%M-%S"
