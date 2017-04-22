@@ -8,3 +8,4 @@ api/
 tmp/
 
 config.json
+test.py
