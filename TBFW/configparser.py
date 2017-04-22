@@ -1,54 +1,69 @@
 # coding=utf-8
+"""
+parse config.json
+"""
+
 import json
+import os
 
-from TBFW.constant import *
-from TBFW.exceptions import *
+from .enums import LogLevel
+from .exceptions.config import *
+from .utils import listAttr, convertDictToObject, ConvertedObject
 
-class ConfigParser:
-	def __init__(self):
-		if not os.path.isfile(pathConfig):
-			with open(pathConfig, "w") as f:
-				json.dump({}, f)
-
-		try:
-			with open(pathConfig) as f:
-				config = json.load(f)
-		except:
-			raise InvalidConfigSyntax
-
-		if "accounts" not in config:
-			raise NoAvailableAccountInConfig
-		self.accounts = config["accounts"]
-		for account in self.accounts:
-			if "ck" in account and "cs" in account and "at" in account and "ats" in account and "sn" in account:
-				continue
-			else:
-				raise InvalidConfigSyntax
-
-		self.muteClient = config.get("muteClient", [])
-		self.muteUser = config.get("muteUser", [])
-		self.muteDomain = config.get("muteDomain", [])
-		self.permissions = config.get("permissions", [])
-
-		self.config = Config()
-		setattr(self.config, "muteClient", self.muteClient)
-		setattr(self.config, "muteUser", self.muteUser)
-		setattr(self.config, "muteDomain", self.muteDomain)
-		setattr(self.config, "permissions", self.permissions)
-		self.config.accounts = []
-		for account in self.accounts:
-			cls = Config()
-			[setattr(cls, key, value) for key, value in account.items()]
-			self.config.accounts.append(cls)
-		self.config.permissions = []
-		for permission in self.permissions:
-			cls = Config()
-			[setattr(cls, key, value) for key, value in permission.items()]
-			if not getattr(cls, "users"):
-				setattr(cls, "users", [])
-			if not getattr(cls, "domain"):
-				setattr(cls, "domain", [])
-			self.config.permissions.append(cls)
 
 class Config:
-	pass
+    """
+    represent config.json.
+    You can access configures with
+    
+    Example:
+    ```python
+    config = Config()
+    config.accounts.test_bot.ck
+    ```
+    """
+
+    def __init__(self):
+        if not os.path.isfile(Path.Config.value):
+            raise NotFoundConfigError
+
+        try:
+            with open(Path.Config.value) as f:
+                config = convertDictToObject(json.load(f))
+        except json.JSONDecodeError:
+            raise InvalidConfigSyntaxError
+
+        if not hasattr(config, "accounts"):
+            raise InsufficientAttributeError("accounts")
+
+        for k in listAttr(config.accounts):
+            v = getattr(config.accounts, k)
+            if hasattr(v, "application") and hasattr(config, "application"):
+                app = getattr(config.application, v.application)
+                if not app:
+                    raise InsufficientAttributeError("application")
+                if not hasattr(app, "ck") or not hasattr(app, "cs"):
+                    raise InsufficientAttributeError("accounts[x].ck or accounts[x].cs")
+
+                v.ck, v.cs = app.ck, app.cs
+
+            for attr in ["ck", "cs", "at", "ats", "id", "sn"]:
+                if not hasattr(v, attr):
+                    raise InsufficientAttributeError("accounts[x].{}".format(attr))
+            setattr(config.accounts, k, v)
+
+        if not hasattr(config, "mute"):
+            config.mute = ConvertedObject()
+        for attr in ["via", "user_id", "user_sn", "domain"]:
+            hasattr(config.mute, attr) or setattr(config.mute, attr, [])
+
+        # TODO: implement permissions
+
+        if not hasattr(config, "log_level"):
+            setattr(config, "log_level", LogLevel.Error)
+        elif not hasattr(LogLevel, config.log_level.title()):
+            config.log_level = LogLevel.Error
+        else:
+            config.log_level = getattr(LogLevel, config.log_level.title())
+
+        [setattr(self, x, getattr(config, x)) for x in listAttr(config)]
