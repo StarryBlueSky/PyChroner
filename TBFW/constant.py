@@ -1,23 +1,4 @@
 # coding=utf-8
-import os
-
-currentDir = os.getcwd()
-pathConfig = "config.json"
-pathPluginsDir = "plugins"
-pluginsDir = currentDir + "/" + pathPluginsDir
-pathAssetsDir = "assets"
-assetsDir = currentDir + "/" + pathAssetsDir
-pathCacheDir = "cache"
-cacheDir = currentDir + "/" + pathCacheDir
-pathApiDir = "api"
-apiDir = currentDir + "/" + pathApiDir
-pathLogDir = "logs"
-logDir = currentDir + "/" + pathLogDir
-pathTmpDir = "tmp"
-tmpDir = currentDir + "/" + pathTmpDir
-dirs = [pluginsDir, logDir, apiDir, cacheDir, tmpDir, assetsDir]
-
-pathThreadApi = "thread.json"
 
 messageLogFormat = "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s"
 messageLogTimeFormat = "%H:%M:%S"
