@@ -1,6 +1,7 @@
 # coding=utf-8
 import gc
 import json
+import os
 import random
 import re
 import socket
@@ -9,33 +10,25 @@ import time
 import traceback
 import urllib.parse
 from datetime import datetime
-from logging import getLogger, captureWarnings, Formatter, DEBUG, INFO, CRITICAL
+from logging import getLogger, captureWarnings, Formatter
 from logging.handlers import RotatingFileHandler
 
-import tweepy
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from TBFW.configparser import ConfigParser
-from TBFW.constant import *
-from TBFW.plugin import PluginManager
-from TBFW.twitterapi import TwitterOAuth, TwitterAPI, UserStream
+from .enums import Path
+from .constant import *
+from .plugin import PluginManager
 
-configparser = ConfigParser()
-config = configparser.config
 
 class _Core:
-    def __init__(self, debug=False):
+    def __init__(self):
         gc.enable()
         socket.setdefaulttimeout(30)
 
-        for directory in dirs:
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-
-        self.debug = debug
-        self.logPath = logDir + "/" + datetime.now().strftime(messageLogDatetimeFormat) + ".log"
-        self.__logger = self.__getLogger()
+        for x in Path:
+            if not os.path.isdir(x.value) and not os.path.isfile(x.value):
+                os.makedirs(x.value)
 
         self.PM = PluginManager()
         self.PM.searchAllPlugins()
@@ -45,7 +38,8 @@ class _Core:
         self.pluginThreads = []
 
         self.boottime = datetime.now()
-        self.__logger.info(messageSuccessInitialization.format(self.boottime))
+        self.logger = self.__getLogger()
+        self.logger.info(messageSuccessInitialization.format(self.boottime))
 
         for initializerPlugin in self.plugins[pluginInitializer]:
             initializerPlugin.code.do()
@@ -54,17 +48,14 @@ class _Core:
         logger = getLogger()
         captureWarnings(capture=True)
 
-        handler = RotatingFileHandler(self.logPath, maxBytes=2 ** 20, backupCount=10000, encoding="utf-8")
-        formatter = Formatter(messageLogFormat, messageLogTimeFormat)
+        handler = RotatingFileHandler(
+                "{}/{}.log".format(Path.LogDir.value, datetime.now().strftime("%Y-%m-%d_%H-%M-%S")), maxBytes=2 ** 20,
+                backupCount=10000, encoding="utf-8")
+        formatter = Formatter("[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s", "%H:%M:%S")
         handler.setFormatter(formatter)
 
-        if not self.debug:
-            getLogger("requests").setLevel(CRITICAL)
-            getLogger("tweepy").setLevel(CRITICAL)
-
-        logger.setLevel(DEBUG if self.debug else INFO)
+        logger.setLevel(config.log_level)
         logger.addHandler(handler)
-
         return logger
 
     def run(self):
