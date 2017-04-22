@@ -3,39 +3,35 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class TBFWError(Exception):
+class BaseError(Exception):
     message = None
-
-    def __init__(self):
-        logger.exception(self.message)
-        Exception.__init__(self, self.message)
 
     def __str__(self):
         return self.message
 
-class InValidPluginFilenameError(TBFWError):
+class InValidPluginFilenameError(BaseError):
     message = "TBFW does not support that plugin's extension. Please check plugin's extension."
 
-class NotFoundPluginTargetError(TBFWError):
+class NotFoundPluginTargetError(BaseError):
     message = "TBFW could not load plugin because of lacking of `TARGET` variable."
 
-class InvalidPluginTargetError(TBFWError):
+class InvalidPluginTargetError(BaseError):
     message = "TBFW could not load plugin because of unsupported target."
 
-class InvalidPluginRatioError(TBFWError):
+class InvalidPluginRatioError(BaseError):
     message = "TBFW could not load plugin because of not int type of RATIO."
 
-class InvalidPluginSyntaxError(TBFWError):
+class InvalidPluginSyntaxError(BaseError):
     message = "TBFW could not load plugin because of invalid syntax."
 
-class InvalidPluginScheduleError(TBFWError):
+class InvalidPluginScheduleError(BaseError):
     message = "TBFW could not load plugin because of unsupported `HOUR` and `MINUTE` and so on."
 
-class TooManyArgmentsForPluginError(TBFWError):
+class TooManyArgmentsForPluginError(BaseError):
     message = "TBFW could not load plugin because too many argments were required."
 
-class InvalidConfigSyntax(TBFWError):
+class InvalidConfigSyntax(BaseError):
     message = "TBFW could not start because config.json was invalid."
 
-class NoAvailableAccountInConfig(TBFWError):
+class NoAvailableAccountInConfig(BaseError):
     message = "TBFW could not start because there was no account in config."
