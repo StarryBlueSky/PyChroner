@@ -48,5 +48,6 @@
       "users" : ["TwitterJP"],
       "domain": ["following"]
     }
-  ]
+  ],
+  "log_level": "info"
 }
