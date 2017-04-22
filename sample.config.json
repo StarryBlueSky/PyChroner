@@ -1,25 +1,46 @@
 {
-  "accounts": [
-    {
-      "id" : 100000000,
-      "ck" : "xxx",
-      "cs" : "xxx",
-      "at" : "xxx",
-      "ats": "xxx",
-      "sn" : "TwitterBot"
+  "application": {
+    "ExampleApp": {
+      "name": "Example Application",
+      "ck": "xxx",
+      "cs": "yyy"
     },
-    {
-      "id" : 200000000,
-      "ck" : "yyy",
-      "cs" : "yyy",
-      "at" : "yyy",
-      "ats": "yyy",
-      "sn" : "TwitterBot2"
+    "FunnyApp": {
+      "name": "Funny Application",
+      "ck": "yyy",
+      "cs": "yyy"
     }
-  ],
-  "muteClient" : ["twittbot.net"],
-  "muteUser"   : ["twitter"],
-  "muteDomain" : ["facebook.com"],
+  },
+  "accounts": {
+    "ExampleBot": {
+      "application": "ExampleApp",
+      "at": "xxx",
+      "ats": "xxx",
+      "id": 100000000,
+      "sn": "TwitterBot"
+    },
+    "FunnyBot": {
+      "application": "FunnyApp",
+      "at": "yyy",
+      "ats": "yyy",
+      "id": 200000000,
+      "sn": "TwitterBot2"
+    }
+  },
+  "mute": {
+    "via": [
+      "twittbot.net"
+    ],
+    "user_id": [
+      300000000, 400000000
+    ],
+    "user_sn": [
+      "twitter"
+    ],
+    "domain": [
+      "facebook.com"
+    ]
+  },
   "permissions": [
     {
       "plugin": "getPingByStatusID",
