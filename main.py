@@ -6,5 +6,5 @@ from TBFW.core import Core as Bot
 if __name__ == "__main__":
 	try:
 		Bot.run()
-	except:
+	except Exception:
 		print(traceback.format_exc())
