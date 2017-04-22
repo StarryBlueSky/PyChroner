@@ -12,9 +12,16 @@ class PluginType(Enum):
     Other = 7
     Initializer = 8
 
+@unique
+class Path(Enum):
+    Config = "config.json"
+    PluginsDir = "plugins"
+    AssetsDir = "assets"
+    CacheDir = "cache"
+    ApiDir = "api"
+    LogDir = "logs"
+    TmpDir = "tmp"
 
-def A():
-    pass
-
-import os
-print(os.path.basename(A.__code__.co_filename)[0:-3])
+@unique
+class API(Enum):
+    Thread = "thread.json"
