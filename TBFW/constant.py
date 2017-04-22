@@ -1,8 +1,5 @@
 # coding=utf-8
 
-messageLogFormat = "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s"
-messageLogTimeFormat = "%H:%M:%S"
-messageLogDatetimeFormat = "%Y-%m-%d_%H-%M-%S"
 messageSuccessInitialization = "Initialization Complate. Current time is {0}."
 messageErrorLoadingPlugin = "Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
 messageSuccessLoadingPlugin = "Plugin \"{0}\"({1}) has been loaded successfully."
