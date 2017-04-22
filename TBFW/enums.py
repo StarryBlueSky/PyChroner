@@ -1,16 +1,17 @@
 # coding=utf-8
-from enum import Enum, unique
+from logging import CRITICAL, ERROR, WARN, INFO, DEBUG
+from enum import Enum, IntEnum, unique, auto
 
 @unique
-class PluginType(Enum):
-    Reply = 1
-    Timeline = 2
-    DM = 3
-    Event = 4
-    Thread = 5
-    Regular = 6
-    Other = 7
-    Initializer = 8
+class PluginType(IntEnum):
+    Reply = auto()
+    Timeline = auto()
+    DM = auto()
+    Event = auto()
+    Thread = auto()
+    Regular = auto()
+    Other = auto()
+    Initializer = auto()
 
 @unique
 class Path(Enum):
@@ -25,3 +26,11 @@ class Path(Enum):
 @unique
 class API(Enum):
     Thread = "thread.json"
+
+class LogLevel(IntEnum):
+    Critical = CRITICAL
+    Error = ERROR
+    Warn = WARN
+    Warning = WARN
+    Info = INFO
+    Debug = DEBUG
