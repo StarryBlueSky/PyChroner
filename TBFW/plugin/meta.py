@@ -1,6 +1,6 @@
 # coding=utf-8
 import os
-from typing import List
+from typing import List, Dict
 
 from .utils import getPluginId
 from ..enums import PluginType
@@ -17,11 +17,20 @@ class PluginMeta:
 
         self.type: PluginType = None
         self.priority: int = None
-        self.attachedStream: int = None
         self.ratio: int = None
-        self.hour: List[int] = []
-        self.minute: List[int] = []
-        self.multipleHour: int = None
-        self.multipleMinute: int = None
         self.hours: List[int] = []
         self.minutes: List[int] = []
+        self.multipleHour: int = None
+        self.multipleMinute: int = None
+        self.permissions: List[Dict] = []
+        self.timeout: int = None
+
+        self.attachedStream: int = None
+        self.combinedHours: List[int] = []
+        self.combinedMinutes: List[int] = []
+
+        self.functionName: str = None
+        self.doc: str = None
+        self.variablesCount: int = None
+        self.variablesName: List[str] = []
+        self.variables: List = []
