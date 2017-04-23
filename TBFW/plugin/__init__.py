@@ -30,14 +30,6 @@ class Plugin:
 
         self.module = importlib.util.module_from_spec(self.spec)
 
-    @property
-    def isLoaded(self) -> bool:
-        return self.isLoaded
-
-    @isLoaded.setter
-    def isLoaded(self, v: bool):
-        self.isLoaded = v
-
     def load(self) -> bool:
         try:
             self.spec.loader.exec_module(self.module)
