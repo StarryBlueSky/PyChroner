@@ -9,6 +9,9 @@ from logging import CRITICAL, ERROR, WARN, WARNING, INFO, DEBUG
 
 @unique
 class PluginType(IntEnum):
+    """
+    represent Plugin's type
+    """
     Reply = 1
     Timeline = 2
     DM = 3
@@ -20,10 +23,16 @@ class PluginType(IntEnum):
 
 @unique
 class API(Enum):
+    """
+    represent JSON API filename
+    """
     Thread = "thread.json"
     Plugins = "plugins.json"
 
 class LogLevel(IntEnum):
+    """
+    represent logger levels
+    """
     Critical = CRITICAL
     Error = ERROR
     Warn = WARN
