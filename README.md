@@ -38,7 +38,7 @@ git clone https://github.com/NephyProject/TwitterBotFramework.git
 ### 2. TBFWで使用しているライブラリのインストール
 ```bash
 cd TwitterBotFramework
-sudo pip3 install watchdog
+sudo pip3 install watchdog timeout-decorator
 ```
 
 ### 3. `config.json`の作成
