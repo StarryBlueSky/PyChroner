@@ -4,7 +4,7 @@ TBFW library
 """
 
 from .enums import PluginType, API
-from .plugin import PluginAPI
+from .plugin.api import PluginAPI
 from .configparser import Config
 
 config = Config()
