@@ -8,4 +8,4 @@ api/
 tmp/
 
 config.json
-plugins/test.py
+test.py
