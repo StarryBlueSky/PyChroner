@@ -2,7 +2,7 @@
 import os
 from typing import List
 
-from . import getPluginId
+from .utils import getPluginId
 from ..enums import PluginType
 
 
