@@ -1,8 +1,7 @@
 # coding=utf-8
 
-messageSuccessInitialization = "Initialization Complate. Current time is {0}."
-messageErrorLoadingPlugin = "Plugin \"{0}\"({1}) could not be loaded. Error Detail:\n{2}"
-messageSuccessLoadingPlugin = "Plugin \"{0}\"({1}) has been loaded successfully."
+configPath = "config.json"
+
 messageSuccessExecutingRegularPlugin = "Regular plugin \"{0}\" was executed successfully."
 messageErrorExecutingRegularPlugin = "Regular plugin \"{0}\" could not be executed. Error Detail:\n{1}"
 messageSuccessConnectingUserStream = "TBFW started @{0}'s streaming."
@@ -22,19 +21,6 @@ pluginAttributeHour = "HOUR"
 pluginAttributeMultipleHour = "MULTIPLE_HOUR"
 pluginAttributeMinute = "MINUTE"
 pluginAttributeMultipleMinute = "MULTIPLE_MINUTE"
-
-defaultAttributeValid = None
-defaultAttributePath = None
-defaultAttributeSize = None
-defaultAttributeName = None
-defaultAttributeTarget = None
-defaultAttributePriority = 0
-defaultAttributeAttachedStream = 0
-defaultAttributeRatio = 1
-defaultAttributeHour = None
-defaultAttributeMultipleHour = None
-defaultAttributeMinute = None
-defaultAttributeMultipleMinute = None
 
 dayStartHour = 0
 oneHourMinutes = 60
