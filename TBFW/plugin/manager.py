@@ -6,7 +6,7 @@ import traceback
 from typing import Dict, List
 
 from . import Plugin
-from .utils import getPluginId
+from .utils import getPluginId, pluginFilePattern
 from ..enums import PluginType, API
 from ..exceptions.plugin import InvalidPluginSyntaxError
 
@@ -86,6 +86,7 @@ class PluginManager:
 
         for pluginFile in os.listdir(self.core.config.directory.plugins):
             pluginPath: str = f"{self.core.config.directory.plugins}/{pluginFile}"
-            self.loadPlugin(pluginPath)
+            if pluginFilePattern.match(pluginPath):
+                self.loadPlugin(pluginPath)
 
         return True
