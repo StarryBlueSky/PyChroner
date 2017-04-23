@@ -1,36 +1,32 @@
 # coding=utf-8
-from logging import CRITICAL, ERROR, WARN, INFO, DEBUG
-from enum import Enum, IntEnum, unique, auto
+"""
+enum constants
+"""
+
+from enum import Enum, IntEnum, unique
+from logging import CRITICAL, ERROR, WARN, WARNING, INFO, DEBUG
+
 
 @unique
 class PluginType(IntEnum):
-    Reply = auto()
-    Timeline = auto()
-    DM = auto()
-    Event = auto()
-    Thread = auto()
-    Regular = auto()
-    Other = auto()
-    Initializer = auto()
-
-@unique
-class Path(Enum):
-    Config = "config.json"
-    PluginsDir = "plugins"
-    AssetsDir = "assets"
-    CacheDir = "cache"
-    ApiDir = "api"
-    LogDir = "logs"
-    TmpDir = "tmp"
+    Reply = 1
+    Timeline = 2
+    DM = 3
+    Event = 4
+    Thread = 5
+    Schedule = 6
+    Startup = 7
+    Other = 8
 
 @unique
 class API(Enum):
     Thread = "thread.json"
+    Plugins = "plugins.json"
 
 class LogLevel(IntEnum):
     Critical = CRITICAL
     Error = ERROR
     Warn = WARN
-    Warning = WARN
+    Warning = WARNING
     Info = INFO
     Debug = DEBUG

@@ -3,7 +3,7 @@
 TBFW library
 """
 
-from .enums import Path, PluginType, API
+from .enums import PluginType, API
 from .plugin import PluginAPI
 from .configparser import Config
 
