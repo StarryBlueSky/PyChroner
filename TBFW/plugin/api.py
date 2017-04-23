@@ -21,7 +21,8 @@ def PluginAPI(pluginType, **kwargs):
                 "multipleMinute": kwargs.get("multipleMinute", None),
                 "account": kwargs.get("account", None),
                 "ratio": kwargs.get("ratio", 1),
-                "permissions": kwargs.get("permissions", [])  # {"plugin": "getPingByStatusID", "action": "deny", "users": ["TwitterJP"], "domain": ["following"]}
+                "permissions": kwargs.get("permissions", [])
+                # {"plugin": "getPingByStatusID", "action": "deny", "users": ["TwitterJP"], "domain": ["following"]}
             }
 
             print(pluginType.name)
