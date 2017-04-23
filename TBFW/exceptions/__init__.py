@@ -1,11 +1,20 @@
 # coding=utf-8
-import logging
+"""
+Base exception class
+"""
 
-logger = logging.getLogger(__name__)
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 class BaseError(Exception):
-    message = None
+    """
+    Represent base exception class
+    """
+
+    def __init__(self, message):
+        self.msg = message
 
     def __str__(self):
-        logger.exception(self.message)
-        return self.message
+        logger.exception(self.msg)
+        return self.msg

@@ -5,11 +5,20 @@ exception classes about plugins
 
 from . import BaseError
 
-class InValidPluginFilenameError(BaseError):
+class InvalidPluginExtensionError(BaseError):
     """
-    this exception will raise when a plugin's extension is not valid.
+    this exception will raise when a plugin's extension is not allowed.
     """
-    message = "TBFW does not support that plugin's extension. Please check plugin's extension."
+
+class NotFoundPluginError(BaseError):
+    """
+    this exception will raise when a plugin is not found.
+    """
+
+class InvalidPluginSyntaxError(BaseError):
+    """
+    this exception will raise when a plugin has invalid python syntax while loading plugins.
+    """
 
 class TooManyArgmentsForPluginError(BaseError):
     """
