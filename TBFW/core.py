@@ -1,283 +1,99 @@
 # coding=utf-8
 import gc
-import json
 import os
-import random
-import re
 import socket
-import threading
 import time
-import traceback
-import urllib.parse
 from datetime import datetime
-from logging import getLogger, captureWarnings, Formatter
+from logging import getLogger, captureWarnings, Formatter, Logger, Handler
 from logging.handlers import RotatingFileHandler
+from typing import List
 
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+from .configparser import Config
+from .enums import PluginType
+from .filesystem import FileSystemWatcher
+from .plugin.manager import PluginManager
+from .threadmanager import ThreadManager
+from .utils import willExecute
 
-from .enums import Path
-from .constant import *
-from .plugin import PluginManager
 
+class Core:
+    def __init__(self) -> None:
+        self.config = Config()
+        self.logger: Logger = self.getLogger()
 
-class _Core:
-    def __init__(self):
+        [
+            os.makedirs(x)
+            for x in self.config.directory.__dict__.values()
+            if not os.path.isdir(x) and not os.path.isfile(x)
+        ]
+
+        self.PM: PluginManager = PluginManager(self)
+        self.PM.loadPluginsFromDir()
+
+        self.TM: ThreadManager = ThreadManager(self)
+
+        self.FS: FileSystemWatcher = FileSystemWatcher(self)
+
         gc.enable()
-        socket.setdefaulttimeout(30)
+        socket.setdefaulttimeout(15)
 
-        for x in Path:
-            if not os.path.isdir(x.value) and not os.path.isfile(x.value):
-                os.makedirs(x.value)
+        self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 
-        self.PM = PluginManager()
-        self.PM.searchAllPlugins()
-        self.plugins = self.PM.plugins
-        self.attachedAccountId = self.PM.attachedAccountId
-
-        self.pluginThreads = []
-
-        self.boottime = datetime.now()
-        self.logger = self.__getLogger()
-        self.logger.info(messageSuccessInitialization.format(self.boottime))
-
-        for initializerPlugin in self.plugins[pluginInitializer]:
-            initializerPlugin.code.do()
-
-    def __getLogger(self):
-        logger = getLogger()
+    def getLogger(self) -> Logger:
+        logger: Logger = getLogger()
         captureWarnings(capture=True)
 
-        handler = RotatingFileHandler(
-                "{}/{}.log".format(Path.LogDir.value, datetime.now().strftime("%Y-%m-%d_%H-%M-%S")), maxBytes=2 ** 20,
-                backupCount=10000, encoding="utf-8")
-        formatter = Formatter("[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s", "%H:%M:%S")
+        handler: Handler = RotatingFileHandler(
+                f"{self.config.directory.logs}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
+                maxBytes=2 ** 20, backupCount=10000, encoding="utf-8"
+        )
+        formatter: Formatter = Formatter(
+                "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s",
+                "%H:%M:%S"
+        )
         handler.setFormatter(formatter)
 
-        logger.setLevel(config.log_level)
+        logger.setLevel(self.config.log_level)
         logger.addHandler(handler)
         return logger
 
-    def run(self):
-        for threadPlugin in self.plugins[pluginThread]:
-            t = threading.Thread(name=threadPlugin.attributeName, target=threadPlugin.code.do)
-            t.start()
-            self.pluginThreads.append(t)
-        threading.Thread(name="__scheduleRegularPlugins", target=self.__scheduleRegularPlugins).start()
-        threading.Thread(name="__watchThreadActivity", target=self.__watchThreadActivity).start()
+    def run(self) -> None:
+        [
+            self.TM.startThread(target=startupPlugin.module.do, name=startupPlugin.meta.name, keepalive=False)
+            for startupPlugin in self.PM.plugins[PluginType.Startup.name]
+        ]
+        [
+            self.TM.startThread(target=threadPlugin.module.do, name=threadPlugin.meta.name)
+            for threadPlugin in self.PM.plugins[PluginType.Thread.name]
+        ]
 
-        observer = Observer()
-        observer.schedule(ChangeHandler(), pluginsDir)
-        observer.start()
-
-        for accountId in self.attachedAccountId:
-            streaming = Streaming(accountId)
-            t = threading.Thread(name="Streaming_for_%s" % config.accounts[accountId].sn, target=streaming.startUserStream)
-            t.start()
+        self.TM.startThread(target=self.startSchedulePlugins)
 
         while True:
             try:
-                time.sleep(60)
+                print("> ")
+                cmd: str = input()
+                print(f"{cmd} is input.")
             except KeyboardInterrupt:
                 break
 
-    def __scheduleRegularPlugins(self):
-        logger = self.__logger
-
-        def _do(plugin):
-            try:
-                plugin.code.do()
-                logger.info(messageSuccessExecutingRegularPlugin.format(plugin.attributeName))
-            except:
-                logger.warning(messageErrorExecutingRegularPlugin.format(plugin.attributeName, traceback.format_exc()))
-
+    def startSchedulePlugins(self):
         while True:
-            now = datetime.now()
-            waitTime = 60.0 - now.second - now.microsecond / 1000000
-            willExecutePlugins = {currentRegularPlugin.attributeId: random.randint(1, currentRegularPlugin.attributeRatio) == 1 for currentRegularPlugin in self.plugins[pluginRegular]}
-            time.sleep(waitTime)
-            now = datetime.now()
-            datetime_hour, datetime_minute = now.hour, now.minute
-            for currentRegularPlugin in self.plugins[pluginRegular]:
-                if not willExecutePlugins[currentRegularPlugin.attributeId]:
-                    continue
-                if datetime_hour in currentRegularPlugin.attributeHours and datetime_minute in currentRegularPlugin.attributeMinutes:
-                    t = threading.Thread(name=currentRegularPlugin.attributeName, target=_do, args=(currentRegularPlugin, ))
-                    t.start()
+            now: datetime = datetime.now()
+            willExecutePlugins: List[str] = [
+                schedulePlugin.meta.id
+                for schedulePlugin in self.PM.plugins[PluginType.Schedule.name]
+                if willExecute(schedulePlugin.meta.ratio)
+            ]
+
+            time.sleep(60.0 - now.second - now.microsecond / 1000000)
+
+            now: datetime = datetime.now()
+            [
+                self.TM.executePluginSafely(schedulePlugin)
+                for schedulePlugin in self.PM.plugins[PluginType.Schedule.name]
+                if schedulePlugin.meta.id in willExecutePlugins
+                   and now.hour in schedulePlugin.meta.hours
+                   and now.minute in schedulePlugin.meta.minutes
+            ]
             time.sleep(1)
-
-    def __watchThreadActivity(self):
-        while True:
-            result = [thread.name for thread in threading.enumerate()]
-            with open(apiDir + "/" + pathThreadApi, "w") as f:
-                json.dump(result, f, sort_keys=True, indent=4)
-
-            for threadPlugin in self.plugins[pluginThread]:
-                if threadPlugin.attributeName not in result:
-                    t = threadPlugin.do()
-                    t.setName(threadPlugin.attributeName)
-                    t.start()
-
-            time.sleep(15)
-
-    def _newPluginFound(self, pluginPath):
-        self.PM.addPlugin(pluginPath)
-
-    def _pluginDeleted(self, pluginPath):
-        self.PM.deletePlugin(pluginPath)
-
-Core = _Core()
-
-class Streaming:
-    def __init__(self, accountId):
-        self.accountId = accountId
-
-        self.accounts = config.accounts
-        self.sn = self.accounts[accountId].sn
-
-        self.__logger = getLogger(__name__)
-
-        self.muteClient = config.muteClient
-        self.muteUser = config.muteUser
-        self.muteDomain = config.muteDomain
-        self.permissions = config.permissions
-
-    def startUserStream(self):
-        auth = TwitterOAuth(self.accountId)
-        connection = UserStream(auth, StreamListener(self.accountId))
-        while True:
-            try:
-                self.__logger.info(messageSuccessConnectingUserStream.format(self.sn))
-                connection.user_stream()
-            except:
-                self.__logger.exception(messageErrorConnectingUserStream.format(self.sn, reconnectUserStreamSeconds))
-                time.sleep(reconnectUserStreamSeconds)
-
-    def _processStream(self, rawJson):
-        stream = json.loads(rawJson)
-        try:
-            if "direct_message" in stream:
-                _stream = stream
-                stream = stream["direct_message"]
-                stream['user'] = stream["sender"]
-                stream['source'] = ""
-                stream["dm_obj"] = _stream
-                stream['text'] = "@{0} {1}".format(self.sn, stream['text'])
-
-            if "text" in stream:
-                via = re.sub("<.*?>", "", stream['source'])
-                if stream['user']['screen_name'] in self.muteUser or via in self.muteClient:
-                    return
-                if len(stream['entities']['urls']) > 0:
-                    if urllib.parse.urlparse(stream['entities']['urls'][0]['expanded_url']).hostname in self.muteDomain:
-                        return
-
-                stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
-
-                if re.match("@%s\s" % self.sn, stream["text"], re.IGNORECASE):
-                    for plugin in Core.plugins[pluginReply]:
-                        t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
-                        t.start()
-                        break
-                    if "dm_obj" in stream:
-                        for plugin in Core.plugins[pluginDM]:
-                            t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
-                            t.start()
-                            break
-                for plugin in Core.plugins[pluginTimeline]:
-                    t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
-                    t.start()
-
-            elif "event" in stream:
-                for plugin in Core.plugins[pluginEvent]:
-                    t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
-                    t.start()
-
-            else:
-                for plugin in Core.plugins["other"]:
-                    t = threading.Thread(target=self.__executePlugin, name=plugin.attributeName, args=(plugin, stream,))
-                    t.start()
-
-        except Exception:
-            self.__logger.exception(messageErrorProcessingStream.format(self.sn))
-
-    def __executePlugin(self, plugin, stream):
-        if plugin.attributeType in [pluginReply, pluginTimeline, pluginEvent, pluginOther, pluginDM]:
-            if plugin.attributeAttachedStream != self.accountId:
-                return
-
-        allow = True
-        api = TwitterAPI(self.accountId)
-        for permission in self.permissions:
-            if permission.plugin == plugin.attributeName:
-                if permission.action == "allow":
-                    allow = False
-                    if stream["user"]["screen_name"] in permission.users:
-                        allow = True
-                    if permission.domain:
-                        for domain in permission.domain:
-                            if "following" == domain:
-                                if stream["user"]["id"] in api.friends_ids(count=5000):
-                                    allow = True
-                            elif "follower" == domain:
-                                if stream["user"]["id"] in api.followers_ids(count=5000):
-                                    allow = True
-
-                elif permission.action == "deny":
-                    allow = True
-                    if stream["user"]["screen_name"] in permission.users:
-                        allow = False
-                    if permission.domain:
-                        for domain in permission.domain:
-                            if "following" == domain:
-                                if stream["user"]["id"] in api.friends_ids(count=5000):
-                                    allow = False
-                            elif "follower" == domain:
-                                if stream["user"]["id"] in api.followers_ids(count=5000):
-                                    allow = False
-
-        if not allow:
-            return
-
-        try:
-            if random.randint(1, plugin.attributeRatio) == 1:
-                plugin.code.do(stream)
-
-        except Exception as e:
-            self.__logger.exception(messageErrorExecutingPlugin.format(plugin.attributeName))
-            if plugin.attributeTarget == "REPLY" and "@" + self.sn in stream["text"]:
-                text = messageTweetErrorExecutingPlugin.format(self.sn, plugin.attributeName, e[0:20])
-                API = TwitterAPI(accountId=self.accountId)
-                API.update_status(text, in_reply_to_status_id=stream["id"])
-
-class StreamListener(tweepy.StreamListener):
-    def __init__(self, accountId):
-        self.accountId = accountId
-        self.__logger = getLogger(__name__)
-
-    def on_data(self, rawJson):
-        streaming = Streaming(self.accountId)
-        t = threading.Thread(target=streaming._processStream, name="_processStream", args=(rawJson, ))
-        t.start()
-
-    def on_error(self, status_code):
-        self.__logger.warning(messageErrorConnectingTwitter.format(status_code))
-
-class ChangeHandler(FileSystemEventHandler):
-    def on_created(self, event):
-        if not event.src_path.endswith(".py"):
-            return
-        pluginPath = event.src_path
-        Core._newPluginFound(pluginPath)
-
-    def on_modified(self, event):
-        if not event.src_path.endswith(".py"):
-            return
-        pluginPath = event.src_path
-        Core._newPluginFound(pluginPath)
-
-    def on_deleted(self, event):
-        if not event.src_path.endswith(".py"):
-            return
-        pluginPath = event.src_path
-        Core._pluginDeleted(pluginPath)

@@ -1,34 +1,34 @@
 # coding=utf-8
 import importlib.util
-import re
-from hashlib import sha1
 from logging import getLogger
 
-from typing.re import Pattern
 
+from .utils import getPluginId, pluginFilePattern
 from .meta import PluginMeta
-from .module import PluginModule
 from ..exceptions.plugin import *
 
 logger = getLogger(__name__)
-
-pluginFilePattern: Pattern = re.compile("^.+[.]py$")
-
-def getPluginId(path: str):
-    return sha1(path.encode()).hexdigest()
 
 class Plugin:
     def __init__(self, path: str) -> None:
         self.isLoaded: bool = False
 
-        self.module: module = PluginModule()
         self.meta = PluginMeta(path=path)
+        self.spec = importlib.util.spec_from_file_location(self.meta.name, self.meta.path)
 
         if not self.meta.accessible:
             raise NotFoundPluginError(f"TBFW could not find a plugin named {self.meta.name} in {self.meta.path}.")
 
+        if self.spec is None:
+            raise ImportError(f"No plugin named {self.meta.name} in {self.meta.path}")
+
         if pluginFilePattern.match(self.meta.filename) is None:
-            raise InvalidPluginExtensionError(f"TBFW does not support this plugin's extension. Please check this plugin's extension. ({self.meta.path})")
+            raise InvalidPluginExtensionError(
+                    f"TBFW does not support this plugin's extension. "
+                    f"Please check this plugin's extension. ({self.meta.path})"
+            )
+
+        self.module = importlib.util.module_from_spec(self.spec)
 
     @property
     def isLoaded(self) -> bool:
@@ -39,18 +39,12 @@ class Plugin:
         self.isLoaded = v
 
     def load(self) -> bool:
-        spec = importlib.util.spec_from_file_location(self.meta.name, self.meta.path)
-        if spec is None:
-            raise ImportError(f"No plugin named {self.meta.name} in {self.meta.path}")
-
-        plugin = importlib.util.module_from_spec(spec)
-
         try:
-            spec.loader.exec_module(plugin)
+            self.spec.loader.exec_module(self.module)
         except Exception:
             raise InvalidPluginSyntaxError(f"TBFW could not load a plugin named {self.meta.name} in {self.meta.path}")
 
-        self.module, self.isLoaded = plugin, True
+        self.isLoaded = True
         logger.info(f"[Loaded] Plugin \"{self.meta.name}\"({self.meta.path}) has been loaded successfully.")
         return self.isLoaded
 

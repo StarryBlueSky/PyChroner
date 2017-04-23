@@ -2,10 +2,13 @@
 import json
 import logging
 import os
+import traceback
 from typing import Dict, List
 
-from . import Plugin, getPluginId
+from . import Plugin
+from .utils import getPluginId
 from ..enums import PluginType, API
+from ..exceptions.plugin import InvalidPluginSyntaxError
 
 logger = logging.getLogger(__name__)
 
@@ -21,23 +24,42 @@ class PluginManager:
 
     def loadPlugin(self, path: str) -> bool:
         plugin: Plugin = Plugin(path=path)
-        plugin.load()
+        try:
+            plugin.load()
+        except InvalidPluginSyntaxError:
+            logger.warning(
+                f"Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
+                f"could not be loaded because it has invalid syntax. "
+                f"Error Detail:\n{traceback.format_exc()}."
+            )
 
         # noinspection PyTypeChecker
         for pluginType in PluginType:
             for i, loadedPlugin in enumerate(self.plugins[pluginType.name]):
                 if plugin.meta.id == loadedPlugin.meta.id:
                     self.plugins[pluginType.name][i] = plugin
+
+                    if PluginType.Thread == pluginType:
+                        pass
+                        # TODO: kill the thread
+
                     break
         else:
             self.plugins[plugin.meta.type.name].append(plugin)
 
         # noinspection PyTypeChecker
-        self.plugins = {pluginType.name: sorted(self.plugins[pluginType.name], key=lambda x: x.meta.priority, reverse=True) for pluginType in PluginType}
+        self.plugins = {
+            pluginType.name: sorted(
+                    self.plugins[pluginType.name],
+                    key=lambda x: x.meta.priority, reverse=True
+            ) for pluginType in PluginType}
 
-        with open(f"{self.core.config.directory.api}/{API.Thread.name}", "w") as f:
+        with open(f"{self.core.config.directory.api}/{API.Thread.value}", "w") as f:
             # noinspection PyTypeChecker
-            json.dump([plugin.meta.__dict__ for pluginType in PluginType for plugin in self.plugins[pluginType.name]], f, sort_keys=True, indent=4)
+            json.dump([
+                plugin.meta.__dict__
+                for pluginType in PluginType for plugin in self.plugins[pluginType.name]
+            ], f, sort_keys=True, indent=4)
         return True
 
     def unloadPlugin(self, path: str) -> bool:
@@ -48,9 +70,15 @@ class PluginManager:
             for i, plugin in enumerate(self.plugins[pluginType.name]):
                 if plugin.meta.id == pluginId:
                     del self.plugins[pluginType.name][i]
-                    logger.info(f"[Unloaded] Plugin \"{plugin.meta.name}\"({plugin.meta.path}) has been unloaded successfully.")
+                    logger.info(
+                        f"[Unloaded] Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
+                        f"has been unloaded successfully."
+                    )
                     return True
-        logger.warning(f"Plugin \"{plugin.meta.name}\"({plugin.meta.path}) could not be unloaded because it is not loaded.")
+        logger.warning(
+            f"Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
+            f"could not be unloaded because it is not loaded."
+        )
         return False
 
     def loadPluginsFromDir(self) -> bool:
