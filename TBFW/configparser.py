@@ -74,3 +74,6 @@ class Config:
             config.log_level = getattr(LogLevel, config.log_level.title())
 
         [setattr(self, x, getattr(config, x)) for x in listAttr(config)]
+
+    def reload(self):
+        self.__init__()
