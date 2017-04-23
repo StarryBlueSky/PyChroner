@@ -32,3 +32,7 @@ def isSafeLiteral(x: str) -> bool:
 
 def willExecute(ratio: int) -> bool:
     return random.randint(1, ratio) == 1
+
+def dumpVar(x: object) -> None:
+    width: int = max([len(y) for y in dir(x)])
+    [print(y.ljust(width + 10), "=", getattr(x, y)) for y in dir(x)]
