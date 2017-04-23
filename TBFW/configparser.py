@@ -53,7 +53,7 @@ class Config:
 
             for attr in ["ck", "cs", "at", "ats", "id", "sn"]:
                 if not hasattr(v, attr):
-                    raise InsufficientAttributeError("accounts[x].{}".format(attr))
+                    raise InsufficientAttributeError(f"accounts[x].{attr}")
             setattr(config.accounts, k, v)
 
         if not hasattr(config, "mute"):
