@@ -18,7 +18,7 @@ from .utils import willExecute
 
 class Core:
     def __init__(self) -> None:
-        self.config = Config()
+        self.config: Config = Config()
         self.logger: Logger = self.getLogger()
 
         [
