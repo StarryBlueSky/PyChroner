@@ -41,13 +41,13 @@
       "facebook.com"
     ]
   },
-  "permissions": [
-    {
-      "plugin": "getPingByStatusID",
-      "action": "deny",
-      "users" : ["TwitterJP"],
-      "domain": ["following"]
-    }
-  ],
+  "directory": {
+    "plugins": "plugins",
+    "logs": "logs",
+    "tmp": "tmp",
+    "cache": "cache",
+    "assets": "assets",
+    "api": "api"
+  },
   "log_level": "info"
 }
