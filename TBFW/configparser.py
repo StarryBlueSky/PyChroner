@@ -22,16 +22,21 @@ class Config:
     config.accounts.test_bot.ck
     ```
     """
+    application = {}
+    account = {}
+    mute = {}
+    directory = {}
+    log_level = None
 
     def __init__(self):
-        if not os.path.isfile(Path.Config.value):
-            raise NotFoundConfigError
+        if not os.path.isfile(configPath):
+            raise NotFoundConfigError(f"{configPath} is not found.")
 
         try:
-            with open(Path.Config.value) as f:
+            with open(configPath) as f:
                 config = convertDictToObject(json.load(f))
         except json.JSONDecodeError:
-            raise InvalidConfigSyntaxError
+            raise InvalidConfigSyntaxError(f"{configPath} has invalid syntax.")
 
         if not hasattr(config, "accounts"):
             raise InsufficientAttributeError("accounts")
@@ -44,7 +49,6 @@ class Config:
                     raise InsufficientAttributeError("application")
                 if not hasattr(app, "ck") or not hasattr(app, "cs"):
                     raise InsufficientAttributeError("accounts[x].ck or accounts[x].cs")
-
                 v.ck, v.cs = app.ck, app.cs
 
             for attr in ["ck", "cs", "at", "ats", "id", "sn"]:
@@ -57,7 +61,10 @@ class Config:
         for attr in ["via", "user_id", "user_sn", "domain"]:
             hasattr(config.mute, attr) or setattr(config.mute, attr, [])
 
-        # TODO: implement permissions
+        if not hasattr(config, "directory"):
+            config.directory = ConvertedObject()
+        for attr in ["plugins", "logs", "tmp", "cache", "assets", "api"]:
+            hasattr(config.directory, attr) or setattr(config.directory, attr, attr)
 
         if not hasattr(config, "log_level"):
             setattr(config, "log_level", LogLevel.Error)
