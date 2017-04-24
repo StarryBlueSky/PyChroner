@@ -88,7 +88,7 @@ class ThreadManager:
             [
                 self.executePluginSafely(schedulePlugin)
                 for schedulePlugin in willExecutePlugins
-                if now.hour in schedulePlugin.meta.hours
-                and now.minute in schedulePlugin.meta.minutes
+                if now.hour in schedulePlugin.meta.combinedHours
+                and now.minute in schedulePlugin.meta.combinedMinutes
             ]
             time.sleep(1)
