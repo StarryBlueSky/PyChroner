@@ -27,7 +27,6 @@ class PluginMeta:
         self.permissions: List[Dict] = []
         self.timeout: int = None
 
-        self.attachedStream: int = None
         self.combinedHours: List[int] = []
         self.combinedMinutes: List[int] = []
 
