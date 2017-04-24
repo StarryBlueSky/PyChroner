@@ -11,6 +11,7 @@ from typing import List
 from .configparser import Config
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
+from .plugin import Plugin
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
 from .utils import willExecute
@@ -59,12 +60,12 @@ class Core:
 
     def run(self) -> None:
         [
-            self.TM.startThread(target=startupPlugin.module.do, name=startupPlugin.meta.name, keepalive=False)
-            for startupPlugin in self.PM.plugins[PluginType.Startup.name]
-        ]
-        [
-            self.TM.startThread(target=threadPlugin.module.do, name=threadPlugin.meta.name)
-            for threadPlugin in self.PM.plugins[PluginType.Thread.name]
+            self.TM.startThread(
+                target=plugin.module.do,
+                name=plugin.meta.name,
+                keepalive=plugin.meta.type == PluginType.Thread
+            )
+            for plugin in self.PM.plugins[PluginType.Startup.name] + self.PM.plugins[PluginType.Thread.name]
         ]
 
         self.TM.startThread(target=self.startSchedulePlugins)
@@ -79,21 +80,20 @@ class Core:
 
     def startSchedulePlugins(self):
         while True:
-            now: datetime = datetime.now()
-            willExecutePlugins: List[str] = [
-                schedulePlugin.meta.id
+            willExecutePlugins: List[Plugin] = [
+                schedulePlugin
                 for schedulePlugin in self.PM.plugins[PluginType.Schedule.name]
                 if willExecute(schedulePlugin.meta.ratio)
             ]
 
-            time.sleep(60.0 - now.second - now.microsecond / 1000000)
+            now: datetime = datetime.now()
+            time.sleep(60 - now.second - now.microsecond / 1000000)
 
             now: datetime = datetime.now()
             [
                 self.TM.executePluginSafely(schedulePlugin)
-                for schedulePlugin in self.PM.plugins[PluginType.Schedule.name]
-                if schedulePlugin.meta.id in willExecutePlugins
-                   and now.hour in schedulePlugin.meta.hours
-                   and now.minute in schedulePlugin.meta.minutes
+                for schedulePlugin in willExecutePlugins
+                if now.hour in schedulePlugin.meta.hours
+                and now.minute in schedulePlugin.meta.minutes
             ]
             time.sleep(1)
