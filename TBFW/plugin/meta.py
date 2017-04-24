@@ -8,6 +8,8 @@ from ..enums import PluginType
 
 class PluginMeta:
     def __init__(self, path: str):
+        self.enable = False
+
         self.path: str = path
         self.dir, _, self.filename = self.path.rpartition("/")
         self.name, _, self.extension = self.filename.rpartition(".")

@@ -48,5 +48,6 @@ class Plugin:
             self.meta.combinedMinutes = sorted(list(set(minutes))) or list(range(60))
 
         self.isLoaded = True
+        self.meta.enable = True
         logger.info(f"[Loaded] Plugin \"{self.meta.name}\"({self.meta.path}) has been loaded successfully.")
         return self.isLoaded
