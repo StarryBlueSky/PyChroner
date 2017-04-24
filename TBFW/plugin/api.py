@@ -1,4 +1,5 @@
 # coding=utf-8
+import platform
 from typing import List, Dict, Callable
 import timeout_decorator
 
@@ -39,7 +40,7 @@ def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
                     f"because this function takes too many argments."
                 )
 
-        if timeout and pluginType is not PluginType.Thread:
+        if timeout and pluginType is not PluginType.Thread and platform.system() != "Windows":
             register = timeout_decorator.timeout(timeout, timeout_exception=TimedOut)(register)
 
         setattr(register, "__meta__", {
