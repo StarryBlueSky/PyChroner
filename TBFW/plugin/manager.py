@@ -54,7 +54,7 @@ class PluginManager:
                     key=lambda x: x.meta.priority, reverse=True
             ) for pluginType in PluginType}
 
-        with open(f"{self.core.config.directory.api}/{API.Thread.value}", "w") as f:
+        with open(f"{self.core.config.directory.api}/{API.Plugins.value}", "w") as f:
             # noinspection PyTypeChecker
             json.dump([
                 plugin.meta.__dict__
