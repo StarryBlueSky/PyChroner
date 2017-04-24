@@ -2,7 +2,7 @@
 import re
 import logging
 from datetime import datetime
-from logging import captureWarnings, Formatter, Logger, Handler
+from logging import captureWarnings, Formatter, Logger, Handler, StreamHandler
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Match
 
@@ -45,12 +45,15 @@ def getLogger(directory: str, logLevel: int) -> Logger:
             f"{directory}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
             maxBytes=2 ** 20, backupCount=10000, encoding="utf-8"
     )
+    handler2: Handler = StreamHandler()
     formatter: Formatter = Formatter(
             "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s",
             "%H:%M:%S"
     )
     handler.setFormatter(formatter)
+    handler2.setFormatter(formatter)
 
     logger.setLevel(logLevel)
     logger.addHandler(handler)
+    logger.addHandler(handler2)
     return logger
