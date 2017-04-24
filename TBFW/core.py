@@ -9,11 +9,12 @@ from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
-from .console.commandparser import CommandParser
+from .console import Console
 
 
 class Core:
-    def __init__(self) -> None:
+    def __init__(self, prompt: bool=True) -> None:
+        self.prompt: bool = prompt
         self.config: Config = Config()
 
         [
@@ -31,7 +32,7 @@ class Core:
 
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
 
-        self.PS: CommandParser = CommandParser(self)
+        self.console = Console(self, self.prompt)
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 
@@ -46,9 +47,4 @@ class Core:
         ]
         self.TM.startThread(target=self.TM.startSchedulePlugins)
 
-        while True:
-            try:
-                cmd: str = input("> ")
-                print(f"{cmd} is input.")
-            except KeyboardInterrupt:
-                break
+        self.console.loop()
