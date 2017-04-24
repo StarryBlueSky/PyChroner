@@ -49,6 +49,4 @@ class Plugin:
 
         self.isLoaded = True
         logger.info(f"[Loaded] Plugin \"{self.meta.name}\"({self.meta.path}) has been loaded successfully.")
-        from ..utils import dumpVar
-        dumpVar(self.meta)
         return self.isLoaded
