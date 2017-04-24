@@ -75,5 +75,8 @@ class Config:
 
         [setattr(self, x, getattr(config, x)) for x in listAttr(config)]
 
+    def get(self, name: str, default: object=None):
+        return getattr(self, name, default)
+
     def reload(self):
         self.__init__()
