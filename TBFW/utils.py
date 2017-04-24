@@ -1,6 +1,9 @@
 # coding=utf-8
-import random
 import re
+import logging
+from datetime import datetime
+from logging import captureWarnings, Formatter, Logger, Handler
+from logging.handlers import RotatingFileHandler
 from typing import Dict, Match
 
 from .exceptions.config import InvalidLiteralError
@@ -30,9 +33,24 @@ def isSafeLiteral(x: str) -> bool:
     m2: Match = re.match("^[^\d]", x)
     return m is not None and m2 is not None
 
-def willExecute(ratio: int) -> bool:
-    return random.randint(1, ratio) == 1
-
 def dumpVar(x: object) -> None:
     width: int = max([len(y) for y in dir(x)])
     [print(y.ljust(width + 10), "=", getattr(x, y)) for y in dir(x)]
+
+def getLogger(directory: str, logLevel: int) -> Logger:
+    logger: Logger = logging.getLogger()
+    captureWarnings(capture=True)
+
+    handler: Handler = RotatingFileHandler(
+            f"{directory}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
+            maxBytes=2 ** 20, backupCount=10000, encoding="utf-8"
+    )
+    formatter: Formatter = Formatter(
+            "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s",
+            "%H:%M:%S"
+    )
+    handler.setFormatter(formatter)
+
+    logger.setLevel(logLevel)
+    logger.addHandler(handler)
+    return logger

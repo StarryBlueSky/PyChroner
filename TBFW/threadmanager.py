@@ -3,12 +3,14 @@ import json
 import threading
 import time
 import traceback
+from datetime import datetime
 from logging import getLogger
 from threading import Thread
 from typing import List, Tuple, Callable
 
-from .enums import API
+from .enums import PluginType, API
 from .plugin import Plugin
+from .plugin.utils import willExecute
 
 logger = getLogger(__name__)
 
@@ -70,3 +72,23 @@ class ThreadManager:
                 pass
             finally:
                 time.sleep(10)
+
+    def startSchedulePlugins(self):
+        while True:
+            willExecutePlugins: List[Plugin] = [
+                schedulePlugin
+                for schedulePlugin in self.core.PM.plugins[PluginType.Schedule.name]
+                if willExecute(schedulePlugin.meta.ratio)
+            ]
+
+            now: datetime = datetime.now()
+            time.sleep(60 - now.second - now.microsecond / 1000000)
+
+            now: datetime = datetime.now()
+            [
+                self.executePluginSafely(schedulePlugin)
+                for schedulePlugin in willExecutePlugins
+                if now.hour in schedulePlugin.meta.hours
+                and now.minute in schedulePlugin.meta.minutes
+            ]
+            time.sleep(1)

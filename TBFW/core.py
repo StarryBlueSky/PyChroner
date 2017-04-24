@@ -1,26 +1,20 @@
 # coding=utf-8
-import gc
 import os
-import socket
-import time
 from datetime import datetime
-from logging import getLogger, captureWarnings, Formatter, Logger, Handler
-from logging.handlers import RotatingFileHandler
-from typing import List
+from logging import Logger
 
+from .utils import getLogger
 from .configparser import Config
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
-from .plugin import Plugin
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
-from .utils import willExecute
 
 
 class Core:
     def __init__(self) -> None:
         self.config: Config = Config()
-        self.logger: Logger = self.getLogger()
+        self.logger: Logger = getLogger(directory=self.config.directory.logs, logLevel=self.config.log_level)
 
         [
             os.makedirs(x)
@@ -35,28 +29,7 @@ class Core:
 
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
 
-        gc.enable()
-        socket.setdefaulttimeout(15)
-
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
-
-    def getLogger(self) -> Logger:
-        logger: Logger = getLogger()
-        captureWarnings(capture=True)
-
-        handler: Handler = RotatingFileHandler(
-                f"{self.config.directory.logs}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log",
-                maxBytes=2 ** 20, backupCount=10000, encoding="utf-8"
-        )
-        formatter: Formatter = Formatter(
-                "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s",
-                "%H:%M:%S"
-        )
-        handler.setFormatter(formatter)
-
-        logger.setLevel(self.config.log_level)
-        logger.addHandler(handler)
-        return logger
 
     def run(self) -> None:
         [
@@ -67,8 +40,7 @@ class Core:
             )
             for plugin in self.PM.plugins[PluginType.Startup.name] + self.PM.plugins[PluginType.Thread.name]
         ]
-
-        self.TM.startThread(target=self.startSchedulePlugins)
+        self.TM.startThread(target=self.TM.startSchedulePlugins)
 
         while True:
             try:
@@ -77,23 +49,3 @@ class Core:
                 print(f"{cmd} is input.")
             except KeyboardInterrupt:
                 break
-
-    def startSchedulePlugins(self):
-        while True:
-            willExecutePlugins: List[Plugin] = [
-                schedulePlugin
-                for schedulePlugin in self.PM.plugins[PluginType.Schedule.name]
-                if willExecute(schedulePlugin.meta.ratio)
-            ]
-
-            now: datetime = datetime.now()
-            time.sleep(60 - now.second - now.microsecond / 1000000)
-
-            now: datetime = datetime.now()
-            [
-                self.TM.executePluginSafely(schedulePlugin)
-                for schedulePlugin in willExecutePlugins
-                if now.hour in schedulePlugin.meta.hours
-                and now.minute in schedulePlugin.meta.minutes
-            ]
-            time.sleep(1)
