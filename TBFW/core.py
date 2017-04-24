@@ -44,8 +44,7 @@ class Core:
 
         while True:
             try:
-                print("> ")
-                cmd: str = input()
+                cmd: str = input("> ")
                 print(f"{cmd} is input.")
             except KeyboardInterrupt:
                 break
