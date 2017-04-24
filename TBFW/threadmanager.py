@@ -15,7 +15,7 @@ logger = getLogger(__name__)
 class ThreadManager:
     def __init__(self, core) -> None:
         self.core = core
-        self.threads: List[Thread] = []
+        self.threads: List[Tuple[Thread, Callable[[], None]]] = []
 
         # noinspection PyTypeChecker
         self.startThread(self.watchThreads)
@@ -28,7 +28,7 @@ class ThreadManager:
         t.start()
 
         if keepalive:
-            self.threads.append(t)
+            self.threads.append((t, target))
 
         return t
 
@@ -48,7 +48,7 @@ class ThreadManager:
         self.startThread(self.wrapPlugin(plugin), name=plugin.meta.name, args=args or [])
 
     def destroyThread(self, name: str) -> bool:
-        for i, thread in enumerate(self.threads):
+        for i, thread, func in enumerate(self.threads):
             if thread.name == name:
                 del self.threads[i]
                 return True
@@ -61,10 +61,10 @@ class ThreadManager:
                 with open(f"{self.core.config.directory.api}/{API.Thread.value}", "w") as f:
                     json.dump([x.name for x in workingThreads], f, sort_keys=True, indent=4)
 
-                for i, thread in enumerate(self.threads):
+                for i, thread, func in enumerate(self.threads):
                     if not thread.is_alive() or thread not in workingThreads:
                         # noinspection PyTypeChecker
-                        self.threads[i] = self.startThread(thread.run, name=thread.name)
+                        self.threads[i] = self.startThread(func, name=thread.name)
 
             except:
                 pass
