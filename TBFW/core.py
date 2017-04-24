@@ -9,19 +9,20 @@ from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
-from .console import CommandParser
+from .console.commandparser import CommandParser
 
 
 class Core:
     def __init__(self) -> None:
         self.config: Config = Config()
-        self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
 
         [
             os.makedirs(x)
             for x in self.config.directory.__dict__.values()
             if not os.path.isdir(x) and not os.path.isfile(x)
         ]
+
+        self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
 
         self.PM: PluginManager = PluginManager(self)
         self.PM.loadPluginsFromDir()
