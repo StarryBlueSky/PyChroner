@@ -9,12 +9,13 @@ from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
+from .console import CommandParser
 
 
 class Core:
     def __init__(self) -> None:
         self.config: Config = Config()
-        self.logger: Logger = getLogger(directory=self.config.directory.logs, logLevel=self.config.log_level)
+        self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
 
         [
             os.makedirs(x)
@@ -28,6 +29,8 @@ class Core:
         self.TM: ThreadManager = ThreadManager(self)
 
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
+
+        self.PS: CommandParser = CommandParser(self)
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 

@@ -37,8 +37,8 @@ def dumpVar(x: object) -> None:
     width: int = max([len(y) for y in dir(x)])
     [print(y.ljust(width + 10), "=", getattr(x, y)) for y in dir(x)]
 
-def getLogger(directory: str, logLevel: int) -> Logger:
-    logger: Logger = logging.getLogger()
+def getLogger(name:str, directory: str, logLevel: int) -> Logger:
+    logger: Logger = logging.getLogger(name)
     captureWarnings(capture=True)
 
     handler: Handler = RotatingFileHandler(
