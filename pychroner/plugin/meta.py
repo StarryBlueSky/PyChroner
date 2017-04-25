@@ -12,6 +12,7 @@ class PluginMeta:
 
         self.path: str = path.replace(os.path.sep, "/")
         self.dir, _, self.filename = self.path.rpartition("/")
+        self.pluginDir, _, self.subDir = self.dir.partition("/")
         self.moduleName, _, self.extension = self.filename.rpartition(".")
         self.id: str = getPluginId(self.path)
         self.accessible = os.path.isfile(self.path)
@@ -39,4 +40,9 @@ class PluginMeta:
 
     @property
     def name(self):
-        return self.moduleName if self.functionName == "do" else f"{self.moduleName}_{self.functionName}"
+        name: str = self.moduleName
+        if self.subDir:
+            name = f"{self.subDir.replace('_', '')}_{name}"
+        if self.functionName != "do":
+            name += f"_{self.functionName}"
+        return name
