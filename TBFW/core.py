@@ -45,6 +45,6 @@ class Core:
             )
             for plugin in self.PM.plugins[PluginType.Startup.name] + self.PM.plugins[PluginType.Thread.name]
         ]
-        self.TM.startThread(target=self.TM.startSchedulePlugins)
+        self.TM.startThread(target=self.TM.wrapper.startSchedulePlugins)
 
         self.console.loop()
