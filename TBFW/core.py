@@ -17,7 +17,10 @@ class Core:
         self.config: Config = Config()
 
         makeDirs(self.config.directory.dirs)
-        self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
+        self.logger: Logger = getLogger(
+                name="TBFW", directory=self.config.directory.logs, logLevel=self.config.logLevel,
+                slack=self.config.slack
+        )
         self.logger.info(f"Logger started. Current time is {datetime.now()}.")
 
         self.PM: PluginManager = PluginManager(self)

@@ -11,6 +11,7 @@ from .datatype.account import Account
 from .datatype.application import Application
 from .datatype.directory import Directory
 from .datatype.mute import Mute
+from .datatype.slack import Slack
 from .enums import LogLevel
 from .exceptions.config import *
 
@@ -30,7 +31,8 @@ class Config:
     account: List[Account] = []
     mute: Mute = None
     directory: Directory = None
-    log_level = None
+    logLevel: int = None
+    slack: Slack = None
     original: Dict[str, Union[str, Dict[str, Dict[str, Union[str, int]]]]] = {}
 
     def __init__(self):
@@ -64,7 +66,8 @@ class Config:
 
         self.mute = Mute(self.original.get("mute"))
         self.directory = Directory(self.original.get("directory"))
-        self.log_level = getattr(LogLevel, self.original.get("log_level", "error").title(), LogLevel.Error)
+        self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
+        self.slack = Slack(self.original.get("slack"))
 
     def get(self, name: str, default: object=None):
         return getattr(self, name, default)

@@ -49,5 +49,13 @@
     "assets": "assets",
     "api": "api"
   },
-  "log_level": "info"
+  "logLevel": "info",
+  "slack": {
+    "webhookUrl": null,
+    "channel": "#python-log",
+    "username": "Python Logger",
+    "iconEmoji": ":desktop_computer:",
+    "iconUrl": null,
+    "logLevel": "error"
+  }
 }
