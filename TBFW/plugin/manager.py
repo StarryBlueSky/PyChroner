@@ -94,9 +94,9 @@ class PluginManager:
     def loadPluginsFromDir(self) -> bool:
         self.unloadPlugins()
 
-        for pluginFile in os.listdir(self.core.config.directory.plugins):
-            pluginPath: str = f"{self.core.config.directory.plugins}/{pluginFile}"
-            if pluginFilePattern.match(pluginPath):
-                self.loadPlugin(pluginPath)
+        with os.scandir(self.core.config.directory.plugins) as it:
+            for entry in it:
+                if pluginFilePattern.match(entry.name) and entry.is_file():
+                    self.loadPlugin(f"{self.core.config.directory.plugins}/{entry.name}")
 
         return True
