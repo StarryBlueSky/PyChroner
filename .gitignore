@@ -5,6 +5,7 @@ assets/
 logs/
 cache/
 api/
+plugins/
 tmp/
 
 config.json
