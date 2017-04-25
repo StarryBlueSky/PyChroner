@@ -1,12 +1,10 @@
 {
   "application": {
     "ExampleApp": {
-      "name": "Example Application",
       "ck": "xxx",
       "cs": "yyy"
     },
     "FunnyApp": {
-      "name": "Funny Application",
       "ck": "yyy",
       "cs": "yyy"
     }

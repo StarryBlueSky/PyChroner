@@ -6,7 +6,6 @@ from . import BaseDataType
 
 class Application(BaseDataType):
     key: str = None
-    name: str = None
     ck: str = None
     cs: str = None
     original: Dict[str, str] = {}
