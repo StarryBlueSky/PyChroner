@@ -39,7 +39,7 @@ def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
         def register(*args) -> Callable:
             if getPluginArgumentCount(pluginType) != len(args):
                 raise TooManyArgmentsForPluginError(
-                    f"TBFW could not load plugin "
+                    f"PyChroner could not load plugin "
                     f"because this function takes too many argments."
                 )
             return func(*args)

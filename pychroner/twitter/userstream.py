@@ -74,7 +74,7 @@ class UserStream:
                 self.api.streaming(self.callback)
             except Exception as e:
                 self.core.logger.warning(
-                        f"TBFW has been disconnected from UserStream. ({e}) Reconnect in {reconnectSecond}"
+                        f"PyChroner has been disconnected from UserStream. ({e}) Reconnect in {reconnectSecond}"
                 )
             finally:
                 time.sleep(reconnectSecond)

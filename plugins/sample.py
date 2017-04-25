@@ -1,5 +1,5 @@
 # coding=utf-8
-from TBFW import PluginType, PluginAPI
+from pychroner import PluginType, PluginAPI
 
 @PluginAPI(PluginType.Schedule)
 def 任意の関数名():

@@ -20,7 +20,7 @@ class Plugin:
         self.spec = importlib.util.spec_from_file_location(self.meta.name, self.meta.path)
 
         if not self.meta.accessible:
-            raise NotFoundPluginError(f"TBFW could not find a plugin named {self.meta.name} in {self.meta.path}.")
+            raise NotFoundPluginError(f"PyChroner could not find a plugin named {self.meta.name} in {self.meta.path}.")
 
         if self.spec is None:
             raise ImportError(f"No plugin named {self.meta.name} in {self.meta.path}")
@@ -32,7 +32,7 @@ class Plugin:
         try:
             self.spec.loader.exec_module(self.module)
         except Exception:
-            raise InvalidPluginSyntaxError(f"TBFW could not load a plugin named {self.meta.name} in {self.meta.path}")
+            raise InvalidPluginSyntaxError(f"PyChroner could not load a plugin named {self.meta.name} in {self.meta.path}")
 
         self.function = [x for x in [getattr(self.module, x) for x in dir(self.module)] if hasattr(x, "__meta__")][0]
         for k, v in self.function.__meta__.items():
