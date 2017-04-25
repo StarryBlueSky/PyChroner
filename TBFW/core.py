@@ -3,11 +3,12 @@ from datetime import datetime
 from logging import Logger
 
 from .configparser import Config
-from .console import Console
+from .console import ConsoleManager
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
 from .thread.manager import ThreadManager
+from .twitter.manager import UserStreamManager
 from .utils import getLogger, makeDirs
 
 
@@ -27,16 +28,16 @@ class Core:
         self.PM.loadPluginsFromDir()
 
         self.TM: ThreadManager = ThreadManager(self)
-
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
-
-        self.console = Console(self, self.prompt)
+        self.UM: UserStreamManager = UserStreamManager(self)
+        self.CM = ConsoleManager(self)
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 
     def run(self) -> None:
         self.TM.start()
         self.FS.start()
+        self.UM.start()
         [
             self.TM.startThread(
                 target=getattr(plugin.module, plugin.meta.functionName),
@@ -47,4 +48,4 @@ class Core:
         ]
         self.TM.startThread(target=self.TM.wrapper.startSchedulePlugins)
 
-        self.console.loop()
+        self.CM.loop()

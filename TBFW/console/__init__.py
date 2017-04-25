@@ -5,10 +5,10 @@ from typing import List
 from .command import Command
 
 
-class Console:
-    def __init__(self, core, prompt: bool=True) -> None:
+class ConsoleManager:
+    def __init__(self, core) -> None:
         self.core = core
-        self.prompt = prompt
+        self.prompt = self.core.prompt
         self.cmd = Command(self.core)
 
     def execute(self, text: str) -> None:
