@@ -1,31 +1,60 @@
 {
-  "accounts": [
-    {
-      "id" : 100000000,
-      "ck" : "xxx",
-      "cs" : "xxx",
-      "at" : "xxx",
-      "ats": "xxx",
-      "sn" : "TwitterBot"
+  "application": {
+    "ExampleApp": {
+      "ck": "xxx",
+      "cs": "yyy"
     },
-    {
-      "id" : 200000000,
-      "ck" : "yyy",
-      "cs" : "yyy",
-      "at" : "yyy",
+    "FunnyApp": {
+      "ck": "yyy",
+      "cs": "yyy"
+    }
+  },
+  "accounts": {
+    "ExampleBot": {
+      "application": "ExampleApp",
+      "at": "xxx",
+      "ats": "xxx",
+      "id": 100000000,
+      "sn": "TwitterBot"
+    },
+    "FunnyBot": {
+      "application": "FunnyApp",
+      "at": "yyy",
       "ats": "yyy",
-      "sn" : "TwitterBot2"
+      "id": 200000000,
+      "sn": "TwitterBot2"
     }
-  ],
-  "muteClient" : ["twittbot.net"],
-  "muteUser"   : ["twitter"],
-  "muteDomain" : ["facebook.com"],
-  "permissions": [
-    {
-      "plugin": "getPingByStatusID",
-      "action": "deny",
-      "users" : ["TwitterJP"],
-      "domain": ["following"]
-    }
-  ]
+  },
+  "mute": {
+    "via": [
+      "twittbot.net"
+    ],
+    "user_id": [
+      300000000, 400000000
+    ],
+    "user_sn": [
+      "twitter"
+    ],
+    "domain": [
+      "facebook.com"
+    ]
+  },
+  "directory": {
+    "plugins": "plugins",
+    "logs": "logs",
+    "tmp": "tmp",
+    "cache": "cache",
+    "assets": "assets",
+    "api": "api"
+  },
+  "logLevel": "info",
+  "slack": {
+    "enabled": false,
+    "webhookUrl": null,
+    "channel": "#python-log",
+    "username": "Python Logger",
+    "iconEmoji": ":desktop_computer:",
+    "iconUrl": null,
+    "logLevel": "error"
+  }
 }
