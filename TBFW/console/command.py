@@ -6,21 +6,38 @@ class Command:
     def __init__(self, core):
         self.core = core
 
-    def stop(self):
+    @staticmethod
+    def default():
+        print(f"Unknown command. Type \"help\" for help.")
+
+    @staticmethod
+    def stop():
         exit(0)
 
-    def exit(self):
+    @staticmethod
+    def exit():
         exit(0)
 
-    def plugin(self):
+    @staticmethod
+    def plugin():
         print("sub commands: list, info <plugin name>, execute <plugin name>")
 
-    def plugin_info(self, args):
-        for pluginType, plugins in self.core.PM.plugins.items():
-            for plugin in plugins:
-                if plugin.meta.name == args[0]:
-                    [print(f"{k.rjust(20)} = {repr(v)}") for k, v in plugin.meta.__dict__.items()]
-                    return
+    def plugin_info(self, *args):
+        if len(args) < 1:
+            print("Type \"plugin info <plugin name>\" to get info.")
+            return
+        for arg in args:
+            found: bool = False
+            for pluginType, plugins in self.core.PM.plugins.items():
+                for plugin in plugins:
+                    if plugin.meta.name == arg:
+                        found = True
+                        [print(f"{k.rjust(20)} = {repr(v)}") for k, v in plugin.meta.__dict__.items()]
+                        break
+                if found:
+                    break
+            else:
+                print(f"No such a plugin named \"{arg}\".")
 
     def plugin_list(self):
         for pluginType, plugins in self.core.PM.plugins.items():
@@ -29,20 +46,37 @@ class Command:
                 print(f"[{'Enabled' if plugin.meta.enable else 'Disabled'}] {plugin.meta.name}")
             print("\n")
 
-    def plugin_execute(self, args):
-        for pluginType, plugins in self.core.PM.plugins.items():
-            for plugin in plugins:
-                if plugin.meta.name == args[0] and getPluginArgumentCount(plugin.meta.type) == 0:
-                    plugin.module.do()
+    def plugin_execute(self, *args):
+        if len(args) < 1:
+            print("Type \"plugin info <plugin name>\" to get info.")
+            return
+        for arg in args:
+            found: bool = False
+            for pluginType, plugins in self.core.PM.plugins.items():
+                for plugin in plugins:
+                    if plugin.meta.name == arg:
+                        found = True
+                        if getPluginArgumentCount(plugin.meta.type) == 0:
+                            plugin.module.do()
+                        else:
+                            print(f"Plugin \"{arg}\" needs an argument. So in this time, could not execute.")
+                        break
+                if found:
+                    break
+            else:
+                print(f"No such a plugin named \"{arg}\".")
 
-    def thread(self):
+    @staticmethod
+    def thread():
         print("sub commands: list")
 
-    def thread_list(self):
+    @staticmethod
+    def thread_list():
         print("Active threads:\n")
         [print(x.name) for x in threading.enumerate()]
 
-    def config(self):
+    @staticmethod
+    def config():
         print("sub commands: show, reload")
 
     def config_show(self):
@@ -52,5 +86,5 @@ class Command:
         self.core.config.reload()
         print("config reloaded.")
 
-    def eval(self, args):
+    def eval(self, *args):
         print(eval(" ".join(args)))

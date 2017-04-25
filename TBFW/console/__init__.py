@@ -9,26 +9,30 @@ class Console:
         self.core = core
         self.prompt = prompt
         self.cmd = Command(self.core)
-        self.commands = [x[0] for x in inspect.getmembers(self.cmd, inspect.ismethod)]
+        self.commands = [
+            x[0] for x in inspect.getmembers(self.cmd, inspect.isfunction)
+                          + inspect.getmembers(self.cmd, inspect.ismethod)
+        ]
+        self.commands.remove("__init__")
 
     def execute(self, text: str) -> None:
-        phrases: List[str] = text.split(" ")
-        if phrases[0] not in self.commands:
-            print(f"Unknown command. Type \"help\" for help.")
+        phrases: List[str] = [x for x in text.split(" ") if x != ""]
+        if not phrases:
             return
-
-        if len(phrases) > 1 and f"{phrases[0]}_{phrases[1]}" in self.commands:
+        if phrases[0] not in self.commands:
+            method: str = "default"
+            args: List[str] = []
+        elif len(phrases) > 1 and f"{phrases[0]}_{phrases[1]}" in self.commands:
             method: str = f"{phrases[0]}_{phrases[1]}"
-            args: List[str] = phrases[2:]
+            args: List[str] = phrases[2:] if len(phrases) >= 3 else []
         else:
             method: str = phrases[0]
-            args: List[str] = phrases[1:]
+            args: List[str] = phrases[1:] if len(phrases) >= 2 else []
 
-        func = getattr(self.cmd, method)
-        if func.__code__.co_argcount == 1:
-            func()
-        else:
-            func(args)
+        try:
+            getattr(self.cmd, method)(*args)
+        except Exception as e:
+            print(f"Error occured while executing the command. {e}")
 
     def loop(self):
         while True:
