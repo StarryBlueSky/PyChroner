@@ -6,7 +6,7 @@ import traceback
 from typing import Dict, List
 
 from . import Plugin
-from .utils import getPluginId, pluginFilePattern
+from .utils import getPluginId, pluginFilePattern, serializeDataType
 from ..enums import PluginType, API
 from ..exceptions.plugin import InvalidPluginSyntaxError
 
@@ -52,6 +52,11 @@ class PluginManager:
         else:
             self.plugins[plugin.meta.type.name].append(plugin)
 
+        if plugin.meta.account:
+            t = list(self.core.UM.accounts.copy())
+            t.append(plugin.meta.account)
+            self.core.UM.accounts = set(t)
+
         # noinspection PyTypeChecker
         self.plugins = {
             pluginType.name: sorted(
@@ -64,7 +69,7 @@ class PluginManager:
             json.dump([
                 plugin.meta.__dict__
                 for pluginType in PluginType for plugin in self.plugins[pluginType.name]
-            ], f, sort_keys=True, indent=4)
+            ], f, sort_keys=True, indent=4, default=serializeDataType)
         return True
 
     def unloadPlugin(self, path: str) -> bool:
