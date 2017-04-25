@@ -4,7 +4,6 @@ exception classes about config file.
 """
 
 from . import BaseError
-from ..constant import configPath
 
 class NotFoundConfigError(BaseError):
     """
@@ -25,10 +24,10 @@ class InsufficientAttributeError(BaseError):
     """
     this exception will raise when config.json lacks an attribute.
     """
-    message = "{} lacks an attribute `{}`"
+    message = "config.json lacks an attribute `{}`"
 
     def __init__(self, attribute: str):
         self.attr = attribute
 
     def __str__(self):
-        return self.message.format(configPath, self.attr)
+        return self.message.format(self.attr)

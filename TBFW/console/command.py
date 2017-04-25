@@ -1,7 +1,9 @@
 # coding=utf-8
-import threading
 import inspect
+import threading
+
 from ..plugin.utils import getPluginArgumentCount
+
 
 class Command:
     def __init__(self, core):

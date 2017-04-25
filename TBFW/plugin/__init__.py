@@ -1,21 +1,21 @@
 # coding=utf-8
 import importlib.util
 from logging import getLogger
-
 from typing import List, Callable
 
 from .meta import PluginMeta
-from ..enums import PluginType
-from .utils import getPluginId, pluginFilePattern
 from .meta import PluginMeta
+from .utils import getPluginId, pluginFilePattern
+from ..enums import PluginType
 from ..exceptions.plugin import *
 
 logger = getLogger(__name__)
 
 class Plugin:
-    def __init__(self, path: str) -> None:
+    def __init__(self, core, path: str) -> None:
         self.isLoaded: bool = False
 
+        self.core = core
         self.meta: PluginMeta = PluginMeta(path=path)
         self.spec = importlib.util.spec_from_file_location(self.meta.name, self.meta.path)
 
@@ -37,6 +37,7 @@ class Plugin:
         self.function = [x for x in [getattr(self.module, x) for x in dir(self.module)] if hasattr(x, "__meta__")][0]
         for k, v in self.function.__meta__.items():
             setattr(self.meta, k, v)
+        self.meta.account = self.core.config.getAccount(self.meta.account)
 
         if self.meta.type == PluginType.Schedule:
             hours: List[int] = self.meta.hours

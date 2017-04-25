@@ -15,6 +15,7 @@ from .datatype.slack import Slack
 from .enums import LogLevel
 from .exceptions.config import *
 
+configPath = "config.json"
 
 class Config:
     """
@@ -69,8 +70,13 @@ class Config:
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
         self.slack = Slack(self.original.get("slack"))
 
-    def get(self, name: str, default: object=None):
+    def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
+
+    def getAccount(self, name: str) -> Account:
+        for account in self.account:
+            if account.key == name:
+                return account
 
     def reload(self):
         self.__init__()

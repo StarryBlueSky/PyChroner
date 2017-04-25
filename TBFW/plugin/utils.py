@@ -5,6 +5,7 @@ import re
 from hashlib import sha1
 
 from typing.re import Pattern
+
 from ..enums import PluginType
 
 pluginFilePattern: Pattern = re.compile("^.+[.]py$")

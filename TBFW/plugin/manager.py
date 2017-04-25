@@ -23,7 +23,7 @@ class PluginManager:
         self.plugins: Dict[str, List[Plugin]] = {x.name: [] for x in PluginType}
 
     def loadPlugin(self, path: str) -> bool:
-        plugin: Plugin = Plugin(path=path)
+        plugin: Plugin = Plugin(self.core, path=path)
         try:
             plugin.load()
         except InvalidPluginSyntaxError:

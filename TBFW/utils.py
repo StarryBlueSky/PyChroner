@@ -22,7 +22,7 @@ def dumpVar(x: object) -> None:
     width: int = max([len(y) for y in dir(x)])
     [print(y.ljust(width + 10), "=", getattr(x, y)) for y in dir(x)]
 
-def getLogger(name:str, directory: str, logLevel: int, slack=None) -> Logger:
+def getLogger(name: str, directory: str, logLevel: int, slack=None) -> Logger:
     logger: Logger = logging.getLogger(name)
 
     formatter: Formatter = Formatter(

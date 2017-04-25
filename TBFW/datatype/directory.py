@@ -1,6 +1,8 @@
 # coding=utf-8
-from . import BaseDataType
 from typing import Dict, List
+
+from . import BaseDataType
+
 
 class Directory(BaseDataType):
     plugins: str = "plugins"

@@ -1,6 +1,8 @@
 # coding=utf-8
-from . import BaseDataType
 from typing import List, Dict, Union
+
+from . import BaseDataType
+
 
 class Mute(BaseDataType):
     via: List[str] = []

@@ -7,7 +7,7 @@ from .console import Console
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
-from .threadmanager import ThreadManager
+from .thread.manager import ThreadManager
 from .utils import getLogger, makeDirs
 
 

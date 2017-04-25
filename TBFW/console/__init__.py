@@ -1,8 +1,9 @@
 # coding=utf-8
 import time
-import inspect
 from typing import List
+
 from .command import Command
+
 
 class Console:
     def __init__(self, core, prompt: bool=True) -> None:

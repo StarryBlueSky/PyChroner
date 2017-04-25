@@ -1,6 +1,7 @@
 # coding=utf-8
-from watchdog.observers import Observer
 from watchdog.events import FileSystemEvent, RegexMatchingEventHandler
+from watchdog.observers import Observer
+
 
 class FileSystemWatcher:
     def __init__(self, core) -> None:
