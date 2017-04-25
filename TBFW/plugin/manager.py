@@ -34,10 +34,12 @@ class PluginManager:
             )
             return False
 
+        found: bool = False
         # noinspection PyTypeChecker
         for pluginType in PluginType:
             for i, loadedPlugin in enumerate(self.plugins[pluginType.name]):
                 if plugin.meta.id == loadedPlugin.meta.id:
+                    found = True
                     self.plugins[pluginType.name][i] = plugin
 
                     if PluginType.Thread == pluginType:
@@ -45,6 +47,8 @@ class PluginManager:
                         # TODO: kill the thread
 
                     break
+            if found:
+                break
         else:
             self.plugins[plugin.meta.type.name].append(plugin)
 
@@ -69,12 +73,11 @@ class PluginManager:
         # noinspection PyTypeChecker
         for pluginType in PluginType:
             for i, plugin in enumerate(self.plugins[pluginType.name]):
-                print(plugin.meta.id, pluginId)
                 if plugin.meta.id == pluginId:
                     del self.plugins[pluginType.name][i]
                     for j, x in enumerate(self.core.TM.willExecutePlugins):
                         if x.meta.id == pluginId:
-                            del self.plugins[pluginType.name][j]
+                            del self.core.TM.willExecutePlugins[j]
                     # TODO: kill the thread
 
                     logger.info(

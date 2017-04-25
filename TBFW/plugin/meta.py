@@ -10,8 +10,8 @@ class PluginMeta:
     def __init__(self, path: str):
         self.enable = False
 
-        self.path: str = path
-        self.dir, _, self.filename = self.path.replace("\\", "/").rpartition("/")
+        self.path: str = path.replace(os.path.sep, "/")
+        self.dir, _, self.filename = self.path.rpartition("/")
         self.name, _, self.extension = self.filename.rpartition(".")
         self.id: str = getPluginId(self.name)
         self.accessible = os.path.isfile(self.path)
