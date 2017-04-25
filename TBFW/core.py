@@ -1,15 +1,14 @@
 # coding=utf-8
-import os
 from datetime import datetime
 from logging import Logger
 
-from .utils import getLogger
 from .configparser import Config
+from .console import Console
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.manager import PluginManager
 from .threadmanager import ThreadManager
-from .console import Console
+from .utils import getLogger, makeDirs
 
 
 class Core:
@@ -17,11 +16,7 @@ class Core:
         self.prompt: bool = prompt
         self.config: Config = Config()
 
-        [
-            os.makedirs(x)
-            for x in self.config.directory.__dict__.values()
-            if not os.path.isdir(x) and not os.path.isfile(x)
-        ]
+        makeDirs(self.config.directory.__dict__.values())
 
         self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
 

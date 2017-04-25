@@ -1,10 +1,11 @@
 # coding=utf-8
 import re
+import os
 import logging
 from datetime import datetime
 from logging import captureWarnings, Formatter, Logger, Handler, StreamHandler
 from logging.handlers import RotatingFileHandler
-from typing import Dict, Match
+from typing import Dict, Match, List
 
 from .exceptions.config import InvalidLiteralError
 
@@ -57,3 +58,8 @@ def getLogger(name:str, directory: str, logLevel: int) -> Logger:
     logger.addHandler(handler)
     logger.addHandler(handler2)
     return logger
+
+def makeDirs(names: List[str]) -> None:
+    [
+        os.makedirs(x) for x in names if not os.path.isdir(x)
+    ]
