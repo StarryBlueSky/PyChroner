@@ -1,13 +1,11 @@
 # coding=utf-8
-import re
-import os
 import logging
+import os
+import re
 from datetime import datetime
 from logging import captureWarnings, Formatter, Logger, Handler, StreamHandler
 from logging.handlers import RotatingFileHandler
-from typing import Dict, Match, List
-
-from .exceptions.config import InvalidLiteralError
+from typing import Match, List
 
 
 def listAttr(x: object) -> list:
