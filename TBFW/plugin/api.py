@@ -1,5 +1,6 @@
 # coding=utf-8
 import platform
+from logging import getLogger
 from typing import List, Dict, Callable
 
 import timeout_decorator
@@ -8,6 +9,7 @@ from .utils import getPluginArgumentCount
 from ..enums import PluginType
 from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgumentsError, TimedOut
 
+logger = getLogger(__name__)
 
 def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
               hours: int=None, minutes: int=None, multipleHour: int=None, multipleMinute: int=None,
@@ -41,8 +43,11 @@ def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
                     f"because this function takes too many argments."
                 )
 
-        if timeout and pluginType is not PluginType.Thread and platform.system() != "Windows":
-            register = timeout_decorator.timeout(timeout, timeout_exception=TimedOut)(register)
+        if timeout and pluginType is not PluginType.Thread:
+            if platform.system() != "Windows":
+                register = timeout_decorator.timeout(timeout, timeout_exception=TimedOut)(register)
+            else:
+                logger.warning("Timeout feature is disabled in Windows.")
 
         setattr(register, "__meta__", {
             "type": pluginType,
