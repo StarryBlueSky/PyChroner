@@ -67,8 +67,8 @@ class PluginManager:
             ], f, sort_keys=True, indent=4)
         return True
 
-    def unloadPlugin(self, name: str) -> bool:
-        pluginId: str = getPluginId(name)
+    def unloadPlugin(self, path: str) -> bool:
+        pluginId: str = getPluginId(path)
 
         # noinspection PyTypeChecker
         for pluginType in PluginType:

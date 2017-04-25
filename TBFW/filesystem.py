@@ -2,8 +2,6 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEvent, RegexMatchingEventHandler
 
-from .plugin.utils import getPluginName
-
 class FileSystemWatcher:
     def __init__(self, core) -> None:
         self.core = core
@@ -24,4 +22,4 @@ class ChangeHandler(RegexMatchingEventHandler):
             self.core.PM.loadPlugin(path=event.src_path)
 
         elif event.event_type == "deleted":
-            self.core.PM.unloadPlugin(name=getPluginName(event.src_path))
+            self.core.PM.unloadPlugin(path=event.src_path)

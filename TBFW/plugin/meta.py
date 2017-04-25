@@ -12,8 +12,8 @@ class PluginMeta:
 
         self.path: str = path.replace(os.path.sep, "/")
         self.dir, _, self.filename = self.path.rpartition("/")
-        self.name, _, self.extension = self.filename.rpartition(".")
-        self.id: str = getPluginId(self.name)
+        self.moduleName, _, self.extension = self.filename.rpartition(".")
+        self.id: str = getPluginId(self.path)
         self.accessible = os.path.isfile(self.path)
         self.size: int = os.path.getsize(self.path) if self.accessible else None
 
@@ -35,3 +35,7 @@ class PluginMeta:
         self.variablesCount: int = None
         self.variablesName: List[str] = []
         self.variables: List = []
+
+    @property
+    def name(self):
+        return self.moduleName if self.functionName == "do" else f"{self.moduleName}_{self.functionName}"

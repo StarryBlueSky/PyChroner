@@ -57,7 +57,7 @@ class Command:
                     if plugin.meta.name == arg:
                         found = True
                         if getPluginArgumentCount(plugin.meta.type) == 0:
-                            plugin.module.do()
+                            getattr(plugin.module, plugin.meta.functionName)()
                         else:
                             print(f"Plugin \"{arg}\" needs an argument. So in this time, could not execute.")
                         break

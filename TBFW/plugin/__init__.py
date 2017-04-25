@@ -2,8 +2,9 @@
 import importlib.util
 from logging import getLogger
 
-from typing import List
+from typing import List, Callable
 
+from .meta import PluginMeta
 from ..enums import PluginType
 from .utils import getPluginId, pluginFilePattern
 from .meta import PluginMeta
@@ -15,7 +16,7 @@ class Plugin:
     def __init__(self, path: str) -> None:
         self.isLoaded: bool = False
 
-        self.meta = PluginMeta(path=path)
+        self.meta: PluginMeta = PluginMeta(path=path)
         self.spec = importlib.util.spec_from_file_location(self.meta.name, self.meta.path)
 
         if not self.meta.accessible:
@@ -25,6 +26,7 @@ class Plugin:
             raise ImportError(f"No plugin named {self.meta.name} in {self.meta.path}")
 
         self.module = importlib.util.module_from_spec(self.spec)
+        self.function: Callable = None
 
     def load(self) -> bool:
         try:
@@ -32,7 +34,8 @@ class Plugin:
         except Exception:
             raise InvalidPluginSyntaxError(f"TBFW could not load a plugin named {self.meta.name} in {self.meta.path}")
 
-        for k, v in self.module.do.__meta__.items():
+        self.function = [x for x in [getattr(self.module, x) for x in dir(self.module)] if hasattr(x, "__meta__")][0]
+        for k, v in self.function.__meta__.items():
             setattr(self.meta, k, v)
 
         if self.meta.type == PluginType.Schedule:

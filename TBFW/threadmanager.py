@@ -39,7 +39,7 @@ class ThreadManager:
     @staticmethod
     def wrapPlugin(plugin: Plugin) -> None:
         try:
-            plugin.module.do()
+            getattr(plugin.module, plugin.meta.functionName)()
             logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
         except Exception:
             logger.warning(

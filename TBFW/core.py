@@ -39,7 +39,7 @@ class Core:
         self.FS.start()
         [
             self.TM.startThread(
-                target=plugin.module.do,
+                target=getattr(plugin.module, plugin.meta.functionName),
                 name=plugin.meta.name,
                 keepalive=plugin.meta.type == PluginType.Thread
             )
