@@ -51,6 +51,7 @@
   },
   "logLevel": "info",
   "slack": {
+    "enabled": false,
     "webhookUrl": null,
     "channel": "#python-log",
     "username": "Python Logger",

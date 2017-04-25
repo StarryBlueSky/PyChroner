@@ -43,7 +43,7 @@ def getLogger(name:str, directory: str, logLevel: int, slack=None) -> Logger:
 
     logger.addHandler(handler)
     logger.addHandler(handler2)
-    if slack.webhookUrl:
+    if slack.enabled:
         handler3: Handler = importModule("SlackHandler").SlackHandler(
                 slack.channel, slack.webhookUrl,
                 username=slack.username, icon_emoji=slack.iconEmoji, icon_url=slack.iconUrl

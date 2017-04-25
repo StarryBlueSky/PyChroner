@@ -6,6 +6,7 @@ from ..enums import LogLevel
 
 
 class Slack(BaseDataType):
+    enabled: bool = False
     webhookUrl: str = None
     channel: str = None
     username: str = None
