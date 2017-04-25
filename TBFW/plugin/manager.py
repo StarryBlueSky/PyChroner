@@ -28,10 +28,11 @@ class PluginManager:
             plugin.load()
         except InvalidPluginSyntaxError:
             logger.warning(
-                f"Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
+                f"Plugin {path} "
                 f"could not be loaded because it has invalid syntax. "
                 f"Error Detail:\n{traceback.format_exc()}."
             )
+            return False
 
         # noinspection PyTypeChecker
         for pluginType in PluginType:
