@@ -21,7 +21,7 @@ class Core:
 
         makeDirs(self.config.directory.dirs)
         self.logger: Logger = getLogger(
-                name="PyChroner", directory=self.config.directory.logs, logLevel=self.config.logLevel,
+                name="pychroner", directory=self.config.directory.logs, logLevel=self.config.logLevel,
                 slack=self.config.slack
         )
         self.logger.info(f"Logger started. Current time is {datetime.now()}.")
