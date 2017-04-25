@@ -16,7 +16,7 @@ class Core:
         self.prompt: bool = prompt
         self.config: Config = Config()
 
-        makeDirs(self.config.directory.__dict__.values())
+        makeDirs(self.config.directory.dirs)
 
         self.logger: Logger = getLogger("TBFW", directory=self.config.directory.logs, logLevel=self.config.log_level)
 

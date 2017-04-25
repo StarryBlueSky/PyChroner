@@ -5,10 +5,14 @@ parse config.json
 
 import json
 import os
+from typing import List, Dict, Union
 
+from .datatype.account import Account
+from .datatype.application import Application
+from .datatype.directory import Directory
+from .datatype.mute import Mute
 from .enums import LogLevel
 from .exceptions.config import *
-from .utils import listAttr, convertDictToObject, ConvertedObject
 
 
 class Config:
@@ -22,11 +26,12 @@ class Config:
     config.accounts.test_bot.ck
     ```
     """
-    application = {}
-    account = {}
-    mute = {}
-    directory = {}
+    application: List[Application] = []
+    account: List[Account] = []
+    mute: Mute = None
+    directory: Directory = None
     log_level = None
+    original: Dict[str, Union[str, Dict[str, Dict[str, Union[str, int]]]]] = {}
 
     def __init__(self):
         if not os.path.isfile(configPath):
@@ -34,46 +39,32 @@ class Config:
 
         try:
             with open(configPath) as f:
-                config = convertDictToObject(json.load(f))
+                self.original = json.load(f)
         except json.JSONDecodeError:
             raise InvalidConfigSyntaxError(f"{configPath} has invalid syntax.")
 
-        if not hasattr(config, "accounts"):
+        if "accounts" not in self.original:
             raise InsufficientAttributeError("accounts")
 
-        for k in listAttr(config.accounts):
-            v = getattr(config.accounts, k)
-            if hasattr(v, "application") and hasattr(config, "application"):
-                app = getattr(config.application, v.application)
-                if not app:
-                    raise InsufficientAttributeError("application")
-                if not hasattr(app, "ck") or not hasattr(app, "cs"):
-                    raise InsufficientAttributeError("accounts[x].ck or accounts[x].cs")
-                v.ck, v.cs = app.ck, app.cs
+        for k, v in self.original["application"].items():
+            self.application.append(Application(k, v))
 
-            for attr in ["ck", "cs", "at", "ats", "id", "sn"]:
-                if not hasattr(v, attr):
-                    raise InsufficientAttributeError(f"accounts[x].{attr}")
-            setattr(config.accounts, k, v)
+        for k, v in self.original["accounts"].items():
+            account: Account = Account(k, v)
+            if account.application:
+                for application in self.application:
+                    if application.key == account.application:
+                        account.apply(application)
+                        break
 
-        if not hasattr(config, "mute"):
-            config.mute = ConvertedObject()
-        for attr in ["via", "user_id", "user_sn", "domain"]:
-            hasattr(config.mute, attr) or setattr(config.mute, attr, [])
+            if not account.ck or not account.cs or not account.at or not account.ats \
+                    or not account.id or not account.sn:
+                raise InsufficientAttributeError("accounts[x].ck, cs, at, ats, id or sn")
+            self.account.append(account)
 
-        if not hasattr(config, "directory"):
-            config.directory = ConvertedObject()
-        for attr in ["plugins", "logs", "tmp", "cache", "assets", "api"]:
-            hasattr(config.directory, attr) or setattr(config.directory, attr, attr)
-
-        if not hasattr(config, "log_level"):
-            setattr(config, "log_level", LogLevel.Error)
-        elif not hasattr(LogLevel, config.log_level.title()):
-            config.log_level = LogLevel.Error
-        else:
-            config.log_level = getattr(LogLevel, config.log_level.title())
-
-        [setattr(self, x, getattr(config, x)) for x in listAttr(config)]
+        self.mute = Mute(self.original.get("mute"))
+        self.directory = Directory(self.original.get("directory"))
+        self.log_level = getattr(LogLevel, self.original.get("log_level", "error").title(), LogLevel.Error)
 
     def get(self, name: str, default: object=None):
         return getattr(self, name, default)
