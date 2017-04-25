@@ -19,6 +19,7 @@ class ThreadManager:
         self.core = core
         self.threads: List[Tuple[Thread, Callable[[], None]]] = []
 
+    def start(self):
         # noinspection PyTypeChecker
         self.startThread(self.watchThreads)
 
