@@ -63,14 +63,20 @@ class PluginManager:
             ], f, sort_keys=True, indent=4)
         return True
 
-    def unloadPlugin(self, path: str) -> bool:
-        pluginId: str = getPluginId(path=path)
+    def unloadPlugin(self, name: str) -> bool:
+        pluginId: str = getPluginId(name)
 
         # noinspection PyTypeChecker
         for pluginType in PluginType:
             for i, plugin in enumerate(self.plugins[pluginType.name]):
+                print(plugin.meta.id, pluginId)
                 if plugin.meta.id == pluginId:
                     del self.plugins[pluginType.name][i]
+                    for j, x in enumerate(self.core.TM.willExecutePlugins):
+                        if x.meta.id == pluginId:
+                            del self.plugins[pluginType.name][j]
+                    # TODO: kill the thread
+
                     logger.info(
                         f"[Unloaded] Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
                         f"has been unloaded successfully."

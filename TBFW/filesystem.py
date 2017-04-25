@@ -2,6 +2,8 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 
+from .plugin.utils import getPluginName
+
 class FileSystemWatcher:
     def __init__(self, core) -> None:
         self.core = core
@@ -27,10 +29,10 @@ class ChangeHandler(FileSystemEventHandler):
         if not event.src_path.endswith(".py"):
             return
 
-        self.core.PM.loadPlugin(path=event.src_path)
+        self.core.PM.loadPlugin(name=getPluginName(event.src_path))
 
     def on_deleted(self, event: FileSystemEvent) -> None:
         if not event.src_path.endswith(".py"):
             return
 
-        self.core.PM.unloadPlugin(path=event.src_path)
+        self.core.PM.unloadPlugin(name=getPluginName(event.src_path))

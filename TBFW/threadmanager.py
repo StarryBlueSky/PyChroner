@@ -18,6 +18,7 @@ class ThreadManager:
     def __init__(self, core) -> None:
         self.core = core
         self.threads: List[Tuple[Thread, Callable[[], None]]] = []
+        self.willExecutePlugins: List[Plugin] = []
 
     def start(self):
         # noinspection PyTypeChecker
@@ -76,7 +77,7 @@ class ThreadManager:
 
     def startSchedulePlugins(self):
         while True:
-            willExecutePlugins: List[Plugin] = [
+            self.willExecutePlugins = [
                 schedulePlugin
                 for schedulePlugin in self.core.PM.plugins[PluginType.Schedule.name]
                 if willExecute(schedulePlugin.meta.ratio)
@@ -88,7 +89,7 @@ class ThreadManager:
             now: datetime = datetime.now()
             [
                 self.executePluginSafely(schedulePlugin)
-                for schedulePlugin in willExecutePlugins
+                for schedulePlugin in self.willExecutePlugins
                 if now.hour in schedulePlugin.meta.combinedHours
                 and now.minute in schedulePlugin.meta.combinedMinutes
             ]
