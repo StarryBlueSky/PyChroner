@@ -7,7 +7,7 @@ class FileSystemWatcher:
         self.core = core
 
         self.observer: Observer = Observer()
-        self.observer.schedule(ChangeHandler(self), self.core.config.directory.plugins)
+        self.observer.schedule(ChangeHandler(self.core), self.core.config.directory.plugins)
 
     def start(self) -> None:
         self.observer.start()
