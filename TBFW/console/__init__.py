@@ -9,20 +9,15 @@ class Console:
         self.core = core
         self.prompt = prompt
         self.cmd = Command(self.core)
-        self.commands = [
-            x[0] for x in inspect.getmembers(self.cmd, inspect.isfunction)
-                          + inspect.getmembers(self.cmd, inspect.ismethod)
-        ]
-        self.commands.remove("__init__")
 
     def execute(self, text: str) -> None:
         phrases: List[str] = [x for x in text.split(" ") if x != ""]
         if not phrases:
             return
-        if phrases[0] not in self.commands:
+        if phrases[0] not in self.cmd.commands:
             method: str = "default"
             args: List[str] = []
-        elif len(phrases) > 1 and f"{phrases[0]}_{phrases[1]}" in self.commands:
+        elif len(phrases) > 1 and f"{phrases[0]}_{phrases[1]}" in self.cmd.commands:
             method: str = f"{phrases[0]}_{phrases[1]}"
             args: List[str] = phrases[2:] if len(phrases) >= 3 else []
         else:

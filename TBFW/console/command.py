@@ -1,14 +1,23 @@
 # coding=utf-8
 import threading
+import inspect
 from ..plugin.utils import getPluginArgumentCount
 
 class Command:
     def __init__(self, core):
         self.core = core
+        self.commands = [x[0] for x in inspect.getmembers(self, inspect.isfunction)
+                     + inspect.getmembers(self, inspect.ismethod)]
+        self.commands.remove("__init__")
+        self.commands.remove("default")
 
     @staticmethod
     def default():
         print(f"Unknown command. Type \"help\" for help.")
+
+    def help(self):
+        print("Available commands:")
+        print(", ".join(self.commands).replace("_", " "))
 
     @staticmethod
     def stop():
@@ -65,6 +74,10 @@ class Command:
                     break
             else:
                 print(f"No such a plugin named \"{arg}\".")
+
+    def plugin_reloadall(self):
+        self.core.PM.loadPluginsFromDir()
+        print("Reloaded all plugins.")
 
     @staticmethod
     def thread():
