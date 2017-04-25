@@ -16,9 +16,10 @@ class ThreadWrapper:
         self.core = core
 
     @staticmethod
-    def wrap(plugin: Plugin) -> None:
+    def wrap(plugin: Plugin, *args) -> None:
         try:
-            getattr(plugin.module, plugin.meta.functionName)()
+            print(args)
+            getattr(plugin.module, plugin.meta.functionName)(*args)
             logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
         except Exception:
             logger.warning(
@@ -28,7 +29,11 @@ class ThreadWrapper:
 
     def executePluginSafely(self, plugin: Plugin, args: List=None) -> None:
         # noinspection PyTypeChecker
-        self.core.TM.startThread(self.wrap(plugin), name=plugin.meta.name, args=args or [])
+        if args:
+            args = [plugin] + args
+        else:
+            args = [plugin]
+        self.core.TM.startThread(self.wrap, name=plugin.meta.name, args=args)
 
     def startSchedulePlugins(self):
         while True:

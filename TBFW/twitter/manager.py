@@ -1,7 +1,11 @@
 # coding=utf-8
+from logging import getLogger
 from typing import List
-from ..datatype.account import Account
+
 from .userstream import UserStream
+from ..datatype.account import Account
+
+logger = getLogger(__name__)
 
 class UserStreamManager:
     def __init__(self, core):
@@ -15,3 +19,4 @@ class UserStreamManager:
             self.streams.append(us)
 
             self.core.TM.startThread(us.start, name=f"StreamingTask_for_{account.key}")
+            logger.info(f"@{account.sn} UserStream connection has established.")
