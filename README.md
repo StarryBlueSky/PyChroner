@@ -1,6 +1,6 @@
 English Readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
 
-# TwitterBotFramework (TBFW)
+# PyChroner
 基本理念: **プログラムの知識の少ない人でも簡単にTwitter Botを運用できるようにする。**
 
 ## 特徴
