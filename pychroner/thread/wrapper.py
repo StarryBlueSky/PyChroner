@@ -19,7 +19,8 @@ class ThreadWrapper:
     def wrap(plugin: Plugin, *args) -> None:
         try:
             getattr(plugin.module, plugin.meta.functionName)(*args)
-            logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
+            if plugin.meta.type is PluginType.Schedule:
+                logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
         except Exception:
             logger.warning(
                 f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" "
