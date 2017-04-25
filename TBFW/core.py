@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+import platform
 from datetime import datetime
 from logging import Logger
 
@@ -23,13 +25,25 @@ class Core:
                 slack=self.config.slack
         )
         self.logger.info(f"Logger started. Current time is {datetime.now()}.")
+        self.logger.info(f"Working directory is {os.getcwd()}. Running as {os.getlogin()}, PID {os.getpid()}.")
+        self.logger.info(
+                f"Operating System is {platform.system()} {platform.release()} "
+                f"[version {platform.version()}] ({platform.architecture()[0]}). "
+        )
+        self.logger.info(
+                f"Running Python is version {platform.python_version()} ({platform.python_implementation()}) "
+                f"build {platform.python_compiler()} [{ platform.python_build()[1]}]."
+        )
+        if os.getlogin() == "root":
+            self.logger.warning(f"You are running as root. Bot should run as normal user.")
+
+        self.UM: UserStreamManager = UserStreamManager(self)
 
         self.PM: PluginManager = PluginManager(self)
         self.PM.loadPluginsFromDir()
 
         self.TM: ThreadManager = ThreadManager(self)
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
-        self.UM: UserStreamManager = UserStreamManager(self)
         self.CM = ConsoleManager(self)
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
