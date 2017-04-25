@@ -30,7 +30,7 @@ def getLogger(name:str, directory: str, logLevel: int) -> Logger:
     )
     handler2: Handler = StreamHandler()
     formatter: Formatter = Formatter(
-            "[%(asctime)s][%(threadName)s %(name)s/%(levelname)s]: %(message)s",
+            "[%(asctime)s] [%(name)s %(threadName)s/%(levelname)s]: %(message)s",
             "%H:%M:%S"
     )
     handler.setFormatter(formatter)
