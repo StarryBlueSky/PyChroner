@@ -9,7 +9,7 @@ if ver.major < 3 or ver.minor < 6:
 
 from .core import Core as Bot
 from .enums import PluginType, API
-from .plugin.api import PluginAPI
+from .plugin.api import PluginAPI, logger
 from .configparser import Config
 from .submodules import importModule
 
