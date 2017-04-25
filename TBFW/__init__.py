@@ -2,6 +2,10 @@
 """
 TBFW library
 """
+import sys
+ver = sys.version_info
+if ver.major < 3 or ver.minor < 6:
+    raise Exception("TBFW requires Python 3.6+.")
 
 from .core import Core as Bot
 from .enums import PluginType, API
