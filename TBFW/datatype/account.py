@@ -3,6 +3,7 @@ from typing import Dict, Union
 
 from . import BaseDataType
 from .application import Application
+from ..twitter import twispy
 
 
 class Account(BaseDataType):
@@ -29,3 +30,6 @@ class Account(BaseDataType):
             self.cs = application.cs
             return
         raise KeyError("application name is not valid.")
+
+    def getHandler(self) -> twispy.handler.API:
+        return twispy.handler.API(self.ck, self.cs, self.at, self.ats)
