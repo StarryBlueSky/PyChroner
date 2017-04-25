@@ -42,6 +42,7 @@ def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
                     f"TBFW could not load plugin "
                     f"because this function takes too many argments."
                 )
+            return func(*args)
 
         if timeout and pluginType is not PluginType.Thread:
             if platform.system() != "Windows":
@@ -61,6 +62,7 @@ def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
             "account": account,
             "timeout": timeout,
 
+            "function": func,
             "functionName": func.__name__,
             "doc": func.__doc__,
             "variablesCount": func.__code__.co_nlocals,

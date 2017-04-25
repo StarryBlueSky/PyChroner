@@ -1,6 +1,6 @@
 # coding=utf-8
 import os
-from typing import List, Dict
+from typing import List, Dict, Callable
 
 from .utils import getPluginId
 from ..enums import PluginType
@@ -30,6 +30,7 @@ class PluginMeta:
         self.combinedHours: List[int] = []
         self.combinedMinutes: List[int] = []
 
+        self.function: Callable = None
         self.functionName: str = None
         self.doc: str = None
         self.variablesCount: int = None

@@ -18,7 +18,6 @@ class ThreadWrapper:
     @staticmethod
     def wrap(plugin: Plugin, *args) -> None:
         try:
-            print(args)
             getattr(plugin.module, plugin.meta.functionName)(*args)
             logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
         except Exception:
