@@ -11,7 +11,7 @@ class PluginMeta:
         self.enable = False
 
         self.path: str = path
-        self.dir, _, self.filename = self.path.rpartition("/")
+        self.dir, _, self.filename = self.path.replace("\\", "/").rpartition("/")
         self.name, _, self.extension = self.filename.rpartition(".")
         self.id: str = getPluginId(self.path)
         self.accessible = os.path.isfile(self.path)
