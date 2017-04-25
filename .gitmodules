@@ -1,3 +1,6 @@
 [submodule "submodules/twispy"]
 	path = submodules/twispy
 	url = https://github.com/NephyProject/Twispy
+[submodule "submodules/slackhandler"]
+	path = submodules/slackhandler
+	url = https://github.com/SlashNephy/SlackHandler
