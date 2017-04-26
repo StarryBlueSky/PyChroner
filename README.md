@@ -1,78 +1,70 @@
-English Readme is [here](https://github.com/NephyProject/TwitterBotFramework/blob/master/README_EN.md).
-
 # PyChroner
-基本理念: **プログラムの知識の少ない人でも簡単にTwitter Botを運用できるようにする。**
+基本理念: **プログラミングに疎い人でも簡単にBotを運用できるようにする。**  
+English Readme is [here](/README_EN.md).  
 
 ## 特徴
 ### わかりやすく
-プログラミングの経験がない人や疎い人でも TBFWを使えば 簡単にTwitter Botが自前で構築できるよう、設計されています。
-<br>また、Pythonで書かれているため実行前にコンパイルは不要です。
+プログラミングに疎い人でも、PyChronerを使えば、いろいろなBotがかんたんに構築できます。  
+現在はTwitterのみを標準でサポートしていますが、将来的に各種サービスに対応する予定です。ごあんしんください。  
 
 ### べんりに
-TBFWは ロギング機能を有しています。このため、プラグインのロード状況や 例外の発生などを容易に確認できます。
-<br>また、JSONにて内部の状況(スレッド等)を吐き出すAPIも整備されています。
-<br>バグを見つけたと思われる際にはissueにログを掲載してくださると助かります。
-
-### いっぱい
-TBFWは 複数のTwitterアカウントに対応しています。
-<br>TBFWは マルチスレッドで動作するのでそれぞれのアカウントが独立して処理されるため、動作に支障は出ません。
+PyChronerはロギング機能を有しています。このため、プラグインのロード状況や、例外の発生などを容易に確認できます。  
+また、JSONにて内部の状況(スレッド等)を吐き出すAPIも整備されています。  
+バグを見つけたと思われる際にはissueにログを掲載してくださると助かります。  
 
 ### おもいのままに
-TBFWは プラグインシステムを用いて簡単に機能を追加できます。
-<br>実際にプラグインを開発するには Wikiの[プラグインの仕様まとめ](https://github.com/NephyProject/TwitterBotFramework/wiki/%5B%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%5D%E4%BB%95%E6%A7%98)をご覧ください。  
+PyChronerはプラグインシステムを用いて簡単に機能を追加できます。  
+プラグインを作るには、Wikiの「[プラグインの作り方](/wiki/plugin_getting_started)」をお読みください。  
+
+### いっぱい
+PyChronerはスペックの許す限りプラグインを読み込むことができます。  
+プラグインはそれぞれが異なるスレッドで動作するため、一つのプラグインがその他のプラグインの動作に支障を与えることはありません。  
 
 ### じゆうに
-このプロジェクトは MITライセンスで公開されています。
-<br>したがって、だれでも無償で無制限に利用できます。
-<br>例えば、このTBFWを利用してBotを作成して 実際に稼働させたりそのソースコードを公開したりすることも自由にできます。
+このプロジェクトは MITライセンスで公開されており、ライセンスを遵守する限り自由に利用できます。  
+例えば、このPyChronerをフォークして機能を追加したものを、同じMITライセンスでGitHub上に公開することなどが可能です。  
 
-## 導入方法 (Redhat系での例)
-TBFWは Python 3.6以上のPythonで動作します。
+---
+
+## 導入方法 (Redhat系)
+PyChronerはバージョン**3.6**以上のPythonで動作します。
 
 ### 1. リポジトリのクローン
 ```bash
-cd ~
-git clone https://github.com/NephyProject/TwitterBotFramework.git
+git clone https://github.com/NephyProject/PyChroner.git
 ```
 
-### 2. TBFWで使用しているライブラリのインストール
+### 2. 使用しているライブラリのインストール
 ```bash
-cd TwitterBotFramework
+cd PyChroner
 sudo pip3 install watchdog timeout-decorator
 ```
 
 ### 3. `config.json`の作成
 `sample.config.json`をコピーして編集してください。
-
-|オプション名|説明|必須?|デフォルト値|
+```bash
+cp sample.config.json
+```
+#### configの内容
+|オプション名|説明|必須|デフォルト値|
 |:-----------:|:------------:|:-----------:|:------------:|
-|accounts|TBFWで使用するアカウントの配列です|Yes|-|
-|muteClient|無視するクライアント(via)の名称です。配列で指定します。|No|[]|
-|muteUser|無視するユーザーのスクリーンネームです。配列で指定します。|No|[]|
-|muteDomain|無視するドメインです。配列で指定します。|No|[]|
-|permissions|プラグインの実行権限を配列で指定します。|No|[]|
+|services|Botで使用する各種サービスのアカウント認証情報です。|Yes|-|
+|logLevel|ログレベルの設定です。|Yes|info|
+|slack|Slackへ通知するための各種設定です。|No|-|
+|secret|プラグインにて使用する各種情報です。|No|-|
 
-以下は`accounts`配列内のオプションです。
-
-|オプション名|説明|必須?|デフォルト値|
-|:-----------:|:------------:|:-----------:|:------------:|
-|id|アカウントの数字IDです。|Yes|-|
-|ck|アカウントのConsumer Keyです。|Yes|-|
-|cs|アカウントのComsumer Secretです。|Yes|-|
-|at|アカウントのAccess Tokenです。|Yes|-|
-|ats|アカウントのAccess Token Secretです。|Yes|-|
-|sn|アカウントのスクリーンネームです。|Yes|-|
-
-以下は`permissions`配列内のオプションです。
-
-|オプション名|説明|必須?|デフォルト値|
-|:-----------:|:------------:|:-----------:|:------------:|
-|plugin|パーミッションを適用するプラグインの名前です。|Yes|-|
-|action|このパーミッションによって許可するならば`allow`を<br>拒否するならば`deny`を指定します。|Yes|-|
-|users|このパーミッションを適用するユーザーのスクリーンネームです。|No|[]|
-|domain|このパーミッションをフォローしているユーザーに適用するならば`following`を<br>フォロワーに適用するならば`follower`を配列で指定します。(複数指定可)|No|[]|
+`services` での各種サービスアカウントの設定方法については、Wikiを参照してください。  
+- [Twitterアカウントの設定](/wiki/config_services_twitter)  
 
 ### 4. 実行
 ```bash
 python3 main.py
 ```
+初回起動時に `plugins` ディレクトリが生成されるので、その中にプラグインを入れると動作させることができます。  
+エラーなどが発生した場合は `logs` 内のファイルに内容が記述されるため、そちらを参照してください。
+
+---
+
+## Copyright and License 
+Copyright © 2017 Nephy Project Team All Rights Reserved.  
+This product released under [The MIT License](/LICENSE).  
