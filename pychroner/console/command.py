@@ -2,7 +2,7 @@
 import inspect
 import threading
 
-from ..plugin.utils import getPluginArgumentCount
+from ..plugin.utils import getMinPluginArgumentCount
 
 
 class Command:
@@ -59,7 +59,7 @@ class Command:
 
     def plugin_execute(self, *args):
         if len(args) < 1:
-            print("Type \"plugin info <plugin name>\" to get info.")
+            print("Type \"plugin execute <plugin name>\" to get info.")
             return
         for arg in args:
             found: bool = False
@@ -67,7 +67,7 @@ class Command:
                 for plugin in plugins:
                     if plugin.meta.name == arg:
                         found = True
-                        if getPluginArgumentCount(plugin.meta.type) == 0:
+                        if getMinPluginArgumentCount(plugin.meta.type) == 0:
                             getattr(plugin.module, plugin.meta.functionName)()
                         else:
                             print(f"Plugin \"{arg}\" needs an argument. So in this time, could not execute.")
