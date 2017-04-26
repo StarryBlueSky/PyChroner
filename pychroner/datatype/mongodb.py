@@ -17,6 +17,9 @@ class MongoDB(BaseDataType):
     mechanism: str = None
     original: Dict[str, str] = {}
 
+    connect = None
+    __db: Dict = {}
+
     def __init__(self, databaseConfig: Dict[str, str]) -> None:
         self.original = databaseConfig
 
@@ -26,7 +29,10 @@ class MongoDB(BaseDataType):
         if not MongoClient:
             raise Exception("pymongo is not found.")
 
-        connect = MongoClient(self.host)
-        db = connect[name]
-        db.authenticate(self.username, self.password, mechanism=self.mechanism)
-        return db
+        if not self.connect:
+            self.connect = MongoClient(self.host)
+        if name not in self.__db:
+            self.__db[name] = self.connect[name]
+            self.__db[name].authenticate(self.username, self.password, mechanism=self.mechanism)
+
+        return self.__db[name]
