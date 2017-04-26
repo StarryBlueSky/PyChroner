@@ -43,6 +43,6 @@ class PluginMeta:
         name: str = self.moduleName
         if self.subDir:
             name = f"{self.subDir.replace('_', '')}_{name}"
-        if self.functionName != "do":
+        if self.functionName and self.functionName != "do":
             name += f"_{self.functionName}"
         return name
