@@ -7,6 +7,7 @@ from typing import List
 
 from ..enums import PluginType
 from ..plugin import Plugin
+from ..plugin.api import PluginAPI
 from ..plugin.utils import willExecute
 
 logger = getLogger(__name__)
@@ -15,9 +16,10 @@ class ThreadWrapper:
     def __init__(self, core):
         self.core = core
 
-    @staticmethod
-    def wrap(plugin: Plugin, *args) -> None:
+    def wrap(self, plugin: Plugin, *args) -> None:
         try:
+            api = PluginAPI(self.core)
+            args = [api] + list(args)
             getattr(plugin.module, plugin.meta.functionName)(*args)
             if plugin.meta.type is PluginType.Schedule:
                 logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")

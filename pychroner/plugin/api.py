@@ -1,11 +1,12 @@
 # coding=utf-8
 import platform
 from logging import getLogger
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Optional
 
+from ..datatype.account import Account
 import timeout_decorator
 
-from .utils import getPluginArgumentCount
+from .utils import getMinPluginArgumentCount
 from ..enums import PluginType
 from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgumentsError, TimedOut
 
@@ -37,12 +38,19 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
 
     def decorator(func: Callable):
         def register(*args) -> Callable:
-            if getPluginArgumentCount(pluginType) != len(args):
+            if getMinPluginArgumentCount(pluginType) > len(args):
                 raise TooManyArgmentsForPluginError(
                     f"PyChroner could not load plugin "
                     f"because this function takes too many argments."
                 )
-            return func(*args)
+            if pluginType in [PluginType.Schedule, PluginType.Thread, PluginType.Startup]:
+                if func.__code__.co_argcount == 0 or len(args) == 0:
+                    return func()
+                return func(args[0])
+            else:
+                if func.__code__.co_argcount == 1 or len(args) == 1:
+                    return func(args[1])
+                return func(*args)
 
         if timeout and pluginType is not PluginType.Thread:
             if platform.system() != "Windows":
@@ -65,9 +73,23 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "function": func,
             "functionName": func.__name__,
             "doc": func.__doc__,
+            "argumentsCount": func.__code__.co_argcount,
             "variablesCount": func.__code__.co_nlocals,
             "variablesName": list(func.__code__.co_varnames),
             "variables": list(func.__code__.co_consts[1:]),
         })
         return register
     return decorator
+
+class PluginAPI:
+    def __init__(self, core):
+        self.core = core
+
+        self.config = self.core.config
+        self.dirs = self.config.directory
+
+    def getAccount(self, key: str) -> Optional[Account]:
+        for account in self.config.account:
+            if account.key == key:
+                return account
+        return None

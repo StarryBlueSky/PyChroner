@@ -53,8 +53,10 @@ class ThreadManager:
 
                 for i, thread, func in enumerate(self.threads):
                     if not thread.is_alive() or thread not in workingThreads:
-                        # noinspection PyTypeChecker
-                        self.threads[i] = self.startThread(func, name=thread.name)
+                        if thread.name in [x.meta.name for x in self.core.PM.plugins.values()]:
+                            self.threads[i] = self.startThread(func, name=thread.name)
+                        else:
+                            self.threads[i] = self.startThread(func, name=thread.name, args=[self.core])
 
             except:
                 pass

@@ -9,6 +9,7 @@ from .configparser import Config
 from .console import ConsoleManager
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
+from .plugin.api import PluginAPI
 from .plugin.manager import PluginManager
 from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
@@ -53,12 +54,12 @@ class Core:
     def run(self) -> None:
         self.TM.start()
         self.FS.start()
-        self.UM.start()
         [
             self.TM.startThread(
                 target=getattr(plugin.module, plugin.meta.functionName),
                 name=plugin.meta.name,
-                keepalive=plugin.meta.type == PluginType.Thread
+                keepalive=plugin.meta.type == PluginType.Thread,
+                args=[PluginAPI(self)]
             )
             for plugin in self.PM.plugins[PluginType.Startup.name] + self.PM.plugins[PluginType.Thread.name]
         ]
