@@ -8,6 +8,7 @@ import timeout_decorator
 from .utils import getMinPluginArgumentCount
 from ..datatype.account import Account
 from ..datatype.mongodb import MongoDB
+from ..datatype.slack import Slack
 from ..enums import PluginType
 from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgumentsError, TimedOut
 
@@ -97,3 +98,6 @@ class PluginAPI:
 
     def getMongoDB(self) -> Optional[MongoDB]:
         return self.config.mongodb
+
+    def getSlack(self) -> Slack:
+        return self.config.slack

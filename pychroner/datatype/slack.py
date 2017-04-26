@@ -1,4 +1,6 @@
 # coding=utf-8
+import json
+import requests
 from typing import Dict
 
 from . import BaseDataType
@@ -21,3 +23,13 @@ class Slack(BaseDataType):
 
         [setattr(self, k, v) for k, v in self.original.items()]
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
+
+    def post(self, text: str, channel: str, username: str=None, icon_emoji: str=None):
+        payload = {
+            "channel": channel,
+            "username": username or "PyChroner Slack Handler",
+            "icon_emoji": icon_emoji or ":desktop_computer:",
+            "text": text
+        }
+
+        return requests.post(self.webhookUrl, data=json.dumps(payload))
