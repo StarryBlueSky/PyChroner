@@ -15,12 +15,13 @@ class PluginType(IntEnum):
     """
     Reply = 1
     Timeline = 2
-    DM = 3
-    Event = 4
-    Thread = 5
-    Schedule = 6
-    Startup = 7
-    Other = 8
+    Retweet = 3
+    DM = 4
+    Event = 5
+    Thread = 6
+    Schedule = 7
+    Startup = 8
+    Other = 9
 
 @unique
 class API(Enum):

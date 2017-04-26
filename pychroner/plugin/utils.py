@@ -15,7 +15,8 @@ def getPluginId(path: str) -> str:
     return sha1(path.replace(os.path.sep, "/").encode()).hexdigest()
 
 def getPluginArgumentCount(pluginType: PluginType) -> int:
-    return 1 if pluginType in [PluginType.Reply, PluginType.Timeline, PluginType.Event, PluginType.DM] else 0
+    return 1 if pluginType in [PluginType.Reply, PluginType.Timeline, PluginType.Retweet, PluginType.Event,
+                               PluginType.DM, PluginType.Other] else 0
 
 def willExecute(ratio: int) -> bool:
     return random.randint(1, ratio) == 1

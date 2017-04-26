@@ -43,6 +43,12 @@ class UserStream:
                     for plugin in self.core.PM.plugins[PluginType.Timeline.name]
                     if plugin.meta.account == self.account
                 ]
+                if "retweeted_status" in stream:
+                    [
+                        self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                        for plugin in self.core.PM.plugins[PluginType.Retweet.name]
+                        if plugin.meta.account == self.account
+                    ]
 
             elif "event" in stream:
                 [
