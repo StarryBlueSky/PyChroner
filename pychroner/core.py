@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import sys
 import platform
 from datetime import datetime
 from logging import Logger
@@ -18,6 +19,7 @@ class Core:
     def __init__(self, prompt: bool=True) -> None:
         self.prompt: bool = prompt
         self.config: Config = Config()
+        sys.path.append(self.config.directory.library)
 
         makeDirs(self.config.directory.dirs)
         self.logger: Logger = getLogger(
@@ -38,11 +40,11 @@ class Core:
             self.logger.warning(f"You are running as root. Bot should run as normal user.")
 
         self.UM: UserStreamManager = UserStreamManager(self)
+        self.TM: ThreadManager = ThreadManager(self)
 
         self.PM: PluginManager = PluginManager(self)
         self.PM.loadPluginsFromDir()
 
-        self.TM: ThreadManager = ThreadManager(self)
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
         self.CM = ConsoleManager(self)
 

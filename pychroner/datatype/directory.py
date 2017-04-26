@@ -11,6 +11,7 @@ class Directory(BaseDataType):
     cache: str = "cache"
     assets: str = "assets"
     api: str = "api"
+    library: str = "library"
     original: Dict[str, str] = {}
 
     def __init__(self, directoryConfig: Dict[str, str]=None) -> None:
@@ -21,4 +22,4 @@ class Directory(BaseDataType):
 
     @property
     def dirs(self) -> List[str]:
-        return [self.plugins, self.logs, self.tmp, self.cache, self.assets, self.api]
+        return [self.plugins, self.logs, self.tmp, self.cache, self.assets, self.api, self.library]

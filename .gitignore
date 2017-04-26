@@ -6,6 +6,7 @@ logs/
 cache/
 api/
 tmp/
+library/
 
 config.json
 test.py
