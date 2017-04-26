@@ -14,7 +14,7 @@ pluginFilePattern: Pattern = re.compile("^.+[.]py$")
 def getPluginId(path: str) -> str:
     return sha1(path.replace(os.path.sep, "/").encode()).hexdigest()
 
-def getPluginArgumentCount(pluginType: PluginType) -> int:
+def getMinPluginArgumentCount(pluginType: PluginType) -> int:
     return 1 if pluginType in [PluginType.Reply, PluginType.Timeline, PluginType.Retweet, PluginType.Event,
                                PluginType.DM, PluginType.Other] else 0
 
