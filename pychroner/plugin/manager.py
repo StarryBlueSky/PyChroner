@@ -1,4 +1,5 @@
 # coding=utf-8
+import copy
 import json
 import logging
 import os
@@ -53,7 +54,7 @@ class PluginManager:
             self.plugins[plugin.meta.type.name].append(plugin)
 
         if plugin.meta.account:
-            t = list(self.core.UM.accounts.copy())
+            t = list(copy.deepcopy(self.core.UM.accounts))
             t.append(plugin.meta.account)
             self.core.UM.accounts = set(t)
 
