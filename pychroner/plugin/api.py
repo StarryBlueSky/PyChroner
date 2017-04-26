@@ -11,7 +11,7 @@ from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgume
 
 logger = getLogger(__name__)
 
-def PluginAPI(pluginType: PluginType, timeout: int=None, priority: int=None,
+def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
               hours: int=None, minutes: int=None, multipleHour: int=None, multipleMinute: int=None,
               account: str=None, ratio: int=None, permissions: List[Dict]=None):
     """
