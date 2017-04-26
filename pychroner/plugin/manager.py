@@ -1,5 +1,4 @@
 # coding=utf-8
-import copy
 import json
 import logging
 import os
@@ -61,9 +60,7 @@ class PluginManager:
                 self.core.TM.willExecutePlugins.append(plugin)
 
         if plugin.meta.account:
-            t = list(copy.deepcopy(self.core.UM.accounts))
-            t.append(plugin.meta.account)
-            self.core.UM.accounts = set(t)
+            self.core.UM.updateAccounts(plugin.meta.account)
 
         # noinspection PyTypeChecker
         self.plugins = {

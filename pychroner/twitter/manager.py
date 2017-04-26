@@ -1,4 +1,5 @@
 # coding=utf-8
+import copy
 from logging import getLogger
 from typing import List
 
@@ -13,10 +14,19 @@ class UserStreamManager:
         self.streams: List[UserStream] = []
         self.accounts: List[Account] = []
 
-    def start(self):
-        for account in self.accounts:
-            us = UserStream(self.core, account)
-            self.streams.append(us)
+    def updateAccounts(self, v: Account):
+        for us in self.streams:
+            if us.account == v:
+                return
+        else:
+            t = list(copy.deepcopy(self.accounts))
+            t.append(v)
+            self.accounts = t
+            self.run(v)
 
-            self.core.TM.startThread(us.start, name=f"StreamingTask_for_{account.key}")
-            logger.info(f"@{account.sn} UserStream connection has established.")
+    def run(self, account):
+        us = UserStream(self.core, account)
+        self.streams.append(us)
+
+        self.core.TM.startThread(us.start, name=f"StreamingTask_for_{account.key}")
+        logger.info(f"@{account.sn} UserStream connection has established.")
