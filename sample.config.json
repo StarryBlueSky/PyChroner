@@ -56,5 +56,8 @@
     "iconEmoji": ":desktop_computer:",
     "iconUrl": null,
     "logLevel": "error"
+  },
+  "secret": {
+    "awesomeWebServiceKey": "xxx-yyy-zzz"
   }
 }
