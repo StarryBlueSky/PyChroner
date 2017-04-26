@@ -3,10 +3,11 @@ import platform
 from logging import getLogger
 from typing import List, Dict, Callable, Optional
 
-from ..datatype.account import Account
 import timeout_decorator
 
 from .utils import getMinPluginArgumentCount
+from ..datatype.account import Account
+from ..datatype.mongodb import MongoDB
 from ..enums import PluginType
 from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgumentsError, TimedOut
 
@@ -93,3 +94,6 @@ class PluginAPI:
             if account.key == key:
                 return account
         return None
+
+    def getMongoDB(self) -> Optional[MongoDB]:
+        return self.config.mongodb

@@ -13,6 +13,7 @@ from .datatype.directory import Directory
 from .datatype.mute import Mute
 from .datatype.slack import Slack
 from .datatype.secret import Secret
+from .datatype.mongodb import MongoDB
 from .enums import LogLevel
 from .exceptions.config import *
 
@@ -36,6 +37,7 @@ class Config:
     logLevel: int = None
     slack: Slack = None
     secret: Secret = None
+    mongodb: MongoDB = None
     original: Dict[str, Union[str, Dict[str, Dict[str, Union[str, int]]]]] = {}
 
     def __init__(self):
@@ -72,6 +74,7 @@ class Config:
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
         self.slack = Slack(self.original.get("slack"))
         self.secret = Secret(self.original.get("secret"))
+        self.database = MongoDB(self.original.get("mongodb"))
 
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
