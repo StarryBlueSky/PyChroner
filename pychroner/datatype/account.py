@@ -1,11 +1,14 @@
 # coding=utf-8
 from typing import Dict, Union
 
-import tweepy
-
 from . import BaseDataType
 from .application import Application
 from ..twitter import twispy
+
+try:
+    import tweepy
+except:
+    tweepy = None
 
 
 class Account(BaseDataType):
@@ -37,6 +40,8 @@ class Account(BaseDataType):
         return twispy.handler.API(self.ck, self.cs, self.at, self.ats)
 
     def getTweepyHandler(self) -> tweepy.API:
+        if not tweepy:
+            raise Exception("tweepy is not found.")
         auth = tweepy.OAuthHandler(self.ck, self.cs)
         auth.set_access_token(self.at, self.ats)
 
