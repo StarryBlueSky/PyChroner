@@ -24,12 +24,17 @@ class Slack(BaseDataType):
         [setattr(self, k, v) for k, v in self.original.items()]
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
 
-    def post(self, text: str, channel: str, username: str=None, icon_emoji: str=None):
+    def post(self, text: str, channel: str, username: str=None, icon_emoji: str=None, icon_url: str=None):
         payload = {
             "channel": channel,
             "username": username or "PyChroner Slack Handler",
-            "icon_emoji": icon_emoji or ":desktop_computer:",
             "text": text
         }
+        if icon_emoji:
+            payload["icon_emoji"] = icon_emoji
+        elif icon_url:
+            payload["icon_url"] = icon_url
+        else:
+            payload["icon_emoji"] = ":desktop_computer:"
 
         return requests.post(self.webhookUrl, data=json.dumps(payload))

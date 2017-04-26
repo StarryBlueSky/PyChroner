@@ -99,5 +99,5 @@ class PluginAPI:
     def getMongoDB(self) -> Optional[MongoDB]:
         return self.config.mongodb
 
-    def getSlack(self) -> Slack:
+    def getSlack(self) -> Optional[Slack]:
         return self.config.slack
