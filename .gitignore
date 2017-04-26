@@ -1,12 +1,6 @@
-__pycache__/
-
-.idea/
-assets/
 logs/
 cache/
 api/
 tmp/
-library/
 
 config.json
-test.py
