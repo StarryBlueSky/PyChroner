@@ -87,19 +87,20 @@ class PluginManager:
         for pluginType in PluginType:
             for i, plugin in enumerate(self.plugins[pluginType.name]):
                 if plugin.meta.id == pluginId:
-                    del self.plugins[pluginType.name][i]
                     for j, x in enumerate(self.core.TM.willExecutePlugins):
                         if x.meta.id == pluginId:
                             del self.core.TM.willExecutePlugins[j]
+
                     # TODO: kill the thread
 
                     logger.info(
                         f"[Unloaded] Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
                         f"has been unloaded successfully."
                     )
+                    del self.plugins[pluginType.name][i]
                     return True
         logger.warning(
-            f"Plugin \"{plugin.meta.name}\"({plugin.meta.path}) "
+            f"Plugin \"{pluginId}\" "
             f"could not be unloaded because it is not loaded."
         )
         return False
