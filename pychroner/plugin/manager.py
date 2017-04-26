@@ -7,7 +7,7 @@ import traceback
 from typing import Dict, List
 
 from . import Plugin
-from .utils import getPluginId, pluginFilePattern, serializeDataType
+from .utils import getPluginId, pluginFilePattern, serializeDataType, willExecute
 from ..enums import PluginType, API
 from ..exceptions.plugin import InvalidPluginSyntaxError
 
@@ -26,13 +26,15 @@ class PluginManager:
     def loadPlugin(self, path: str) -> bool:
         plugin: Plugin = Plugin(self.core, path=path)
         try:
-            plugin.load()
+            t: bool = plugin.load()
         except InvalidPluginSyntaxError:
             logger.warning(
                 f"Plugin {path} "
                 f"could not be loaded because it has invalid syntax. "
                 f"Error Detail:\n{traceback.format_exc()}."
             )
+            return False
+        if not t:
             return False
 
         found: bool = False
@@ -42,6 +44,9 @@ class PluginManager:
                 if plugin.meta.id == loadedPlugin.meta.id:
                     found = True
                     self.plugins[pluginType.name][i] = plugin
+                    for j, x in enumerate(self.core.TM.willExecutePlugins):
+                        if x.meta.id == plugin.meta.id:
+                            self.core.TM.willExecutePlugins[j] = plugin
 
                     if PluginType.Thread == pluginType:
                         pass
@@ -52,6 +57,8 @@ class PluginManager:
                 break
         else:
             self.plugins[plugin.meta.type.name].append(plugin)
+            if plugin.meta.type is PluginType.Schedule and willExecute(plugin.meta.ratio):
+                self.core.TM.willExecutePlugins.append(plugin)
 
         if plugin.meta.account:
             t = list(copy.deepcopy(self.core.UM.accounts))
