@@ -34,7 +34,11 @@ class Plugin:
         except Exception:
             raise InvalidPluginSyntaxError(f"PyChroner could not load a plugin named {self.meta.name} in {self.meta.path}")
 
-        self.function = [x for x in [getattr(self.module, x) for x in dir(self.module)] if hasattr(x, "__meta__")][0]
+        t = [x for x in [getattr(self.module, x) for x in dir(self.module)] if hasattr(x, "__meta__")]
+        if len(t) == 0:
+            logger.info(f"[Skipped] Module \"{self.meta.name}\"({self.meta.path}) has been skipped.")
+            return False
+        self.function = t[0]
         for k, v in self.function.__meta__.items():
             setattr(self.meta, k, v)
         self.meta.account = self.core.config.getAccount(self.meta.account)
