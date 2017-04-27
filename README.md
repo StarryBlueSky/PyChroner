@@ -1,6 +1,14 @@
 # PyChroner
+
+> Python + Chronus(Cron) = PyChroner  
+
 基本理念: **プログラミングに疎い人でも簡単にBotを運用できるようにする。**  
 English Readme is [here](/README_EN.md).  
+
+お知らせ: **「TwitterBotFramework」は「PyChroner」に名前が変わりました。**
+現在活発に **仕様及び機能の変更が行われている** ので、アップデートは必ず **変更点を確認してから** 行ってください。  
+- [TwitterBotFrameworkからの大まかな変更点](https://github.com/NephyProject/PyChroner/wiki/changelog#v3)
+- [TwitterBotFrameworkからのプラグイン移行ガイド](https://github.com/NephyProject/PyChroner/wiki/plugin_migration_fromTBFW)
 
 ## 特徴
 ### わかりやすく
@@ -14,7 +22,7 @@ PyChronerはロギング機能を有しています。このため、プラグ�
 
 ### おもいのままに
 PyChronerはプラグインシステムを用いて簡単に機能を追加できます。  
-プラグインを作るには、Wikiの「[プラグインの作り方](/wiki/plugin_getting_started)」をお読みください。  
+プラグインを作るには、Wikiの「[プラグインの作り方](https://github.com/NephyProject/PyChroner/wiki/plugin_getting_started)」をお読みください。  
 
 ### いっぱい
 PyChronerはスペックの許す限りプラグインを読み込むことができます。  
@@ -54,7 +62,7 @@ cp sample.config.json
 |secret|プラグインにて使用する各種情報です。|No|-|
 
 `services` での各種サービスアカウントの設定方法については、Wikiを参照してください。  
-- [Twitterアカウントの設定](/wiki/config_services_twitter)  
+- [Twitterアカウントの設定](https://github.com/NephyProject/PyChroner/wiki/config_services_twitter)  
 
 ### 4. 実行
 ```bash
