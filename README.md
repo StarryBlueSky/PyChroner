@@ -1,4 +1,6 @@
-# PyChroner
+# PyChroner  
+[![Python](https://img.shields.io/badge/Python-3.6-blue.svg?style=flat-square)]()
+[![License](https://img.shields.io/badge/License-MIT%20License-blue.svg?style=flat-square)]()
 
 > Python + Chronus(Cron) = PyChroner  
 
