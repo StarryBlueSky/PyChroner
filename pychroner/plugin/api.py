@@ -48,11 +48,23 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             if pluginType in [PluginType.Schedule, PluginType.Thread, PluginType.Startup]:
                 if func.__code__.co_argcount == 0 or len(args) == 0:
                     return func()
+                # PluginAPI
+                if hasattr(func, "__meta__"):
+                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["account"]]
+                    if t:
+                        args[0].accountKey = func.__meta__["account"]
+
                 return func(args[0])
             else:
                 if func.__code__.co_argcount == 1 or len(args) == 1:
+                    # stream
                     return func(args[1])
-                return func(*args)
+                # PluginAPI + stream
+                if hasattr(func, "__meta__"):
+                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["account"]]
+                    if t:
+                        args[0].accountKey = func.__meta__["account"]
+                return func(args[0], args[1])
 
         if timeout and pluginType is not PluginType.Thread:
             if platform.system() != "Windows":
@@ -90,7 +102,13 @@ class PluginAPI:
         self.config = self.core.config
         self.dirs = self.config.directory
 
-    def getAccount(self, key: str) -> Optional[Account]:
+        self.accountKey = None
+
+    def getAccount(self, accountKey: str=None) -> Optional[Account]:
+        if not self.accountKey and not accountKey:
+            return None
+
+        key = accountKey or self.accountKey
         for account in self.config.account:
             if account.key == key:
                 return account
