@@ -29,6 +29,10 @@ class Plugin:
         self.function: Callable = None
 
     def load(self) -> bool:
+        if self.meta.name.startswith("Disabled_"):
+            logger.info(f"[Skipped] Plugin \"{self.meta.name}\"({self.meta.path}) has been skipped.")
+            return False
+
         try:
             self.spec.loader.exec_module(self.module)
         except Exception:
