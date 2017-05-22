@@ -3,8 +3,6 @@ import platform
 from logging import getLogger
 from typing import List, Dict, Callable, Optional
 
-import timeout_decorator
-
 from .utils import getMinPluginArgumentCount
 from ..datatype.account import Account
 from ..datatype.mongodb import MongoDB
@@ -68,6 +66,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
 
         if timeout and pluginType is not PluginType.Thread:
             if platform.system() != "Windows":
+                import timeout_decorator
                 register = timeout_decorator.timeout(timeout, timeout_exception=TimedOut)(register)
             else:
                 logger.warning("Timeout feature is disabled in Windows.")
