@@ -74,7 +74,7 @@ class Config:
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
         self.slack = Slack(self.original.get("slack"))
         self.secret = Secret(self.original.get("secret"))
-        self.database = MongoDB(self.original.get("mongodb"))
+        self.mongodb = MongoDB(self.original.get("mongodb"))
 
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
