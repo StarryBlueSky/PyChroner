@@ -45,7 +45,7 @@ class Config:
             raise NotFoundConfigError(f"{configPath} is not found.")
 
         try:
-            with open(configPath) as f:
+            with open(configPath, encoding="utf-8") as f:
                 self.original = json.load(f)
         except json.JSONDecodeError:
             raise InvalidConfigSyntaxError(f"{configPath} has invalid syntax.")
