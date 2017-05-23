@@ -1,4 +1,6 @@
 # coding=utf-8
+import time
+
 from watchdog.events import FileSystemEvent, RegexMatchingEventHandler
 from watchdog.observers import Observer
 
@@ -20,6 +22,7 @@ class ChangeHandler(RegexMatchingEventHandler):
 
     def on_any_event(self, event: FileSystemEvent) -> None:
         if event.event_type in ["created", "modified"]:
+            time.sleep(1)
             self.core.PM.loadPlugin(path=event.src_path)
 
         elif event.event_type == "deleted":
