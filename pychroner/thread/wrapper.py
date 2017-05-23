@@ -1,6 +1,5 @@
 # coding=utf-8
 import time
-import traceback
 from datetime import datetime
 from logging import getLogger
 from typing import List
@@ -24,9 +23,8 @@ class ThreadWrapper:
             if plugin.meta.type is PluginType.Schedule:
                 logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" was executed successfully.")
         except Exception:
-            logger.warning(
-                f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" "
-                f"could not be executed. Error Detail:\n{traceback.format_exc()}"
+            logger.exception(
+                f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" could not be executed."
             )
 
     def executePluginSafely(self, plugin: Plugin, args: List=None) -> None:
