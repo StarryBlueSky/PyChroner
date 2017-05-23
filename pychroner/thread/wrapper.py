@@ -30,11 +30,11 @@ class ThreadWrapper:
             )
 
     def executePluginSafely(self, plugin: Plugin, args: List=None) -> None:
-        # noinspection PyTypeChecker
-        if args:
-            args = [plugin] + args
-        else:
-            args = [plugin]
+        if plugin.meta.validUntil and plugin.meta.validUntil < datetime.now():
+            return
+        if plugin.meta.validFrom and plugin.meta.validFrom > datetime.now():
+            return
+        args = [plugin] + args if args else [plugin]
         self.core.TM.startThread(self.wrap, name=plugin.meta.name, args=args)
 
     def startSchedulePlugins(self):
@@ -45,6 +45,7 @@ class ThreadWrapper:
                 if willExecute(schedulePlugin.meta.ratio)
             ]
 
+            # noinspection PyTypeChecker
             now: datetime = datetime.now()
             time.sleep(60 - now.second - now.microsecond / 1000000)
 

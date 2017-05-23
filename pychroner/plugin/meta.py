@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+from datetime import datetime
 from typing import List, Dict, Callable
 
 from .utils import getPluginId
@@ -27,6 +28,8 @@ class PluginMeta:
         self.multipleMinute: int = None
         self.permissions: List[Dict] = []
         self.timeout: int = None
+        self.validFrom: datetime = None
+        self.validUntil: datetime = None
 
         self.combinedHours: List[int] = []
         self.combinedMinutes: List[int] = []

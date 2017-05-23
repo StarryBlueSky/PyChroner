@@ -1,5 +1,6 @@
 # coding=utf-8
 import platform
+from datetime import datetime
 from logging import getLogger
 from typing import List, Dict, Callable, Optional
 
@@ -14,7 +15,8 @@ logger = getLogger(__name__)
 
 def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
               hours: int=None, minutes: int=None, multipleHour: int=None, multipleMinute: int=None,
-              account: str=None, ratio: int=None, permissions: List[Dict]=None):
+              account: str=None, ratio: int=None, permissions: List[Dict]=None,
+                validFrom: datetime=None, validUntil: datetime=None):
     """
     decorator implementation of plugin metainfo
     :param pluginType: (PluginType) target plugin type
@@ -82,6 +84,8 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "permissions": permissions or [],
             "account": account,
             "timeout": timeout,
+            "validFrom": validFrom,
+            "validUntil": validUntil,
 
             "function": func,
             "functionName": func.__name__,
