@@ -14,6 +14,7 @@ from .datatype.mute import Mute
 from .datatype.slack import Slack
 from .datatype.secret import Secret
 from .datatype.mongodb import MongoDB
+from .datatype.webui import WebUI
 from .enums import LogLevel
 from .exceptions.config import *
 
@@ -38,6 +39,7 @@ class Config:
     slack: Slack = None
     secret: Secret = None
     mongodb: MongoDB = None
+    webui: WebUI = None
     original: Dict[str, Union[str, Dict[str, Dict[str, Union[str, int]]]]] = {}
 
     def __init__(self):
@@ -75,6 +77,7 @@ class Config:
         self.slack = Slack(self.original.get("slack"))
         self.secret = Secret(self.original.get("secret"))
         self.mongodb = MongoDB(self.original.get("mongodb"))
+        self.webui = WebUI(self.original.get("webui"))
 
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)

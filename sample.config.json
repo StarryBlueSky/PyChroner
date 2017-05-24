@@ -57,7 +57,19 @@
     "iconUrl": null,
     "logLevel": "error"
   },
+  "webui": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": "5000"
+  },
   "secret": {
     "awesomeWebServiceKey": "xxx-yyy-zzz"
+  },
+  "mongodb": {
+    "host": null,
+    "port": null,
+    "username": null,
+    "password": null,
+    "mechanism": null
   }
 }

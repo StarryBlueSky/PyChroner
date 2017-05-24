@@ -19,4 +19,4 @@ class WebUIManager:
         if self.core.config.logLevel == LogLevel.Debug:
             self.app.debug = True
 
-        self.core.TM.startThread(self.app.run)
+        self.core.TM.startThread(self.app.run, args=[self.core.config.webui.host, self.core.config.webui.port])
