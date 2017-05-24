@@ -21,7 +21,7 @@ class MongoDB(BaseDataType):
     __db: Dict = {}
 
     def __init__(self, databaseConfig: Dict[str, str]) -> None:
-        self.original = databaseConfig
+        self.original = databaseConfig or {}
 
         [setattr(self, k, v) for k, v in self.original.items()]
 
