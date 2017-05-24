@@ -13,6 +13,7 @@ from .plugin.api import PluginAPI
 from .plugin.manager import PluginManager
 from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
+from .webui.manager import WebUIManager
 from .utils import getLogger, makeDirs
 
 
@@ -48,6 +49,7 @@ class Core:
 
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
         self.CM = ConsoleManager(self)
+        self.WM = WebUIManager(self)
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 
@@ -65,4 +67,5 @@ class Core:
         ]
         self.TM.startThread(target=self.TM.wrapper.startSchedulePlugins)
 
+        self.WM.start()
         self.CM.loop()
