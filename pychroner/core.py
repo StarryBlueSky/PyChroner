@@ -1,9 +1,11 @@
 # coding=utf-8
 import os
-import sys
 import platform
+import sys
 from datetime import datetime
 from logging import Logger
+
+from gevent.queue import Queue
 
 from .configparser import Config
 from .console import ConsoleManager
@@ -14,8 +16,8 @@ from .plugin.manager import PluginManager
 from .plugin.storage import LocalStorage
 from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
-from .webui.manager import WebUIManager
 from .utils import getLogger, makeDirs
+from .webui.manager import WebUIManager
 
 
 class Core:
@@ -25,9 +27,11 @@ class Core:
         sys.path.append(self.config.directory.library)
 
         makeDirs(self.config.directory.dirs)
+        self.queue = Queue()
         self.logger: Logger = getLogger(
                 name="pychroner", directory=self.config.directory.logs, logLevel=self.config.logLevel,
-                slack=self.config.slack
+                slack=self.config.slack,
+                queue=self.queue
         )
         self.logger.info(f"Logger started. Current time is {datetime.now()}.")
         self.logger.info(f"Working directory is {os.getcwd()}. Running as {os.getlogin()}, PID {os.getpid()}.")

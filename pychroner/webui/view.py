@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
-from flask import render_template, send_from_directory
+from gevent.hub import LoopExit
+from flask import render_template, send_from_directory, Response
 from flask_classy import FlaskView, route, request
 
 class View(FlaskView):
@@ -19,11 +20,28 @@ class View(FlaskView):
                 threads=[x[0].name for x in self.core.TM.threads]
         )
 
+    @route("/log")
+    def page_log(self):
+        return render_template("log.html")
+
     @route("/execute", methods=["POST"])
     def page_execute(self):
         cmd = request.form["command"]
         self.core.CM.execute(cmd)
         return "Done"
+
+    @route("/stream")
+    def page_stream(self):
+        def get():
+            q = self.core.queue
+            while True:
+                try:
+                    data = q.get().replace("\n", "<br>")
+                    yield f"data: {data}\n\n"
+                except LoopExit:
+                    return
+
+        return Response(get(), mimetype="text/event-stream")
 
     @route("/static/{name}/{filetype}/<filename>")
     def static(self, name, filetype, filename):

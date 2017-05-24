@@ -22,7 +22,7 @@ def dumpVar(x: object) -> None:
     width: int = max([len(y) for y in dir(x)])
     [print(y.ljust(width + 10), "=", getattr(x, y)) for y in dir(x)]
 
-def getLogger(name: str, directory: str, logLevel: int, slack=None) -> Logger:
+def getLogger(name: str, directory: str, logLevel: int, slack=None, queue=None) -> Logger:
     logger: Logger = logging.getLogger(name)
 
     formatter: Formatter = Formatter(
@@ -51,6 +51,12 @@ def getLogger(name: str, directory: str, logLevel: int, slack=None) -> Logger:
         handler3.setFormatter(formatter)
         handler3.setLevel(slack.logLevel)
         logger.addHandler(handler3)
+    if queue:
+        from .webui.logger import QueueHandler
+        handler4: Handler = QueueHandler(queue)
+        handler4.setFormatter(formatter)
+        handler4.setLevel(logLevel)
+        logger.addHandler(handler4)
     return logger
 
 def makeDirs(names: List[str]) -> None:
