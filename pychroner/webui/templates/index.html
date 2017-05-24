@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>PyChroner Web UI</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>PyChroner Web UI (beta)</h1>
+            <hr class="hr">
+            <h2>Enabled plugins</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plugin in plugins %}
+                    <tr>
+                        <td>{{ plugin.meta.name }}</td>
+                        <td>{{ plugin.meta.type.name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2>Working threads</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in threads %}
+                    <tr>
+                        <td>{{ t }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <div class="container">
+                <span style="text-align: right">PyChroner <a href="https://github.com/NephyProject/PyChroner">GitHub</a></span>
+            </div>
+        </footer>
+        <!--suppress HtmlUnknownTarget -->
+        <script async src="/static/honoka/js/bootstrap.min.js"></script>
+        <!--suppress HtmlUnknownTarget -->
+        <link rel="stylesheet" href="/static/honoka/css/bootstrap.min.css">
+    </body>
+</html>
