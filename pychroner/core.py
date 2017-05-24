@@ -11,6 +11,7 @@ from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.api import PluginAPI
 from .plugin.manager import PluginManager
+from .plugin.storage import LocalStorage
 from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
 from .webui.manager import WebUIManager
@@ -50,6 +51,7 @@ class Core:
         self.FS: FileSystemWatcher = FileSystemWatcher(self)
         self.CM = ConsoleManager(self)
         self.WM = WebUIManager(self)
+        self.LS = LocalStorage()
 
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 

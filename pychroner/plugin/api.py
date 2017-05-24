@@ -19,6 +19,8 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
                 validFrom: datetime=None, validUntil: datetime=None):
     """
     decorator implementation of plugin metainfo
+    :param validUntil: 
+    :param validFrom: 
     :param pluginType: (PluginType) target plugin type
     :param timeout: seconds to stop plugin execution
     :param priority: priority to execute plugin (min 0)
@@ -106,6 +108,7 @@ class PluginAPI:
         self.dirs = self.config.directory
 
         self.accountKey = None
+        self.plugin = None
 
     def getAccount(self, accountKey: str=None) -> Optional[Account]:
         if not self.accountKey and not accountKey:
@@ -122,3 +125,6 @@ class PluginAPI:
 
     def getSlack(self) -> Optional[Slack]:
         return self.config.slack
+
+    def getLocalStorage(self) -> Optional[Dict]:
+        return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
