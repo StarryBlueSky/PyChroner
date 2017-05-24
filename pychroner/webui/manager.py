@@ -7,13 +7,13 @@ from .view import View
 
 
 class WebUIManager:
-    app = Flask(__name__, static_folder="pychroner/webui/static")
+    app = Flask(__name__)
     app.jinja_loader = FileSystemLoader("pychroner/webui/templates")
 
     def __init__(self, core):
         self.core = core
-        MyView = View(self.core)
-        MyView.register(self.app)
+        setattr(self.app, "core", self.core)
+        View.register(self.app)
 
     def start(self):
         if self.core.config.logLevel == LogLevel.Debug:
