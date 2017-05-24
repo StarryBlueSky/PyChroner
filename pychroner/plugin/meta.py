@@ -13,7 +13,7 @@ class PluginMeta:
 
         self.path: str = path.replace(os.path.sep, "/")
         self.dir, _, self.filename = self.path.rpartition("/")
-        self.pluginDir, _, self.subDir = self.dir.partition("/")
+        self.pluginDir, _, self.subDir = self.dir.rpartition("/plugins")
         self.moduleName, _, self.extension = self.filename.rpartition(".")
         self.id: str = getPluginId(self.path)
         self.accessible = os.path.isfile(self.path)
