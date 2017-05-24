@@ -43,8 +43,8 @@ class Core:
                 f"Running Python is version {platform.python_version()} ({platform.python_implementation()}) "
                 f"build {platform.python_compiler()} [{ platform.python_build()[1]}]."
         )
-        if os.getlogin() == "root":
-            self.logger.warning(f"You are running as root. Bot should run as normal user.")
+        if os.getlogin() in ["root", "Administrator"]:
+            self.logger.warning(f"You are running as root or Administrator. Bot should be running as a normal user.")
 
         self.UM: UserStreamManager = UserStreamManager(self)
         self.TM: ThreadManager = ThreadManager(self)
