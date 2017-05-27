@@ -1,7 +1,7 @@
 # coding=utf-8
 import platform
 from datetime import datetime
-from logging import getLogger
+from logging import getLogger, Logger
 from typing import List, Dict, Callable, Optional
 
 from .utils import getMinPluginArgumentCount
@@ -128,3 +128,6 @@ class PluginAPI:
 
     def getLocalStorage(self) -> Optional[Dict]:
         return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
+
+    def getLogger(self) -> Logger:
+        return getLogger(f"pychroner.plugins.{self.plugin.meta.name}")
