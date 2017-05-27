@@ -130,4 +130,4 @@ class PluginAPI:
         return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
 
     def getLogger(self) -> Logger:
-        return getLogger(f"pychroner.plugins.{self.plugin.meta.name}")
+        return logger

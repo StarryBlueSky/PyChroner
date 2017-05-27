@@ -18,7 +18,6 @@ class ThreadWrapper:
     def wrap(self, plugin: Plugin, *args) -> None:
         try:
             api = PluginAPI(self.core)
-            api.plugin = plugin
             args = [api] + list(args)
             getattr(plugin.module, plugin.meta.functionName)(*args)
             if plugin.meta.type is PluginType.Schedule:
