@@ -26,7 +26,7 @@ def getLogger(name: str, directory: str, logLevel: int, slack=None, queue=None) 
     logger: Logger = logging.getLogger(name)
 
     formatter: Formatter = Formatter(
-            "[%(asctime)s] [%(name)s %(threadName)s/%(levelname)s]: %(message)s", "%H:%M:%S"
+            "[%(asctime)s] [%(name)s %(threadName)s<%(funcName)s:%(lineno)s>/%(levelname)s]: %(message)s", "%H:%M:%S"
     )
 
     handler: Handler = RotatingFileHandler(
