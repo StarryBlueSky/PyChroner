@@ -10,4 +10,4 @@ class QueueHandler(Handler):
         self.queue = queue
 
     def emit(self, record):
-        self.queue.put_nowait(self.format(record))
+        self.queue.put_nowait(record)

@@ -5,22 +5,20 @@
         <title>Log Stream | PyChroner Web UI</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script>
-            var list = document.getElementById("list");
-            var log = document.getElementById("log");
-
             $(document).ready(
                 function() {
-                    var eventSource = new EventSource("/stream");
+                    let obj = $("#console");
+                    let eventSource = new EventSource("/api/stream");
+
                     eventSource.onmessage = function (e) {
-                        console.log(e);
-                        var obj = $("#console");
-                        obj.html(obj.html() + e.data + "<br>");
+                        let d = JSON.parse(e.data);
+                        obj.html(`${obj.html()}[${d.time}] [${d.name} ${d.thread_name}&lt;${d.function_name}:${d.line}&gt;/<span class="${d.type}">${d.type}</span>]: <span class="${d.type}">${d.log}</span><br>`);
                     }
                 }
             );
         </script>
         <style>
-            div#console {
+            #console {
                 position: absolute;
                 top: 0;
                 right: 0;
@@ -33,14 +31,27 @@
                 background: #002B36;
                 color: #ccc;
             }
+
+            span.critical {
+                color: #CB4B16;
+            }
+            span.error {
+                color: #DC322F;
+            }
+            span.warning {
+                color: #B58900;
+            }
+            span.info {
+            }
+            span.debug {
+                color: #2AA198;
+            }
+
         </style>
     </head>
     <body>
-        <div id="console"></div>
-
-        <!--suppress HtmlUnknownTarget -->
-        <script async src="/static/honoka/js/bootstrap.min.js"></script>
-        <!--suppress HtmlUnknownTarget -->
-        <link rel="stylesheet" href="/static/honoka/css/bootstrap.min.css">
+        <pre>
+            <code id="console"></code>
+        </pre>
     </body>
 </html>
