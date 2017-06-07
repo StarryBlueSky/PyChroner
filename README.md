@@ -47,7 +47,7 @@ git clone https://github.com/NephyProject/PyChroner.git
 ### 2. 使用しているライブラリのインストール
 ```bash
 cd PyChroner
-sudo pip3 install watchdog timeout-decorator
+sudo pip3 install watchdog psutil gevent flask timeout-decorator
 ```
 
 ### 3. `config.json`の作成
