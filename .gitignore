@@ -3,4 +3,5 @@ cache/
 api/
 tmp/
 
+lock
 config.json

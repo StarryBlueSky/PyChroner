@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 from logging import Logger
 
+import psutil
 from gevent.queue import Queue
 
 from .configparser import Config
@@ -22,6 +23,18 @@ from .webui.manager import WebUIManager
 
 class Core:
     def __init__(self, prompt: bool=True) -> None:
+        pidFile = f"{os.getcwd()}/lock"
+        if os.path.isfile(pidFile):
+            running = False
+            with open(pidFile) as f:
+                if f.read().isdigit() and psutil.pid_exists(int(f.read())):
+                    running = True
+            if running:
+                print("PyChroner is already running.")
+                exit(1)
+        with open(pidFile, "w") as f:
+            f.write(os.getpid())
+
         self.prompt: bool = prompt
         self.config: Config = Config()
         sys.path.append(self.config.directory.library)
