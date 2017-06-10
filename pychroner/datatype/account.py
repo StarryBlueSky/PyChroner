@@ -5,10 +5,7 @@ from . import BaseDataType
 from .application import Application
 from ..twitter import twispy
 
-try:
-    import tweepy
-except:
-    tweepy = None
+import tweepy
 
 
 class Account(BaseDataType):
