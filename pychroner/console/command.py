@@ -2,9 +2,6 @@
 import inspect
 import threading
 
-from ..plugin.utils import getMinPluginArgumentCount
-
-
 class Command:
     def __init__(self, core):
         self.core = core
@@ -56,26 +53,6 @@ class Command:
             for plugin in plugins:
                 print(f"[{'Enabled' if plugin.meta.enable else 'Disabled'}] {plugin.meta.name}")
             print("\n")
-
-    def plugin_execute(self, *args):
-        if len(args) < 1:
-            print("Type \"plugin execute <plugin name>\" to get info.")
-            return
-        for arg in args:
-            found: bool = False
-            for pluginType, plugins in self.core.PM.plugins.items():
-                for plugin in plugins:
-                    if plugin.meta.name == arg:
-                        found = True
-                        if getMinPluginArgumentCount(plugin.meta.type) == 0:
-                            getattr(plugin.module, plugin.meta.functionName)()
-                        else:
-                            print(f"Plugin \"{arg}\" needs an argument. So in this time, could not execute.")
-                        break
-                if found:
-                    break
-            else:
-                print(f"No such a plugin named \"{arg}\".")
 
     def plugin_reloadall(self):
         self.core.PM.loadPluginsFromDir()

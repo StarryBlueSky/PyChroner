@@ -4,12 +4,11 @@ from datetime import datetime
 from logging import getLogger, Logger
 from typing import List, Dict, Callable, Optional
 
-from .utils import getMinPluginArgumentCount
 from ..datatype.account import Account
 from ..datatype.mongodb import MongoDB
 from ..datatype.slack import Slack
 from ..enums import PluginType
-from ..exceptions.plugin import TooManyArgmentsForPluginError, TimeRelatedArgumentsError, TimedOut
+from ..exceptions.plugin import TimeRelatedArgumentsError, TimedOut
 
 logger = getLogger(__name__)
 
@@ -42,11 +41,6 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
 
     def decorator(func: Callable):
         def register(*args) -> Callable:
-            if getMinPluginArgumentCount(pluginType) > len(args):
-                raise TooManyArgmentsForPluginError(
-                    f"PyChroner could not load plugin "
-                    f"because this function takes too many argments."
-                )
             if pluginType in [PluginType.Schedule, PluginType.Thread, PluginType.Startup]:
                 if func.__code__.co_argcount == 0 or len(args) == 0:
                     return func()
