@@ -35,39 +35,39 @@ class UserStream:
                 if re.match(f"@{self.account.sn}%s", stream["text"], re.IGNORECASE):
                     [
                         self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                        for plugin in self.core.PM.plugins[PluginType.Reply.name]
+                        for plugin in self.core.PM.plugins[PluginType.TwitterReply.name]
                         if plugin.meta.account == self.account
                     ]
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.Timeline.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
                     if plugin.meta.account == self.account
                 ]
                 if "retweeted_status" in stream:
                     [
                         self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                        for plugin in self.core.PM.plugins[PluginType.Retweet.name]
+                        for plugin in self.core.PM.plugins[PluginType.TwitterRetweet.name]
                         if plugin.meta.account == self.account
                     ]
 
             elif "event" in stream:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.Event.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterEvent.name]
                     if plugin.meta.account == self.account
                 ]
 
             elif "direct_message" in stream:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.DM.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterDM.name]
                     if plugin.meta.account == self.account
                 ]
 
             else:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.Other.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterOther.name]
                     if plugin.meta.account == self.account
                 ]
 
