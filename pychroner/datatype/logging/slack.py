@@ -4,8 +4,8 @@ from typing import Dict
 
 import requests
 
-from . import BaseDataType
-from ..enums import LogLevel
+from ...datatype import BaseDataType
+from ...enums import LogLevel
 
 
 class Slack(BaseDataType):
@@ -18,9 +18,8 @@ class Slack(BaseDataType):
     logLevel: int = None
     original: Dict[str, str] = {}
 
-    def __init__(self, slackConfig: Dict[str, str]=None) -> None:
-        slackConfig = slackConfig or {}
-        self.original = slackConfig
+    def __init__(self, config: Dict[str, str]=None) -> None:
+        self.original = config or {}
 
         [setattr(self, k, v) for k, v in self.original.items()]
         self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)

@@ -4,9 +4,9 @@ from datetime import datetime
 from logging import getLogger, Logger
 from typing import List, Dict, Callable, Optional
 
-from ..datatype.account import Account
-from ..datatype.mongodb import MongoDB
-from ..datatype.slack import Slack
+from ..datatype.database.mongodb import MongoDB
+from ..datatype.logging.slack import Slack
+from ..datatype.services.twitter.account import Account
 from ..enums import PluginType
 from ..exceptions.plugin import TimeRelatedArgumentsError, TimedOut
 
@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
               hours: int=None, minutes: int=None, multipleHour: int=None, multipleMinute: int=None,
-              account: str=None, ratio: int=None, permissions: List[Dict]=None,
+              twitterAccount: str=None, ratio: int=None, permissions: List[Dict]=None,
                 validFrom: datetime=None, validUntil: datetime=None):
     """
     decorator implementation of plugin metainfo
@@ -27,7 +27,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
     :param minutes: 
     :param multipleHour: 
     :param multipleMinute: 
-    :param account: attached account name
+    :param twitterAccount: attached account name
     :param ratio: possibility of 1/n to execute plugin
     :param permissions: {"action": "deny", "user_id": [10000000], "user_sn": ["TwitterJP"], "domain": ["following"]}
     :return: 
@@ -46,9 +46,9 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
                     return func()
                 # PluginAPI
                 if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["account"]]
+                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["twitterAccount"]]
                     if t:
-                        args[0].accountKey = func.__meta__["account"]
+                        args[0].accountKey = func.__meta__["twitterAccount"]
 
                 return func(args[0])
             else:
@@ -57,9 +57,9 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
                     return func(args[1])
                 # PluginAPI + stream
                 if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["account"]]
+                    t = [x for x in args[0].core.config.services.twitter.accounts if x.key == func.__meta__["twitterAccount"]]
                     if t:
-                        args[0].accountKey = func.__meta__["account"]
+                        args[0].accountKey = func.__meta__["twitterAccount"]
                 return func(args[0], args[1])
 
         if timeout and pluginType is not PluginType.Thread:
@@ -78,7 +78,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "multipleHour": multipleHour,
             "multipleMinute": multipleMinute,
             "permissions": permissions or [],
-            "account": account,
+            "twitterAccount": twitterAccount,
             "timeout": timeout,
             "validFrom": validFrom,
             "validUntil": validUntil,

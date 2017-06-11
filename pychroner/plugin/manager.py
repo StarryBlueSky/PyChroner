@@ -59,8 +59,8 @@ class PluginManager:
             if plugin.meta.type is PluginType.Schedule and willExecute(plugin.meta.ratio):
                 self.core.TM.willExecutePlugins.append(plugin)
 
-        if plugin.meta.account:
-            self.core.UM.updateAccounts(plugin.meta.account)
+        if plugin.meta.twitterAccount:
+            self.core.UM.updateAccounts(plugin.meta.twitterAccount)
 
         # noinspection PyTypeChecker
         self.plugins = {

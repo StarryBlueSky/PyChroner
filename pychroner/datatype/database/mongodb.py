@@ -1,7 +1,7 @@
 # coding=utf-8
 from typing import Dict
 
-from . import BaseDataType
+from ...datatype import BaseDataType
 
 try:
     from pymongo import MongoClient
@@ -20,8 +20,8 @@ class MongoDB(BaseDataType):
     connect = None
     __db: Dict = {}
 
-    def __init__(self, databaseConfig: Dict[str, str]) -> None:
-        self.original = databaseConfig or {}
+    def __init__(self, config: Dict[str, str]) -> None:
+        self.original = config or {}
 
         [setattr(self, k, v) for k, v in self.original.items()]
 

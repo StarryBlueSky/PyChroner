@@ -5,16 +5,16 @@ parse config.json
 
 import json
 import os
-from typing import List, Dict, Union
+from typing import Dict, Union
 
-from .datatype.account import Account
-from .datatype.application import Application
+from .datatype.services import Services
+from .datatype.database import DataBase
+from .datatype.logging import Logging
 from .datatype.directory import Directory
-from .datatype.mute import Mute
-from .datatype.slack import Slack
 from .datatype.secret import Secret
-from .datatype.mongodb import MongoDB
 from .datatype.webui import WebUI
+from .datatype.services.twitter.account import Account
+from .datatype.logging.slack import Slack
 from .enums import LogLevel
 from .exceptions.config import *
 
@@ -23,23 +23,13 @@ configPath = "config.json"
 class Config:
     """
     represent config.json.
-    You can access configures with
-    
-    Example:
-    ```python
-    config = Config()
-    config.accounts.test_bot.ck
-    ```
     """
-    application: List[Application] = []
-    account: List[Account] = []
-    mute: Mute = None
+    services: Services = Services()
+    database: DataBase = DataBase()
     directory: Directory = None
-    logLevel: int = None
-    slack: Slack = None
-    secret: Secret = None
-    mongodb: MongoDB = None
     webui: WebUI = None
+    secret: Secret = None
+    logging: Logging = Logging()
     original: Dict[str, Union[str, Dict[str, Dict[str, Union[str, int]]]]] = {}
 
     def __init__(self):
@@ -52,38 +42,52 @@ class Config:
         except json.JSONDecodeError:
             raise InvalidConfigSyntaxError(f"{configPath} has invalid syntax.")
 
-        if "accounts" not in self.original:
-            raise InsufficientAttributeError("accounts")
+        for service, t in self.original.get("services", {}).items():
+            if service == "twitter":
+                from .datatype.services.twitter.mute import Mute
+                from .datatype.services.twitter.application import Application
+                from .datatype.services.twitter.account import Account
 
-        for k, v in self.original["application"].items():
-            self.application.append(Application(k, v))
+                self.services.twitter.mute = Mute(t.get("mute"))
+                self.services.twitter.applications = [Application(k, v) for k, v in t["applications"].items()]
 
-        for k, v in self.original["accounts"].items():
-            account: Account = Account(k, v)
-            if account.application:
-                for application in self.application:
-                    if application.key == account.application:
-                        account.apply(application)
-                        break
+                for k, v in t["accounts"].items():
+                    account: Account = Account(k, v)
+                    if account.application:
+                        for application in self.services.twitter.applications:
+                            if application.key == account.application:
+                                account.apply(application)
+                                break
 
-            if not account.ck or not account.cs or not account.at or not account.ats \
-                    or not account.id or not account.sn:
-                raise InsufficientAttributeError("accounts[x].ck, cs, at, ats, id or sn")
-            self.account.append(account)
+                    if not account.ck or not account.cs or not account.at or not account.ats or not account.id or not account.sn:
+                        raise InsufficientAttributeError("services.twitter.accounts.x.ck, cs, at, ats, id or sn")
+                    self.services.twitter.accounts.append(account)
 
-        self.mute = Mute(self.original.get("mute"))
-        self.directory = Directory(self.original.get("directory"))
-        self.logLevel = getattr(LogLevel, self.original.get("logLevel", "error").title(), LogLevel.Error)
-        self.slack = Slack(self.original.get("slack"))
+            elif service == "discord":
+                from .datatype.services.discord.account import Account
+
+                for k, v in t["accounts"].items():
+                    account: Account = Account(k, v)
+                    self.services.discord.accounts.append(account)
+
+        for database, t in self.original.get("database", {}).items():
+            if database == "mongodb":
+                from .datatype.database.mongodb import MongoDB
+
+                self.database.mongodb = MongoDB(t)
+
+        self.logging.level = getattr(LogLevel, self.original.get("logging", {}).get("logLevel", "error").title(), LogLevel.Error)
+        self.logging.slack = Slack(self.original.get("logging", {}).get("slack"))
+
         self.secret = Secret(self.original.get("secret"))
-        self.mongodb = MongoDB(self.original.get("mongodb"))
         self.webui = WebUI(self.original.get("webui"))
+        self.directory = Directory(self.original.get("directory"))
 
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
 
-    def getAccount(self, name: str) -> Account:
-        for account in self.account:
+    def getTwitterAccount(self, name: str) -> Account:
+        for account in self.services.twitter.accounts or {}:
             if account.key == name:
                 return account
 

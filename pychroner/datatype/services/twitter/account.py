@@ -1,11 +1,11 @@
 # coding=utf-8
 from typing import Dict, Union
 
-from . import BaseDataType
-from .application import Application
-from ..twitter import twispy
-
 import tweepy
+
+from ....datatype.services.twitter.application import Application
+from ....datatype import BaseDataType
+from ....twitter import twispy
 
 
 class Account(BaseDataType):
@@ -19,8 +19,8 @@ class Account(BaseDataType):
     sn: str = None
     original: Dict[str, Union[str, int]] = {}
 
-    def __init__(self, key: str, accountConfig: Dict[str, Union[str, int]]) -> None:
-        self.original = accountConfig
+    def __init__(self, key: str, config: Dict[str, Union[str, int]]) -> None:
+        self.original = config
 
         self.key = key
         [setattr(self, k, v) for k, v in self.original.items()]

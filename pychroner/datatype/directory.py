@@ -15,9 +15,8 @@ class Directory(BaseDataType):
     library: str = f"{os.getcwd()}/library"
     original: Dict[str, str] = {}
 
-    def __init__(self, directoryConfig: Dict[str, str]=None) -> None:
-        directoryConfig = directoryConfig or {}
-        self.original = directoryConfig
+    def __init__(self, config: Dict[str, str]) -> None:
+        self.original = config or {}
 
         [setattr(self, k, v) for k, v in self.original.items()]
 

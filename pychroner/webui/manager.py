@@ -2,7 +2,7 @@
 from flask import Flask
 from jinja2 import FileSystemLoader
 
-from pychroner.enums import LogLevel
+from ..enums import LogLevel
 from .view import View
 
 
@@ -16,7 +16,7 @@ class WebUIManager:
         View.register(self.app)
 
     def start(self):
-        if self.core.config.logLevel == LogLevel.Debug:
+        if self.core.config.logging.level == LogLevel.Debug:
             self.app.debug = True
 
         self.core.TM.startThread(self.app.run, args=[self.core.config.webui.host, self.core.config.webui.port])

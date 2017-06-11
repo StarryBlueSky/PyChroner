@@ -27,13 +27,14 @@ class Core:
         if os.path.isfile(pidFile):
             running = False
             with open(pidFile) as f:
-                if f.read().isdigit() and psutil.pid_exists(int(f.read())):
+                pid = f.read()
+                if pid.isdigit() and psutil.pid_exists(int(pid.strip())):
                     running = True
             if running:
                 print("PyChroner is already running.")
                 exit(1)
         with open(pidFile, "w") as f:
-            f.write(os.getpid())
+            f.write(str(os.getpid()))
 
         self.prompt: bool = prompt
         self.config: Config = Config()
@@ -42,8 +43,8 @@ class Core:
         makeDirs(self.config.directory.dirs)
         self.queue = Queue()
         self.logger: Logger = getLogger(
-                name="pychroner", directory=self.config.directory.logs, logLevel=self.config.logLevel,
-                slack=self.config.slack,
+                name="pychroner", directory=self.config.directory.logs, logLevel=self.config.logging.level,
+                slack=self.config.logging.slack,
                 queue=self.queue
         )
         self.logger.info(f"Logger started. Current time is {datetime.now()}.")

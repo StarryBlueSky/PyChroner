@@ -6,8 +6,7 @@ from hashlib import sha1
 
 from typing.re import Pattern
 
-from ..datatype.account import Account
-from ..enums import PluginType
+from ..datatype.services.twitter.account import Account
 
 pluginFilePattern: Pattern = re.compile("^.+[.]py$")
 

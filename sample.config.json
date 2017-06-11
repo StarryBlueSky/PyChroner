@@ -1,75 +1,89 @@
 {
-  "application": {
-    "ExampleApp": {
-      "ck": "xxx",
-      "cs": "yyy"
+  "services": {
+    "twitter": {
+      "applications": {
+        "ExampleApp": {
+          "ck": "xxx",
+          "cs": "yyy"
+        },
+        "FunnyApp": {
+          "ck": "yyy",
+          "cs": "yyy"
+        }
+      },
+      "accounts": {
+        "ExampleBot": {
+          "application": "ExampleApp",
+          "at": "xxx",
+          "ats": "xxx",
+          "id": 100000000,
+          "sn": "TwitterBot"
+        },
+        "FunnyBot": {
+          "application": "FunnyApp",
+          "at": "yyy",
+          "ats": "yyy",
+          "id": 200000000,
+          "sn": "TwitterBot2"
+        }
+      },
+      "mute": {
+        "via": [
+          "twittbot.net"
+        ],
+        "user_id": [
+          300000000, 400000000
+        ],
+        "user_sn": [
+          "twitter"
+        ],
+        "domain": [
+          "facebook.com"
+        ]
+      }
     },
-    "FunnyApp": {
-      "ck": "yyy",
-      "cs": "yyy"
+    "discord": {
+      "accounts": {
+        "ExampleBot": {
+          "token": "xxxxxxxxxx",
+          "id": 8000000000000,
+          "prefix": "!"
+        },
+        "AwesomeBot": {
+          "token": "xxxxxxxxxx",
+          "id": 9000000000000,
+          "prefix": "?"
+        }
+      }
     }
   },
-  "accounts": {
-    "ExampleBot": {
-      "application": "ExampleApp",
-      "at": "xxx",
-      "ats": "xxx",
-      "id": 100000000,
-      "sn": "TwitterBot"
-    },
-    "FunnyBot": {
-      "application": "FunnyApp",
-      "at": "yyy",
-      "ats": "yyy",
-      "id": 200000000,
-      "sn": "TwitterBot2"
+  "database": {
+    "mongodb": {
+      "host": null,
+      "port": null,
+      "username": null,
+      "password": null,
+      "mechanism": null
     }
-  },
-  "mute": {
-    "via": [
-      "twittbot.net"
-    ],
-    "user_id": [
-      300000000, 400000000
-    ],
-    "user_sn": [
-      "twitter"
-    ],
-    "domain": [
-      "facebook.com"
-    ]
-  },
-  "directory": {
-    "plugins": "plugins",
-    "logs": "logs",
-    "tmp": "tmp",
-    "cache": "cache",
-    "assets": "assets",
-    "api": "api"
-  },
-  "logLevel": "info",
-  "slack": {
-    "enabled": false,
-    "webhookUrl": null,
-    "channel": "#python-log",
-    "username": "Python Logger",
-    "iconEmoji": ":desktop_computer:",
-    "iconUrl": null,
-    "logLevel": "error"
   },
   "webui": {
     "enabled": true,
     "host": "127.0.0.1",
-    "port": "5000"
+    "port": 5000
   },
   "secret": {
     "awesomeWebServiceKey": "xxx-yyy-zzz"
   },
-  "mongodb": {
-    "host": null,
-    "port": null,
-    "username": null,
-    "password": null,
-    "mechanism": null
+  "logging": {
+    "level": "info",
+    "slack": {
+      "enabled": false,
+      "webhookUrl": null,
+      "channel": "#python-log",
+      "username": "Python Logger",
+      "iconEmoji": ":desktop_computer:",
+      "iconUrl": null,
+      "logLevel": "error"
+    }
   }
 }

@@ -3,8 +3,8 @@ import copy
 from logging import getLogger
 from typing import List
 
+from ..datatype.services.twitter.account import Account
 from .userstream import UserStream
-from ..datatype.account import Account
 
 logger = getLogger(__name__)
 

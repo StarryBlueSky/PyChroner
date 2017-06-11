@@ -1,7 +1,7 @@
 # coding=utf-8
 from typing import Dict
 
-from . import BaseDataType
+from ....datatype import BaseDataType
 
 
 class Application(BaseDataType):
@@ -10,8 +10,8 @@ class Application(BaseDataType):
     cs: str = None
     original: Dict[str, str] = {}
 
-    def __init__(self, key: str, applicationConfig: Dict[str, str]) -> None:
-        self.original = applicationConfig
+    def __init__(self, key: str, config: Dict[str, str]) -> None:
+        self.original = config
 
         self.key = key
         [setattr(self, k, v) for k, v in self.original.items()]

@@ -41,7 +41,7 @@ class Plugin:
         self.function = t[0]
         for k, v in self.function.__meta__.items():
             setattr(self.meta, k, v)
-        self.meta.account = self.core.config.getAccount(self.meta.account)
+        self.meta.twitterAccount = self.core.config.getTwitterAccount(self.meta.twitterAccount)
 
         if self.meta.type == PluginType.Schedule:
             hours: List[int] = self.meta.hours

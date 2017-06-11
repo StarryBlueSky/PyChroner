@@ -1,7 +1,7 @@
 # coding=utf-8
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 
-from . import BaseDataType
+from ....datatype import BaseDataType
 
 
 class Mute(BaseDataType):
@@ -11,8 +11,8 @@ class Mute(BaseDataType):
     domain: List[str] = []
     original: Dict[str, List[Union[str, int]]] = {}
 
-    def __init__(self, muteConfig: Dict[str, List[Union[str, int]]]=None) -> None:
-        muteConfig = muteConfig or {}
+    def __init__(self, config: Optional[Dict[str, List[Union[str, int]]]]) -> None:
+        muteConfig = config or {}
         self.original = muteConfig
 
         [setattr(self, k, v) for k, v in self.original.items()]
