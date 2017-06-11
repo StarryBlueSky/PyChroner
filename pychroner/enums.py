@@ -29,6 +29,38 @@ class PluginType(IntEnum):
     TwitterMisc = 19
 
     TwitterEvent = 20
+    TwitterFavorite = 21
+    TwitterFavoritedRetweet = 22
+    # reserved 21 to 39
+
+    DiscordReady = 40
+    DiscordMessage = 41
+    DiscordMessageDelete = 42
+    DiscordMessageEdit = 43
+    DiscordReactionAdd = 44
+    DiscordReactionRemove = 45
+    DiscordReactionClear = 46
+    DiscordChannelCreate = 47
+    DiscordChannelDelete = 48
+    DiscordChannelUpdate = 49
+    DiscordMemberJoin = 50
+    DiscordMemberRemove = 51
+    DiscordMemberUpdate = 52
+    DiscordServerJoin = 53
+    DiscordServerRemove = 54
+    DiscordServerUpdate = 55
+    DiscordServerRoleCreate = 56
+    DiscordServerRoleDelete = 57
+    DiscordServerRoleUpdate = 58
+    DiscordServerEmojiUpdate = 59
+    DiscordServerAvailable = 60
+    DiscordServerUnavailable = 61
+    DiscordVoiceStateUpdate = 62
+    DiscordMemberBan = 63
+    DiscordMemberUnban = 64
+    DiscordTyping = 65
+    DiscordGroupJoin = 66
+    DiscordGroupRemove = 67
 
 @unique
 class API(Enum):
