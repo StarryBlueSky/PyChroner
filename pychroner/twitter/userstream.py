@@ -80,7 +80,7 @@ class UserStream:
                 self.api.streaming(self.callback)
             except Exception as e:
                 self.core.logger.warning(
-                        f"PyChroner has been disconnected from UserStream. ({e}) Reconnect in {reconnectSecond}"
+                        f"PyChroner has been disconnected from UserStream. ({e}) Reconnect in {reconnectSecond} secs."
                 )
             finally:
                 time.sleep(reconnectSecond)
