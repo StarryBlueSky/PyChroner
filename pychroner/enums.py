@@ -13,17 +13,22 @@ class PluginType(IntEnum):
     """
     represent Plugin's type
     """
-    TwitterReply = 1
-    TwitterTimeline = 2
-    TwitterRetweet = 3
-    TwitterDM = 4
-    TwitterEvent = 5
-    Thread = 6
-    Schedule = 7
-    Startup = 8
-    TwitterOther = 9
-    TwitterDelete = 10
+    Thread = 0
+    Schedule = 1
+    Startup = 2
 
+    TwitterReply = 10
+    TwitterRetweet = 11
+    TwitterTimeline = 12
+    TwitterDM = 13
+    TwitterFriends = 14
+    TwitterDelete = 15
+    TwitterStatusWithheld = 16
+    TwitterScrubGeo = 17
+    TwitterLimit = 18
+    TwitterMisc = 19
+
+    TwitterEvent = 20
 
 @unique
 class API(Enum):
