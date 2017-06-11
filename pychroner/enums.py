@@ -30,8 +30,13 @@ class PluginType(IntEnum):
 
     TwitterEvent = 20
     TwitterFavorite = 21
-    TwitterFavoritedRetweet = 22
-    # reserved 21 to 39
+    TwitterUnfavorite = 22
+    TwitterFavoritedRetweet = 23
+    TwitterRetweetedRetweet = 24
+    TwitterQuotedTweet = 25
+    TwitterFollow = 26
+    TwitterUserUpdate = 27
+    TwitterListMemberAdded = 28
 
     DiscordReady = 40
     DiscordMessage = 41
