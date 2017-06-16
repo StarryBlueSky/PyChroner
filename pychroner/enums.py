@@ -35,8 +35,11 @@ class PluginType(IntEnum):
     TwitterRetweetedRetweet = 24
     TwitterQuotedTweet = 25
     TwitterFollow = 26
-    TwitterUserUpdate = 27
-    TwitterListMemberAdded = 28
+    TwitterBlock = 27
+    TwitterUnblock = 28
+    TwitterUserUpdate = 29
+    TwitterListMemberAdded = 30
+    TwitterListUserSubscribed = 31
 
     DiscordReady = 40
     DiscordMessage = 41
