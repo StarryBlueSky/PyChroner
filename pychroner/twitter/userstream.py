@@ -15,60 +15,56 @@ class UserStream:
         self.account = account
         self.api = self.account.getHandler()
 
-        self.mute = self.core.config.mute
+        self.mute = self.core.config.services.twitter.mute
 
     def callback(self, stream: Dict) -> None:
         try:
             if "text" in stream:
-                stream["via"] = re.sub("<.*?>", "", stream["source"])
                 if stream["user"]["screen_name"] in self.mute.user_sn \
                     or stream["user"]["id"] in self.mute.user_id \
-                        or stream["via"] in self.mute.via:
-                    return
-                for i in range(len(stream["entities"]["urls"])):
-                    if urllib.parse.urlparse(stream["entities"]["urls"][i]["expanded_url"]).hostname \
-                            in self.mute.domain:
+                    or re.sub("<.+?>", "", stream["source"]) in self.mute.via \
+                    or any([urllib.parse.urlparse(stream["entities"]["urls"][i]["expanded_url"]).hostname in self.mute.domain for i in range(len(stream["entities"]["urls"]))]):
                         return
 
                 stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
 
-                if re.match(f"@{self.account.sn}%s", stream["text"], re.IGNORECASE):
+                if re.match(f"@{self.account.sn}¥s", stream["text"], re.IGNORECASE):
                     [
                         self.core.TM.wrapper.executePluginSafely(plugin, [stream])
                         for plugin in self.core.PM.plugins[PluginType.TwitterReply.name]
-                        if plugin.meta.account == self.account
+                        if plugin.meta.twitterAccount == self.account
                     ]
-                [
-                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
-                    if plugin.meta.account == self.account
-                ]
                 if "retweeted_status" in stream:
                     [
                         self.core.TM.wrapper.executePluginSafely(plugin, [stream])
                         for plugin in self.core.PM.plugins[PluginType.TwitterRetweet.name]
-                        if plugin.meta.account == self.account
+                        if plugin.meta.twitterAccount == self.account
                     ]
+                [
+                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                    for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
+                    if plugin.meta.twitterAccount == self.account
+                ]
 
             elif "event" in stream:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
                     for plugin in self.core.PM.plugins[PluginType.TwitterEvent.name]
-                    if plugin.meta.account == self.account
+                    if plugin.meta.twitterAccount == self.account
                 ]
 
             elif "direct_message" in stream:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
                     for plugin in self.core.PM.plugins[PluginType.TwitterDM.name]
-                    if plugin.meta.account == self.account
+                    if plugin.meta.twitterAccount == self.account
                 ]
 
             else:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
                     for plugin in self.core.PM.plugins[PluginType.TwitterOther.name]
-                    if plugin.meta.account == self.account
+                    if plugin.meta.twitterAccount == self.account
                 ]
 
         except Exception:
