@@ -39,7 +39,8 @@ class PluginType(IntEnum):
     TwitterUnblock = 28
     TwitterUserUpdate = 29
     TwitterListMemberAdded = 30
-    TwitterListUserSubscribed = 31
+    TwitterListMemberRemoved = 31
+    TwitterListUserSubscribed = 32
 
     DiscordReady = 40
     DiscordMessage = 41
