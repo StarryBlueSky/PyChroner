@@ -20,14 +20,10 @@ TwitterBotFrameworkの当初の目標(Goal)は, 既存のTwitter Bot作成サイ
 ## 特徴
 準備中.
 
----
-
 ## 導入方法
 PyChronerは Python **3.6**以上で動作します. 以下では, Python 3.6.1がインストール済みとしています.
 
 準備中.
-
----
 
 ## ライセンス
 PyChronerは, [MITライセンス](https://github.com/NephyProject/PyChroner/wiki/LICENSE) の下で公開されています.
