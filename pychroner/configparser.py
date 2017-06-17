@@ -76,7 +76,7 @@ class Config:
 
                 self.database.mongodb = MongoDB(t)
 
-        self.logging.level = getattr(LogLevel, self.original.get("logging", {}).get("logLevel", "error").title(), LogLevel.Error)
+        self.logging.level = getattr(LogLevel, self.original.get("logging", {}).get("level", "error").title(), LogLevel.Error)
         self.logging.slack = Slack(self.original.get("logging", {}).get("slack"))
 
         self.secret = Secret(self.original.get("secret"))
