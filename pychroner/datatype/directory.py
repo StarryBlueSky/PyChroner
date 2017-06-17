@@ -13,12 +13,6 @@ class Directory(BaseDataType):
     assets: str = f"{os.getcwd()}/assets"
     api: str = f"{os.getcwd()}/api"
     library: str = f"{os.getcwd()}/library"
-    original: Dict[str, str] = {}
-
-    def __init__(self, config: Dict[str, str]) -> None:
-        self.original = config or {}
-
-        [setattr(self, k, v) for k, v in self.original.items()]
 
     @property
     def dirs(self) -> List[str]:

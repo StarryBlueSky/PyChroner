@@ -26,7 +26,7 @@ class Config:
     """
     services: Services = Services()
     database: DataBase = DataBase()
-    directory: Directory = None
+    directory: Directory = Directory()
     webui: WebUI = None
     secret: Secret = None
     logging: Logging = Logging()
@@ -81,7 +81,6 @@ class Config:
 
         self.secret = Secret(self.original.get("secret"))
         self.webui = WebUI(self.original.get("webui"))
-        self.directory = Directory(self.original.get("directory"))
 
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
