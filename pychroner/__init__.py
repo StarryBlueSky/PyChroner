@@ -17,7 +17,8 @@ requirements = [
     ("Jinja2==2.9.6", "jinja2"),
     ("tweepy==3.5.0", "tweepy"),
     ("timeout-decorator==0.3.3", "timeout_decorator"),
-    ("discord.py[voice]==0.16.8", "discord")
+    ("discord.py[voice]==0.16.8", "discord"),
+    ("pymongo==3.4.0", "pymongo")
 ]
 
 from .pip import PIP
