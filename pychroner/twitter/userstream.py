@@ -1,14 +1,12 @@
 # coding=utf-8
 import re
 import time
-from logging import getLogger
 from typing import Dict
 
 from typing.re import Pattern
 
 from ..enums import PluginType
 
-logger = getLogger(__name__)
 reconnectSecond: int = 5
 
 viaPattern: Pattern = re.compile("<.+?>")
