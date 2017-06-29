@@ -46,9 +46,9 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
                     return func()
                 # PluginAPI
                 if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["twitterAccount"]]
+                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["twitterAccountName"]]
                     if t:
-                        args[0].accountKey = func.__meta__["twitterAccount"]
+                        args[0].accountKey = func.__meta__["twitterAccountName"]
 
                 return func(args[0])
             else:
@@ -57,9 +57,9 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
                     return func(args[1])
                 # PluginAPI + stream
                 if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.services.twitter.accounts if x.key == func.__meta__["twitterAccount"]]
+                    t = [x for x in args[0].core.config.services.twitter.accounts if x.key == func.__meta__["twitterAccountName"]]
                     if t:
-                        args[0].accountKey = func.__meta__["twitterAccount"]
+                        args[0].accountKey = func.__meta__["twitterAccountName"]
                 return func(args[0], args[1])
 
         if timeout and pluginType is not PluginType.Thread:
@@ -78,7 +78,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "multipleHour": multipleHour,
             "multipleMinute": multipleMinute,
             "permissions": permissions or [],
-            "twitterAccount": twitterAccount,
+            "twitterAccountName": twitterAccount,
             "timeout": timeout,
             "validFrom": validFrom,
             "validUntil": validUntil,

@@ -31,7 +31,8 @@ class PluginMeta:
         self.timeout: int = None
         self.validFrom: datetime = None
         self.validUntil: datetime = None
-        self.twitterAccount: str = None
+        self.twitterAccount = None
+        self.twitterAccountName: str = None
 
         self.combinedHours: List[int] = []
         self.combinedMinutes: List[int] = []
