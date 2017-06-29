@@ -109,7 +109,7 @@ class PluginAPI:
             return None
 
         key = accountKey or self.accountKey
-        for account in self.config.account:
+        for account in self.config.services.twitter.accounts:
             if account.key == key:
                 return account
         return None
