@@ -1,13 +1,18 @@
 # coding=utf-8
-import time
-import urllib.parse
-from logging import getLogger
 import re
-from ..enums import PluginType
+import time
+from logging import getLogger
 from typing import Dict
+
+from typing.re import Pattern
+
+from ..enums import PluginType
 
 logger = getLogger(__name__)
 reconnectSecond: int = 5
+
+viaPattern: Pattern = re.compile("<.+?>")
+domainPattern: Pattern = re.compile("https?://([^/]+).*")
 
 class UserStream:
     def __init__(self, core, account) -> None:
@@ -15,60 +20,55 @@ class UserStream:
         self.account = account
         self.api = self.account.getHandler()
 
-        self.mute = self.core.config.services.twitter.mute
-
     def callback(self, stream: Dict) -> None:
-        try:
-            if "text" in stream:
-                if stream["user"]["screen_name"] in self.mute.user_sn \
-                    or stream["user"]["id"] in self.mute.user_id \
-                    or re.sub("<.+?>", "", stream["source"]) in self.mute.via \
-                    or any([urllib.parse.urlparse(stream["entities"]["urls"][i]["expanded_url"]).hostname in self.mute.domain for i in range(len(stream["entities"]["urls"]))]):
-                        return
+        # tweets
+        if "text" in stream:
+            if stream["user"]["screen_name"] in self.core.config.services.twitter.mute.user_sn \
+                or stream["user"]["id"] in self.core.config.services.twitter.mute.user_id \
+                or viaPattern.findall(stream["source"])[0] in self.core.config.services.twitter.mute.via \
+                or any([domainPattern.findall(entity["expanded_url"])[0] in self.core.config.services.twitter.mute.domain for entity in stream["entities"]["urls"]]):
+                    return
 
-                stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
+            stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
 
-                if re.match(f"@{self.account.sn}¥s", stream["text"], re.IGNORECASE):
-                    [
-                        self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                        for plugin in self.core.PM.plugins[PluginType.TwitterReply.name]
-                        if plugin.meta.twitterAccount == self.account
-                    ]
-                if "retweeted_status" in stream:
-                    [
-                        self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                        for plugin in self.core.PM.plugins[PluginType.TwitterRetweet.name]
-                        if plugin.meta.twitterAccount == self.account
-                    ]
+            if re.match(f"@{self.account.sn}¥s", stream["text"], re.IGNORECASE):
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterReply.name]
                     if plugin.meta.twitterAccount == self.account
                 ]
-
-            elif "event" in stream:
+            if "retweeted_status" in stream:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterEvent.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterRetweet.name]
                     if plugin.meta.twitterAccount == self.account
                 ]
+            [
+                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
+                if plugin.meta.twitterAccount == self.account
+            ]
 
-            elif "direct_message" in stream:
-                [
-                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterDM.name]
-                    if plugin.meta.twitterAccount == self.account
-                ]
+        elif "event" in stream:
+            [
+                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                for plugin in self.core.PM.plugins[PluginType.TwitterEvent.name]
+                if plugin.meta.twitterAccount == self.account
+            ]
 
-            else:
-                [
-                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterMisc.name]
-                    if plugin.meta.twitterAccount == self.account
-                ]
+        elif "direct_message" in stream:
+            [
+                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                for plugin in self.core.PM.plugins[PluginType.TwitterDM.name]
+                if plugin.meta.twitterAccount == self.account
+            ]
 
-        except Exception:
-            logger.exception(f"Error occured while processing @{self.account.sn} UserStream.")
+        else:
+            [
+                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+                for plugin in self.core.PM.plugins[PluginType.TwitterMisc.name]
+                if plugin.meta.twitterAccount == self.account
+            ]
 
     def start(self) -> None:
         while True:
