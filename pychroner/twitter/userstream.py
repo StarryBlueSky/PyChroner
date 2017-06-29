@@ -63,7 +63,7 @@ class UserStream:
             else:
                 [
                     self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterMisc.name]
+                    for plugin in self.core.PM.plugins[PluginType.TwitterOther.name]
                     if plugin.meta.twitterAccount == self.account
                 ]
 
