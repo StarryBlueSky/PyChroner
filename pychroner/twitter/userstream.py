@@ -18,6 +18,13 @@ class UserStream:
         self.account = account
         self.api = self.account.getHandler()
 
+    def callPlugins(self, pluginType: PluginType, stream: Dict):
+        [
+            self.core.TM.wrapper.executePluginSafely(plugin, [stream])
+            for plugin in self.core.PM.plugins[pluginType.name]
+            if plugin.meta.twitterAccountName == self.account.key
+        ]
+
     def callback(self, stream: Dict) -> None:
         # tweets
         if "text" in stream:
@@ -27,52 +34,81 @@ class UserStream:
                 or any([domainPattern.findall(entity["expanded_url"])[0] in self.core.config.services.twitter.mute.domain for entity in stream["entities"]["urls"]]):
                     return
 
+            # prevent Name-Reply attack
             stream["user"]["name"] = stream["user"]["name"].replace("@", "@​")
 
             # Reply
             if re.match(f"@{self.account.sn}¥s", stream["text"], re.IGNORECASE):
-                [
-                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterReply.name]
-                    if plugin.meta.twitterAccountName == self.account.key
-                ]
+                self.callPlugins(PluginType.TwitterReply, stream)
             # RT
             if "retweeted_status" in stream:
-                [
-                    self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                    for plugin in self.core.PM.plugins[PluginType.TwitterRetweet.name]
-                    if plugin.meta.twitterAccountName == self.account.key
-                ]
-            # Timeline
-            [
-                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                for plugin in self.core.PM.plugins[PluginType.TwitterTimeline.name]
-                if plugin.meta.twitterAccountName == self.account.key
-            ]
+                self.callPlugins(PluginType.TwitterRetweet, stream)
 
-        # Events
-        elif "event" in stream:
-            [
-                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                for plugin in self.core.PM.plugins[PluginType.TwitterEvent.name]
-                if plugin.meta.twitterAccountName == self.account.key
-            ]
+            # All Timeline
+            self.callPlugins(PluginType.TwitterTimeline, stream)
 
         # DM
         elif "direct_message" in stream:
-            [
-                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                for plugin in self.core.PM.plugins[PluginType.TwitterDM.name]
-                if plugin.meta.twitterAccountName == self.account.key
-            ]
+            self.callPlugins(PluginType.TwitterDM, stream)
+
+        # Events
+        elif "event" in stream:
+            if stream["event"] == "favorite":
+                self.callPlugins(PluginType.TwitterEventFavorite, stream)
+            elif stream["event"] == "unfavorite":
+                self.callPlugins(PluginType.TwitterEventUnfavorite, stream)
+            elif stream["event"] == "favorited_retweet":
+                self.callPlugins(PluginType.TwitterEventFavoritedRetweet, stream)
+            elif stream["event"] == "retweeted_retweet":
+                self.callPlugins(PluginType.TwitterEventRetweetedRetweet, stream)
+            elif stream["event"] == "quoted_tweet":
+                self.callPlugins(PluginType.TwitterEventQuotedTweet, stream)
+            elif stream["event"] == "follow":
+                self.callPlugins(PluginType.TwitterEventFollow, stream)
+            elif stream["event"] == "unfollow":
+                self.callPlugins(PluginType.TwitterEventUnfollow, stream)
+            elif stream["event"] == "block":
+                self.callPlugins(PluginType.TwitterEventBlock, stream)
+            elif stream["event"] == "unblock":
+                self.callPlugins(PluginType.TwitterEventUnblock, stream)
+            elif stream["event"] == "user_update":
+                self.callPlugins(PluginType.TwitterEventUserUpdate, stream)
+            elif stream["event"] == "list_created":
+                self.callPlugins(PluginType.TwitterEventListCreated, stream)
+            elif stream["event"] == "list_updated":
+                self.callPlugins(PluginType.TwitterEventListUpdated, stream)
+            elif stream["event"] == "list_destroyed":
+                self.callPlugins(PluginType.TwitterEventListDestroyed, stream)
+            elif stream["event"] == "list_member_added":
+                self.callPlugins(PluginType.TwitterEventListMemberAdded, stream)
+            elif stream["event"] == "list_member_removed":
+                self.callPlugins(PluginType.TwitterEventListMemberRemoved, stream)
+            elif stream["event"] == "list_user_subscribed":
+                self.callPlugins(PluginType.TwitterEventListUserSubscribed, stream)
+            elif stream["event"] == "list_user_unsubscribed":
+                self.callPlugins(PluginType.TwitterEventListUserUnsubscribed, stream)
+
+            # All Events
+            self.callPlugins(PluginType.TwitterEvent, stream)
 
         # Miscellaneous UserStream data
         else:
-            [
-                self.core.TM.wrapper.executePluginSafely(plugin, [stream])
-                for plugin in self.core.PM.plugins[PluginType.TwitterMisc.name]
-                if plugin.meta.twitterAccountName == self.account.key
-            ]
+            if "friends" in stream:
+                self.callPlugins(PluginType.TwitterMiscFriends, stream)
+            elif "delete" in stream:
+                self.callPlugins(PluginType.TwitterMiscDelete, stream)
+            elif "status_withheld" in stream:
+                self.callPlugins(PluginType.TwitterMiscStatusWithheld, stream)
+            elif "scrub_geo" in stream:
+                self.callPlugins(PluginType.TwitterMiscScrubGeo, stream)
+            elif "limit" in stream:
+                self.callPlugins(PluginType.TwitterMiscLimit, stream)
+
+            # All Miscs
+            self.callPlugins(PluginType.TwitterMisc, stream)
+
+        # All UserStream data
+        self.callPlugins(PluginType.Twitter, stream)
 
     def start(self) -> None:
         while True:
