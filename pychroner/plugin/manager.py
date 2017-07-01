@@ -63,18 +63,22 @@ class PluginManager:
             self.core.UM.updateAccounts(plugin.meta.twitterAccount)
 
         # noinspection PyTypeChecker
-        self.plugins = {
+        self.plugins: Dict[str, List[Plugin]] = {
             pluginType.name: sorted(
                     self.plugins[pluginType.name],
                     key=lambda x: x.meta.priority, reverse=True
-            ) for pluginType in PluginType}
+            ) for pluginType in PluginType
+        }
 
         with open(f"{self.core.config.directory.api}/{API.Plugins.value}", "w") as f:
             # noinspection PyTypeChecker
-            json.dump([
-                plugin.meta.__dict__
-                for pluginType in PluginType for plugin in self.plugins[pluginType.name]
-            ], f, sort_keys=True, indent=4, default=serializeDataType)
+            json.dump(
+                [
+                    plugin.meta.__dict__
+                    for pluginType in PluginType for plugin in self.plugins[pluginType.name]
+                ],
+                f, sort_keys=True, indent=4, default=serializeDataType
+            )
         return True
 
     def unloadPlugin(self, path: str) -> bool:
