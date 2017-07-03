@@ -1,6 +1,7 @@
 # coding=utf-8
 import re
 import time
+import urllib.parse
 from typing import Dict
 
 from typing.re import Pattern
@@ -30,8 +31,8 @@ class UserStream:
         if "text" in stream:
             if stream["user"]["screen_name"] in self.core.config.services.twitter.mute.user_sn \
                 or stream["user"]["id"] in self.core.config.services.twitter.mute.user_id \
-                or viaPattern.findall(stream["source"])[0] in self.core.config.services.twitter.mute.via \
-                or any([domainPattern.findall(entity["expanded_url"])[0] in self.core.config.services.twitter.mute.domain for entity in stream["entities"]["urls"]]):
+                or viaPattern.sub("\1", stream["source"]) in self.core.config.services.twitter.mute.via \
+                or any([urllib.parse.urlparse(entity["expanded_url"]).hostname in self.core.config.services.twitter.mute.domain for entity in stream["entities"]["urls"]]):
                     return
 
             # prevent Name-Reply attack
