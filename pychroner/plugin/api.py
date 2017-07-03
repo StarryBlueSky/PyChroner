@@ -98,10 +98,10 @@ class PluginAPI:
         return None
 
     def getMongoDB(self) -> Optional[MongoDB]:
-        return self.config.mongodb
+        return self.config.database.mongodb
 
     def getSlack(self) -> Optional[Slack]:
-        return self.config.slack
+        return self.config.logging.slack
 
     def getLocalStorage(self) -> Optional[Dict]:
         return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
