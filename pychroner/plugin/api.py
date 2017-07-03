@@ -41,26 +41,9 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
 
     def decorator(func: Callable):
         def register(*args) -> Callable:
-            if pluginType in [PluginType.Schedule, PluginType.Thread, PluginType.Startup]:
-                if func.__code__.co_argcount == 0 or len(args) == 0:
-                    return func()
-                # PluginAPI
-                if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.account if x.key == func.__meta__["twitterAccountName"]]
-                    if t:
-                        args[0].accountKey = func.__meta__["twitterAccountName"]
-
-                return func(args[0])
-            else:
-                if func.__code__.co_argcount == 1 or len(args) == 1:
-                    # stream
-                    return func(args[1])
-                # PluginAPI + stream
-                if hasattr(func, "__meta__"):
-                    t = [x for x in args[0].core.config.services.twitter.accounts if x.key == func.__meta__["twitterAccountName"]]
-                    if t:
-                        args[0].accountKey = func.__meta__["twitterAccountName"]
-                return func(args[0], args[1])
+            if len(args) > 0 and twitterAccount:
+                args[0].twitterAccountName = twitterAccount
+            return func(*args)
 
         if timeout and pluginType is not PluginType.Thread:
             if platform.system() != "Windows":
@@ -101,14 +84,14 @@ class PluginAPI:
         self.config = self.core.config
         self.dirs = self.config.directory
 
-        self.accountKey = None
+        self.twitterAccountName = None
         self.plugin = None
 
-    def getAccount(self, accountKey: str=None) -> Optional[Account]:
-        if not self.accountKey and not accountKey:
+    def getTwitterAccount(self, accountKey: str=None) -> Optional[Account]:
+        if not self.twitterAccountName and not accountKey:
             return None
 
-        key = accountKey or self.accountKey
+        key = accountKey or self.twitterAccountName
         for account in self.config.services.twitter.accounts:
             if account.key == key:
                 return account
@@ -123,5 +106,6 @@ class PluginAPI:
     def getLocalStorage(self) -> Optional[Dict]:
         return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
 
-    def getLogger(self) -> Logger:
+    @staticmethod
+    def getLogger() -> Logger:
         return logger
