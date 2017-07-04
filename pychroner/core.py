@@ -87,5 +87,6 @@ class Core:
         ]
         self.TM.startThread(target=self.TM.wrapper.startSchedulePlugins)
 
-        self.WM.start()
+        if self.config.webui.enabled:
+            self.WM.start()
         self.CM.loop()
