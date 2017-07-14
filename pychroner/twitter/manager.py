@@ -29,4 +29,4 @@ class UserStreamManager:
         self.streams.append(us)
 
         self.core.TM.startThread(us.start, name=f"StreamingTask_for_{account.key}")
-        logger.info(f"@{account.sn} UserStream connection has established.")
+        logger.info(f"Twitter @{account.sn} UserStream connection has established.")
