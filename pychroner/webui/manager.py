@@ -16,6 +16,9 @@ class WebUIManager:
         View.register(self.app)
 
     def start(self):
+        if not self.core.config.webui.enabled:
+            return
+
         if self.core.config.logging.level == LogLevel.Debug:
             self.app.debug = True
 
