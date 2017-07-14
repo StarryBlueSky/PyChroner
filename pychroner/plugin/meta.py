@@ -33,6 +33,8 @@ class PluginMeta:
         self.validUntil: datetime = None
         self.twitterAccount = None
         self.twitterAccountName: str = None
+        self.discordAccount = None
+        self.discordAccountName: str = None
 
         self.combinedHours: List[int] = []
         self.combinedMinutes: List[int] = []

@@ -19,7 +19,7 @@ from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
 from .utils import getLogger, makeDirs
 from .webui.manager import WebUIManager
-
+from .discord.manager import WebSocketManager
 
 class Core:
     def __init__(self, prompt: bool=True) -> None:
@@ -61,6 +61,7 @@ class Core:
             self.logger.warning(f"You are running as root or Administrator. Bot should be running as a normal user.")
 
         self.UM: UserStreamManager = UserStreamManager(self)
+        self.WSM: WebSocketManager = WebSocketManager(self)
         self.TM: ThreadManager = ThreadManager(self)
 
         self.PM: PluginManager = PluginManager(self)
@@ -80,13 +81,12 @@ class Core:
             self.TM.startThread(
                 target=getattr(plugin.module, plugin.meta.functionName),
                 name=plugin.meta.name,
-                keepalive=plugin.meta.type == PluginType.Thread,
+                keepalive=plugin.meta.type is PluginType.Thread,
                 args=[PluginAPI(self)]
             )
             for plugin in self.PM.plugins[PluginType.Startup.name] + self.PM.plugins[PluginType.Thread.name]
         ]
         self.TM.startThread(target=self.TM.wrapper.startSchedulePlugins)
 
-        if self.config.webui.enabled:
-            self.WM.start()
+        self.WM.start()
         self.CM.loop()

@@ -61,6 +61,8 @@ class PluginManager:
 
         if plugin.meta.twitterAccount:
             self.core.UM.updateAccounts(plugin.meta.twitterAccount)
+        if plugin.meta.discordAccount:
+            self.core.WSM.updateAccounts(plugin.meta.discordAccount)
 
         # noinspection PyTypeChecker
         self.plugins: Dict[str, List[Plugin]] = {

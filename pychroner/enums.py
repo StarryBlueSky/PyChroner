@@ -8,6 +8,9 @@ from logging import CRITICAL, ERROR, WARN, WARNING, INFO, DEBUG
 
 __all__ = ["PluginType", "API", "LogLevel"]
 
+DiscordPluginTypeIDStart = 50
+DiscordPluginTypeIDEnd = 77
+
 @unique
 class PluginType(IntEnum):
     """
@@ -49,7 +52,7 @@ class PluginType(IntEnum):
     TwitterEventListUserSubscribed = 46
     TwitterEventListUserUnsubscribed = 47
 
-    DiscordReady = 50
+    DiscordReady = DiscordPluginTypeIDStart
     DiscordMessage = 51
     DiscordMessageDelete = 52
     DiscordMessageEdit = 53
@@ -76,7 +79,38 @@ class PluginType(IntEnum):
     DiscordMemberUnban = 74
     DiscordTyping = 75
     DiscordGroupJoin = 76
-    DiscordGroupRemove = 77
+    DiscordGroupRemove = DiscordPluginTypeIDEnd
+
+@unique
+class DiscordEventFunction(Enum):
+    DiscordReady = "on_ready"
+    DiscordMessage = "on_message"
+    DiscordMessageDelete = "on_message_delete"
+    DiscordMessageEdit = "on_message_edit"
+    DiscordReactionAdd = "on_reaction_add"
+    DiscordReactionRemove = "on_reaction_remove"
+    DiscordReactionClear = "on_reaction_clear"
+    DiscordChannelCreate = "on_channel_create"
+    DiscordChannelDelete = "on_channel_delete"
+    DiscordChannelUpdate = "on_channel_update"
+    DiscordMemberJoin = "on_member_join"
+    DiscordMemberRemove = "on_member_remove"
+    DiscordMemberUpdate = "on_member_update"
+    DiscordServerJoin = "on_server_join"
+    DiscordServerRemove = "on_server_remove"
+    DiscordServerUpdate = "on_server_update"
+    DiscordServerRoleCreate = "on_server_role_create"
+    DiscordServerRoleDelete = "on_server_role_delete"
+    DiscordServerRoleUpdate = "on_server_role_update"
+    DiscordServerEmojiUpdate = "on_server_emojis_update"
+    DiscordServerAvailable = "on_server_available"
+    DiscordServerUnavailable = "on_server_unavailable"
+    DiscordVoiceStateUpdate = "on_voice_state_update"
+    DiscordMemberBan = "on_member_ban"
+    DiscordMemberUnban = "on_member_unban"
+    DiscordTyping = "on_typing"
+    DiscordGroupJoin = "on_group_join"
+    DiscordGroupRemove = "on_group_remove"
 
 @unique
 class API(Enum):

@@ -13,7 +13,8 @@ from .datatype.logging import Logging
 from .datatype.directory import Directory
 from .datatype.secret import Secret
 from .datatype.webui import WebUI
-from .datatype.services.twitter.account import Account
+from .datatype.services.twitter.account import Account as TwitterAccount
+from .datatype.services.discord.account import Account as DiscordAccount
 from .datatype.logging.slack import Slack
 from .enums import LogLevel
 from .exceptions.config import *
@@ -85,8 +86,13 @@ class Config:
     def get(self, name: str, default: object=None) -> object:
         return getattr(self, name, default)
 
-    def getTwitterAccount(self, name: str) -> Account:
+    def getTwitterAccount(self, name: str) -> TwitterAccount:
         for account in self.services.twitter.accounts or {}:
+            if account.key == name:
+                return account
+
+    def getDiscordAccount(self, name: str) -> DiscordAccount:
+        for account in self.services.discord.accounts or {}:
             if account.key == name:
                 return account
 

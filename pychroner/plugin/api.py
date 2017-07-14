@@ -15,10 +15,12 @@ logger = getLogger(__name__)
 def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
               hours: int=None, minutes: int=None, multipleHour: int=None, multipleMinute: int=None,
               twitterAccount: str=None, ratio: int=None, permissions: List[Dict]=None,
-                validFrom: datetime=None, validUntil: datetime=None):
+              validFrom: datetime=None, validUntil: datetime=None,
+              discordAccount: str=None):
     """
     decorator implementation of plugin metainfo
-    :param validUntil: 
+    :param discordAccount:
+    :param validUntil:
     :param validFrom: 
     :param pluginType: (PluginType) target plugin type
     :param timeout: seconds to stop plugin execution
@@ -62,6 +64,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "multipleMinute": multipleMinute,
             "permissions": permissions or [],
             "twitterAccountName": twitterAccount,
+            "discordAccountName": discordAccount,
             "timeout": timeout,
             "validFrom": validFrom,
             "validUntil": validUntil,

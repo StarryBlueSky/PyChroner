@@ -42,6 +42,7 @@ class Plugin:
         for k, v in self.function.__meta__.items():
             setattr(self.meta, k, v)
         self.meta.twitterAccount = self.core.config.getTwitterAccount(self.meta.twitterAccountName)
+        self.meta.discordAccount = self.core.config.getDiscordAccount(self.meta.discordAccountName)
 
         if self.meta.type == PluginType.Schedule:
             hours: List[int] = self.meta.hours
@@ -57,5 +58,5 @@ class Plugin:
 
         self.isLoaded = True
         self.meta.enable = True
-        logger.info(f"[Loaded] Plugin \"{self.meta.name}\"({self.meta.path}) has been loaded successfully.")
+        logger.info(f"[Loaded] {self.meta.type.name} Plugin \"{self.meta.name}\"({self.meta.path}) has been loaded successfully.")
         return self.isLoaded
