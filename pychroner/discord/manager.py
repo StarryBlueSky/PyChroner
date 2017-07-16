@@ -9,6 +9,9 @@ from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd
 
 logger = getLogger(__name__)
 
+async def on_error(event, *args, **kwargs):
+    logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {args} + {kwargs}.")
+
 class WebSocketManager:
     def __init__(self, core):
         self.core = core
@@ -31,6 +34,8 @@ class WebSocketManager:
                 for plugin in self.core.PM.plugins[pluginType.name]:
                     if plugin.meta.discordAccount is ws.account:
                         setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, getattr(plugin.module, plugin.meta.functionName))
+
+        setattr(ws.client, "on_error", on_error)
 
     def run(self, account):
         ws = WebSocket(self.core, account)
