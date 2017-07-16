@@ -8,13 +8,14 @@ from .command import Command
 class ConsoleManager:
     def __init__(self, core) -> None:
         self.core = core
-        self.prompt = self.core.prompt
-        self.cmd = Command(self.core)
+        self.prompt: bool = self.core.prompt
+        self.cmd: Command = Command(self.core)
 
     def execute(self, text: str) -> None:
         phrases: List[str] = [x for x in text.split(" ") if x != ""]
         if not phrases:
             return
+
         if phrases[0] not in self.cmd.commands:
             method: str = "default"
             args: List[str] = []
@@ -30,7 +31,7 @@ class ConsoleManager:
         except Exception as e:
             print(f"Error occured while executing the command. {e}")
 
-    def loop(self):
+    def loop(self) -> None:
         while True:
             try:
                 if self.prompt:

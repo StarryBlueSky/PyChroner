@@ -17,7 +17,7 @@ class MongoDB(BaseDataType):
     mechanism: str = None
     original: Dict[str, str] = {}
 
-    connect = None
+    connect: MongoClient = None
     __db: Dict = {}
 
     def __init__(self, config: Dict[str, str]) -> None:

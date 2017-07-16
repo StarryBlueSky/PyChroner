@@ -1,6 +1,7 @@
 # coding=utf-8
-from ...datatype import BaseDataType
 from .mongodb import MongoDB
+from ...datatype import BaseDataType
+
 
 class DataBase(BaseDataType):
     mongodb: MongoDB = None
