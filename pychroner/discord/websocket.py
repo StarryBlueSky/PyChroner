@@ -23,7 +23,7 @@ class WebSocket:
             except KeyboardInterrupt:
                 break
             finally:
-                self.loop.run_until_complete(asyncio.gather(
+                self.loop.run_until_complete(
                         self.client.logout()
-                ))
+                )
                 self.loop.close()
