@@ -88,6 +88,7 @@ class PluginAPI:
         self.dirs = self.config.directory
 
         self.twitterAccountName = None
+        self.discordClient = None
         self.plugin = None
 
     def getTwitterAccount(self, accountKey: str=None) -> Optional[Account]:
@@ -99,6 +100,9 @@ class PluginAPI:
             if account.key == key:
                 return account
         return None
+
+    def getDiscordClient(self):
+        return self.discordClient
 
     def getMongoDB(self) -> Optional[MongoDB]:
         return self.config.database.mongodb
