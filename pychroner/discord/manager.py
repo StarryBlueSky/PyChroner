@@ -1,16 +1,28 @@
 # coding=utf-8
 import copy
 from logging import getLogger
-from typing import List
+from typing import List, Callable
 
+from ..exceptions.plugin import DiscordEventPluginNeedsExtraArgs
+from ..plugin.api import PluginAPI
 from ..datatype.services.discord.account import Account
 from .websocket import WebSocket
-from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd, DiscordEventFunction
+from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd, DiscordEventFunction, DiscordEventFunctionArguments
 
 logger = getLogger(__name__)
 
-async def on_error(event, *args, **kwargs):
+async def on_error(event: str, *args, **kwargs) -> None:
     logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {args} + {kwargs}.")
+
+def wrap(func: Callable, pluginType: PluginType, pluginApi):
+    args = getattr(DiscordEventFunctionArguments, pluginType.name).value
+    if func.__meta__["argumentsCount"] - 1 != len(args):
+        raise DiscordEventPluginNeedsExtraArgs(f"Plugin \"{pluginApi.plugin.meta.name}\" needs (pluginApi, {', '.join(args)}) arguments.")
+
+    async def do(*args):
+        await func(pluginApi, *args)
+
+    return do
 
 class WebSocketManager:
     def __init__(self, core):
@@ -29,11 +41,21 @@ class WebSocketManager:
             self.run(v)
 
     def apply(self, ws):
+        pluginApi = PluginAPI(self.core)
+        pluginApi.discordClient = ws.client
+
         for pluginType in PluginType:
             if DiscordPluginTypeIDStart <= pluginType.value <= DiscordPluginTypeIDEnd:
                 for plugin in self.core.PM.plugins[pluginType.name]:
                     if plugin.meta.discordAccount is ws.account:
-                        setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, getattr(plugin.module, plugin.meta.functionName))
+                        pluginApi.plugin = plugin
+                        try:
+                            func = wrap(getattr(plugin.module, plugin.meta.functionName), pluginType, pluginApi)
+                        except DiscordEventPluginNeedsExtraArgs:
+                            logger.exception("An error occured while applying Discord event functions.")
+                            continue
+
+                        setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, func)
 
         setattr(ws.client, "on_error", on_error)
 
@@ -43,4 +65,4 @@ class WebSocketManager:
         self.sockets.append(ws)
 
         self.core.TM.startThread(ws.start, name=f"StreamingTask_for_{account.key}")
-        logger.info(f"Discord {account.id} WebSocket connection has established.")
+        logger.info(f"Discord \"{account.id}\" WebSocket connection has established.")

@@ -71,7 +71,7 @@ class PluginType(IntEnum):
     DiscordServerRoleCreate = 66
     DiscordServerRoleDelete = 67
     DiscordServerRoleUpdate = 68
-    DiscordServerEmojiUpdate = 69
+    DiscordServerEmojisUpdate = 69
     DiscordServerAvailable = 70
     DiscordServerUnavailable = 71
     DiscordVoiceStateUpdate = 72
@@ -102,7 +102,7 @@ class DiscordEventFunction(Enum):
     DiscordServerRoleCreate = "on_server_role_create"
     DiscordServerRoleDelete = "on_server_role_delete"
     DiscordServerRoleUpdate = "on_server_role_update"
-    DiscordServerEmojiUpdate = "on_server_emojis_update"
+    DiscordServerEmojisUpdate = "on_server_emojis_update"
     DiscordServerAvailable = "on_server_available"
     DiscordServerUnavailable = "on_server_unavailable"
     DiscordVoiceStateUpdate = "on_voice_state_update"
@@ -111,6 +111,36 @@ class DiscordEventFunction(Enum):
     DiscordTyping = "on_typing"
     DiscordGroupJoin = "on_group_join"
     DiscordGroupRemove = "on_group_remove"
+
+class DiscordEventFunctionArguments(Enum):
+    DiscordReady = []
+    DiscordMessage = ["message"]
+    DiscordMessageDelete = ["message"]
+    DiscordMessageEdit = ["before_message", "after_message"]
+    DiscordReactionAdd = ["reaction", "user"]
+    DiscordReactionRemove = ["reaction", "user"]
+    DiscordReactionClear = ["message", "reactions"]
+    DiscordChannelCreate = ["channel"]
+    DiscordChannelDelete = ["channel"]
+    DiscordChannelUpdate = ["before_channel", "after_channel"]
+    DiscordMemberJoin = ["member"]
+    DiscordMemberRemove = ["member"]
+    DiscordMemberUpdate = ["before_member", "after_member"]
+    DiscordServerJoin = ["server"]
+    DiscordServerRemove = ["server"]
+    DiscordServerUpdate = ["before_server", "after_server"]
+    DiscordServerRoleCreate = ["role"]
+    DiscordServerRoleDelete = ["role"]
+    DiscordServerRoleUpdate = ["before_role", "after_role"]
+    DiscordServerEmojisUpdate = ["before_emojis", "after_emojis"]
+    DiscordServerAvailable = ["server"]
+    DiscordServerUnavailable = ["server"]
+    DiscordVoiceStateUpdate = ["before_state", "after_state"]
+    DiscordMemberBan = ["member"]
+    DiscordMemberUnban = ["server", "user"]
+    DiscordTyping = ["channel", "user", "when"]
+    DiscordGroupJoin = ["channel", "user"]
+    DiscordGroupRemove = ["channel", "user"]
 
 @unique
 class API(Enum):

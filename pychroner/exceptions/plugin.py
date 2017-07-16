@@ -24,3 +24,8 @@ class TimedOut(BaseError):
     """
     this exception will raise when a plugin reaches timed out.
     """
+
+class DiscordEventPluginNeedsExtraArgs(BaseError):
+    """
+    this exception will raise when a discord plugin does not have right arguments.
+    """
