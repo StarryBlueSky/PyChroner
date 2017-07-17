@@ -75,6 +75,7 @@ class Core:
         self.logger.info(f"Initialization Complate. Current time is {datetime.now()}.")
 
     def run(self) -> None:
+        self.WSM.start()
         self.TM.start()
         self.FS.start()
         [
