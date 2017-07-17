@@ -16,6 +16,7 @@ class PluginManager:
     def __init__(self, core):
         self.core = core
         self.plugins: Dict[str, List[Plugin]] = None
+        self.completed = False
         self.unloadPlugins()
 
     def unloadPlugins(self) -> None:
@@ -117,4 +118,5 @@ class PluginManager:
                 if pluginFilePattern.match(path) and os.path.isfile(path):
                     self.loadPlugin(path)
 
+        self.completed = True
         return True
