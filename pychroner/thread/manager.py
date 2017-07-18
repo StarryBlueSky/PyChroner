@@ -17,15 +17,14 @@ logger = getLogger(__name__)
 class ThreadManager:
     def __init__(self, core) -> None:
         self.core = core
-        self.wrapper = ThreadWrapper(self.core)
+        self.wrapper: ThreadWrapper = ThreadWrapper(self.core)
         self.threads: List[Tuple[Thread, Callable[[], None]]] = []
         self.willExecutePlugins: List[Plugin] = []
 
-    def start(self):
-        # noinspection PyTypeChecker
+    def start(self) -> None:
         self.startThread(self.watchThreads)
 
-    def startThread(self, target: Callable, name: str=None, args: List=None, keepalive: bool=True) -> Thread:
+    def startThread(self, target: Callable[[], None], name: str=None, args: List=None, keepalive: bool=True) -> Thread:
         name: str = name or target.__name__
         args: Tuple = tuple(args) if args else ()
 

@@ -32,18 +32,17 @@ class ThreadWrapper:
             return
         if plugin.meta.validFrom and plugin.meta.validFrom > datetime.now():
             return
-        args = [plugin] + args if args else [plugin]
+        args: List = [plugin] + args if args else [plugin]
         self.core.TM.startThread(self.wrap, name=plugin.meta.name, args=args)
 
     def startSchedulePlugins(self):
         while True:
-            self.core.TM.willExecutePlugins = [
+            self.core.TM.willExecutePlugins: List[Plugin] = [
                 schedulePlugin
                 for schedulePlugin in self.core.PM.plugins[PluginType.Schedule.name]
                 if willExecute(schedulePlugin.meta.ratio)
             ]
 
-            # noinspection PyTypeChecker
             now: datetime = datetime.now()
             time.sleep(60 - now.second - now.microsecond / 1000000)
 
