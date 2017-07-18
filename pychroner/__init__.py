@@ -22,13 +22,18 @@ requirements = [
 ]
 
 from .pip import PIP
+
+exit_flag = False
 for pipname, modname in requirements:
     try:
         __import__(modname)
     except:
-        if PIP.installModule(pipname):
-            print("Error occured while installing libraries.")
-            exit(1)
+        if not PIP.installModule(pipname):
+            print(f"Error occured while installing {pipname}.")
+            exit_flag = True
+if exit_flag:
+    print("Some libraries are not installed to your system. Please retry to install.")
+    exit(1)
 
 from .core import Core as Bot
 from .enums import PluginType, API
