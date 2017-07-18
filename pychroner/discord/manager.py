@@ -1,15 +1,13 @@
 # coding=utf-8
-import time
-import copy
 from logging import getLogger
 from typing import List
 
-from ..plugin.meta import PluginMeta
+from .websocket import WebSocket
+from ..datatype.services.discord.account import Account
+from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd, DiscordEventFunction, DiscordEventFunctionArguments
 from ..exceptions.plugin import DiscordEventPluginNeedsExtraArgs
 from ..plugin.api import PluginAPI
-from ..datatype.services.discord.account import Account
-from .websocket import WebSocket
-from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd, DiscordEventFunction, DiscordEventFunctionArguments
+from ..plugin.meta import PluginMeta
 
 logger = getLogger(__name__)
 
