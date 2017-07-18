@@ -10,6 +10,7 @@ from gevent.queue import Queue
 
 from .configparser import Config
 from .console import ConsoleManager
+from .discord.manager import WebSocketManager
 from .enums import PluginType
 from .filesystem import FileSystemWatcher
 from .plugin.api import PluginAPI
@@ -19,7 +20,7 @@ from .thread.manager import ThreadManager
 from .twitter.manager import UserStreamManager
 from .utils import getLogger, makeDirs
 from .webui.manager import WebUIManager
-from .discord.manager import WebSocketManager
+
 
 class Core:
     def __init__(self, prompt: bool=True) -> None:
@@ -58,7 +59,7 @@ class Core:
                 f"build {platform.python_compiler()} [{ platform.python_build()[1]}]."
         )
         if os.getlogin() in ["root", "Administrator"]:
-            self.logger.warning(f"You are running as root or Administrator. Bot should be running as a normal user.")
+            self.logger.warning(f"PyChroner is running as root or Administrator. Bot should be running as a normal user.")
 
         self.UM: UserStreamManager = UserStreamManager(self)
         self.WSM: WebSocketManager = WebSocketManager(self)
