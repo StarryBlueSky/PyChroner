@@ -5,8 +5,28 @@
         <title>Log Stream | PyChroner Web UI</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script>
+            function send_notification(text) {
+                if (window.Notification && Notification.permission === "granted") {
+                    new Notification("PyChroner WebUI", {
+                        body: text
+                    });
+                }
+            }
+
+            function subscribe() {
+                if (window.Notification && Notification.permission === "default") {
+                    Notification.requestPermission(function (permission) {
+                        if (permission === "granted") {
+                            send_notification("通知が有効になりました. PyChronerの重大なログや, Log Streamの接続状況などのメッセージが通知されます.");
+                        }
+                    });
+                }
+            }
+
             $(document).ready(
                 function() {
+                    subscribe();
+
                     let obj = $("#console");
                     let eventSource = new EventSource("/api/stream");
 
@@ -16,7 +36,11 @@
                         if ($(".log").length > 500) {
                             $(".log:first").remove();
                         }
-                    }
+
+                        if (d.type === "critical") {
+                            send_notification(`重大なエラーが発生しています. 詳細: ${d.log}`);
+                        }
+                    };
                 }
             );
         </script>
