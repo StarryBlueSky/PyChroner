@@ -12,7 +12,10 @@
 
                     eventSource.onmessage = function (e) {
                         let d = JSON.parse(e.data);
-                        obj.html(`${obj.html()}[${d.time}] [${d.name} ${d.thread_name}&lt;${d.function_name}:${d.line}&gt;/<span class="${d.type}">${d.type}</span>]: <span class="${d.type}">${d.log}</span><br>`);
+                        obj.append(`<p class="log">[${d.time}] [${d.name} ${d.thread_name}&lt;${d.function_name}:${d.line}&gt;/<span class="${d.type}">${d.type}</span>]: <span class="${d.type}">${d.log}</span></p>`);
+                        if ($(".log").length > 500) {
+                            $(".log:first").remove();
+                        }
                     }
                 }
             );
@@ -30,6 +33,11 @@
                 padding: 10px;
                 background: #002B36;
                 color: #ccc;
+            }
+
+            p.log {
+                -webkit-margin-before: 0;
+                -webkit-margin-after: 0;
             }
 
             span.critical {
