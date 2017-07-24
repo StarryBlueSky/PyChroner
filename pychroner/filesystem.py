@@ -24,6 +24,7 @@ class ChangeHandler(RegexMatchingEventHandler):
         if event.event_type in ["created", "modified"]:
             time.sleep(1)
             self.core.PM.loadPlugin(path=event.src_path)
+            [self.core.WSM.apply(ws) for ws in self.core.WSM.sockets]
 
         elif event.event_type == "deleted":
             self.core.PM.unloadPlugin(path=event.src_path)
