@@ -13,7 +13,11 @@ from ..plugin.api import PluginAPI
 logger = getLogger(__name__)
 
 async def on_error(event: str, *args, **kwargs) -> None:
-    logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {args} + {kwargs}.")
+    formatted_args = {
+        slot: getattr(arg, slot)
+        for arg in args for slot in getattr(arg, "__slots__", [])
+    }
+    logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {formatted_args} + {kwargs}.")
 
 def apply(ws: WebSocket, plugins: List[Plugin], pluginType: PluginType, pluginApi: PluginAPI):
     default_args: List[str] = getattr(DiscordEventFunctionArguments, pluginType.name).value
