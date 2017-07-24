@@ -1,4 +1,5 @@
 # coding=utf-8
+import asyncio
 from logging import getLogger
 from typing import List
 
@@ -6,23 +7,25 @@ from .websocket import WebSocket
 from ..datatype.services.discord.account import Account
 from ..enums import PluginType, DiscordPluginTypeIDStart, DiscordPluginTypeIDEnd, DiscordEventFunction, DiscordEventFunctionArguments
 from ..exceptions.plugin import DiscordEventPluginNeedsExtraArgs
+from ..plugin import Plugin
 from ..plugin.api import PluginAPI
-from ..plugin.meta import PluginMeta
 
 logger = getLogger(__name__)
 
 async def on_error(event: str, *args, **kwargs) -> None:
     logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {args} + {kwargs}.")
 
-def wrap(meta: PluginMeta, pluginType: PluginType, pluginApi):
-    args = getattr(DiscordEventFunctionArguments, pluginType.name).value
-    if meta.argumentsCount - 1 != len(args):
-        raise DiscordEventPluginNeedsExtraArgs(f"Plugin \"{pluginApi.plugin.meta.name}\" needs (pluginApi, {', '.join(args)}) arguments.")
+def apply(ws: WebSocket, plugins: List[Plugin], pluginType: PluginType, pluginApi: PluginAPI):
+    default_args: List[str] = getattr(DiscordEventFunctionArguments, pluginType.name).value
+    if any([plugin.meta.argumentsCount - 1 != len(default_args) for plugin in plugins]):
+        raise DiscordEventPluginNeedsExtraArgs(f"Plugin \"{pluginApi.plugin.meta.name}\" needs (pluginApi, {', '.join(default_args)}) arguments.")
 
     async def do(*args):
-        await meta.function(pluginApi, *args)
+        for plugin in plugins:
+            pluginApi.plugin: Plugin = plugin
+            asyncio.run_coroutine_threadsafe(plugin.meta.function(pluginApi, *args), ws.loop)
 
-    return do
+    setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, do)
 
 class WebSocketManager:
     def __init__(self, core):
@@ -41,19 +44,14 @@ class WebSocketManager:
         pluginApi = PluginAPI(self.core)
         pluginApi.discordClient = ws.client
 
+        # noinspection PyTypeChecker
         for pluginType in PluginType:
             if DiscordPluginTypeIDStart <= pluginType.value <= DiscordPluginTypeIDEnd:
-                for plugin in self.core.PM.plugins[pluginType.name]:
-                    if plugin.meta.discordAccount is ws.account:
-                        pluginApi.plugin = plugin
-                        try:
-                            func = wrap(plugin.meta, pluginType, pluginApi)
-                        except DiscordEventPluginNeedsExtraArgs:
-                            logger.exception("An error occured while applying Discord event functions.")
-                            continue
-                        event = getattr(DiscordEventFunction, pluginType.name).value
-
-                        setattr(ws.client, event, func)
+                try:
+                    apply(ws, self.core.PM.plugins[pluginType.name], pluginType, pluginApi)
+                except DiscordEventPluginNeedsExtraArgs:
+                    logger.exception("An error occured while applying Discord event functions.")
+                    continue
 
         setattr(ws.client, "on_error", on_error)
 
