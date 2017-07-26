@@ -111,7 +111,7 @@ class PluginAPI:
         return self.config.logging.slack
 
     def getLocalStorage(self) -> Optional[Dict]:
-        return self.core.LS.get(self.plugin.meta.id) if self.plugin else None
+        return self.core.LS.get(self.plugin) if self.plugin else None
 
     @staticmethod
     def getLogger() -> Logger:
