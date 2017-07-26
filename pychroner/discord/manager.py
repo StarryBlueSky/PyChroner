@@ -19,15 +19,21 @@ async def on_error(event: str, *args, **kwargs) -> None:
     }
     logger.exception(f"An error occured while Discord WebSocket ({event}). Event function's args are {formatted_args} + {kwargs}.")
 
+
+async def wrap(plugin: Plugin, pluginApi: PluginAPI, *args):
+    pluginApi.plugin: Plugin = plugin
+    try:
+        await plugin.meta.function(pluginApi, *args)
+    except:
+        logger.exception(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" could not be executed.")
+
 def apply(ws: WebSocket, plugins: List[Plugin], pluginType: PluginType, pluginApi: PluginAPI):
     default_args: List[str] = getattr(DiscordEventFunctionArguments, pluginType.name).value
     if any([plugin.meta.argumentsCount - 1 != len(default_args) for plugin in plugins]):
         raise DiscordEventPluginNeedsExtraArgs(f"Plugin \"{pluginApi.plugin.meta.name}\" needs (pluginApi, {', '.join(default_args)}) arguments.")
 
     async def do(*args):
-        for plugin in plugins:
-            pluginApi.plugin: Plugin = plugin
-            asyncio.run_coroutine_threadsafe(plugin.meta.function(pluginApi, *args), ws.loop)
+        [asyncio.run_coroutine_threadsafe(wrap(plugin, pluginApi, *args), ws.loop) for plugin in plugins]
 
     setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, do)
 
