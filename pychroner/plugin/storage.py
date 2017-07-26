@@ -3,14 +3,14 @@ from typing import Dict
 
 class LocalStorage:
     def __init__(self) -> None:
-        self.__storage: Dict[str] = {}
+        self.__storage: Dict = {}
 
-    def __get(self, key: str) -> Dict[str]:
+    def __get(self, key: str) -> Dict:
         if key not in self.__storage:
             self.__storage[key] = {}
         return self.__storage[key]
 
-    def get(self, plugin) -> Dict[str]:
+    def get(self, plugin) -> Dict:
         return self.__get(plugin.meta.id)
 
     def __clear(self, key: str) -> bool:
