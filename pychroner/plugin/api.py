@@ -113,6 +113,9 @@ class PluginAPI:
     def getLocalStorage(self) -> Optional[Dict]:
         return self.core.LS.get(self.plugin) if self.plugin else None
 
+    def clearLocalStorage(self) -> bool:
+        return self.core.LS.clear(self.plugin) if self.plugin else False
+
     @staticmethod
     def getLogger() -> Logger:
         return logger
