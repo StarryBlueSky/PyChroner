@@ -112,12 +112,16 @@ class UserStream:
         self.callPlugins(PluginType.Twitter, stream)
 
     def start(self) -> None:
+        reconnect = False
         while True:
             try:
+                if reconnect:
+                    self.core.logger.info("PyChroner has reconnected to UserStream successfully.")
                 self.api.streaming(self.callback)
             except Exception as e:
                 self.core.logger.warning(
                         f"PyChroner has been disconnected from UserStream. ({e}) Reconnect in {reconnectSecond} secs."
                 )
+                reconnect = True
             finally:
                 time.sleep(reconnectSecond)
