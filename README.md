@@ -12,11 +12,22 @@ English README is [here](https://github.com/NephyProject/PyChroner/blob/master/R
 TwitterBotFrameworkの当初の目標(Goal)は, 既存のTwitter Bot作成サイト(twittbot.net, autotweety.net, ...)より柔軟で扱いやすいフレームワークを作る, ということでした.  
 しかし, 現在では名称が旧称**TwitterBotFramework**から**PyChroner**に変更されたことからも分かるように, 今や作成可能なBotはTwitterの枠を超えています. 現状ではTwitter APIのほか, Discord APIに対応しており柔軟なBot作成が可能です.
 
+## 動作確認環境
+- Windows 10 Pro 64bit / Windows Server 2016 Datacenter 64bit / Ubuntu 17.01 64bit
+- Python **3.6.0**以上
+
+ただし, Windows NT系ではPluginのTimeout機能は利用できません. 詳細は`PluginAPI`の項でご確認ください.
+
 ## 特徴
 準備中.
 
 ## 導入方法
-PyChronerは Python **3.6**以上で動作します. 以下では, Python 3.6.1がインストール済みとしています.
+以下では, Python 3.6.1がインストール済みとしています.
+
+このリポジトリをCloneし, sample.config.jsonを参考に設定値を変更します. 詳しくは[設定リファレンス](https://github.com/NephyProject/PyChroner/wiki/config.json-Reference)をご覧ください.  
+設定を更新したら `python main.py`を実行すればPyChronerは立ち上がります.
+
+起動することを確認したら, プラグインを`plugins`内に配置しましょう. 想像力次第でなんでもできます.
 
 ## ライセンス
 PyChronerは, [MITライセンス](https://github.com/NephyProject/PyChroner/wiki/LICENSE) の下で公開されています.  
