@@ -20,7 +20,7 @@ class ThreadWrapper:
             api = PluginAPI(self.core)
             api.plugin = plugin
             args = [api] + list(args)
-            getattr(plugin.module, plugin.meta.functionName)(*args)
+            plugin.meta.function(*args)
             if plugin.meta.type is PluginType.Schedule:
                 logger.info(f"{plugin.meta.type.name} plugin \"{plugin.meta.name}\" has been executed successfully.")
         except Exception:
