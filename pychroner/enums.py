@@ -51,6 +51,8 @@ class PluginType(IntEnum):
     TwitterEventListMemberRemoved = 45
     TwitterEventListUserSubscribed = 46
     TwitterEventListUserUnsubscribed = 47
+    TwitterEventMute = 48
+    TwitterEventUnmute = 49
 
     DiscordReady = DiscordPluginTypeIDStart
     DiscordMessage = 51

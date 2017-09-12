@@ -88,6 +88,10 @@ class UserStream:
                 self.callPlugins(PluginType.TwitterEventListUserSubscribed, stream)
             elif stream["event"] == "list_user_unsubscribed":
                 self.callPlugins(PluginType.TwitterEventListUserUnsubscribed, stream)
+            elif stream["event"] == "mute":
+                self.callPlugins(PluginType.TwitterEventMute, stream)
+            elif stream["event"] == "unmute":
+                self.callPlugins(PluginType.TwitterEventUnmute, stream)
 
             # All Events
             self.callPlugins(PluginType.TwitterEvent, stream)
