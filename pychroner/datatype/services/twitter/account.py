@@ -43,3 +43,9 @@ class Account(BaseDataType):
         auth.set_access_token(self.at, self.ats)
 
         return tweepy.API(auth)
+
+    def getTwispyHandler(self) -> twispy.handler.API:
+        import twispy
+        if not twispy:
+            raise Exception("twispy is not found.")
+        return twispy.handler.API(self.ck, self.cs, self.at, self.ats)

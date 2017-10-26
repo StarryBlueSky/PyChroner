@@ -1,8 +1,6 @@
-English README is [here](https://github.com/NephyProject/PyChroner/blob/master/README_EN.md).
-
 # PyChroner: Easy bot Framework
 
-*** このプロジェクトの開発は終了しています。今後は重大なバグの修正のみ行います。 ***
+**このプロジェクトは現在非活性です。今後しばらくは重大なバグの修正や小さな機能修正のみが行われる予定です。**
 
 > Python + [Chronus](https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AD%E3%83%8E%E3%82%B9_(%E6%99%82%E9%96%93%E3%81%AE%E7%A5%9E))(Cron) + er = PyChroner
 
