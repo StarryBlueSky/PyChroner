@@ -1,7 +1,9 @@
 # coding=utf-8
 import asyncio
+import time
 
 from discord.ext import commands
+
 
 class WebSocket:
     def __init__(self, core, account):
@@ -10,20 +12,15 @@ class WebSocket:
 
         self.loop = asyncio.new_event_loop()
         self.client = commands.Bot(
-                loop=self.loop,
-                command_prefix=self.account.prefix
+            loop=self.loop,
+            command_prefix=self.account.prefix
         )
 
     def start(self):
         while True:
             try:
-                self.loop.run_until_complete(
-                        self.client.start(self.account.token)
-                )
+                self.client.run(self.account.token)
             except KeyboardInterrupt:
                 break
             finally:
-                self.loop.run_until_complete(
-                        self.client.logout()
-                )
-                self.loop.close()
+                time.sleep(3)
