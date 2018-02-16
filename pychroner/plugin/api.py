@@ -21,18 +21,18 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
     decorator implementation of plugin metainfo
     :param discordAccount:
     :param validUntil:
-    :param validFrom: 
+    :param validFrom:
     :param pluginType: (PluginType) target plugin type
     :param timeout: seconds to stop plugin execution
     :param priority: priority to execute plugin (min 0)
-    :param hours: 
-    :param minutes: 
-    :param multipleHour: 
-    :param multipleMinute: 
+    :param hours:
+    :param minutes:
+    :param multipleHour:
+    :param multipleMinute:
     :param twitterAccount: attached account name
     :param ratio: possibility of 1/n to execute plugin
     :param permissions: {"action": "deny", "user_id": [10000000], "user_sn": ["TwitterJP"], "domain": ["following"]}
-    :return: 
+    :return:
     """
 
     if pluginType is not PluginType.Schedule and any([hours, minutes, multipleHour, multipleMinute]):
@@ -72,10 +72,7 @@ def PluginMeta(pluginType: PluginType, timeout: int=None, priority: int=None,
             "function": func,
             "functionName": func.__name__,
             "doc": func.__doc__,
-            "argumentsCount": func.__code__.co_argcount,
-            "variablesCount": func.__code__.co_nlocals,
-            "variablesName": list(func.__code__.co_varnames),
-            "variables": list(func.__code__.co_consts[1:]),
+            "argumentsCount": func.__code__.co_argcount
         })
         return register
     return decorator

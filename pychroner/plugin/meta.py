@@ -43,9 +43,6 @@ class PluginMeta:
         self.functionName: str = None
         self.doc: str = None
         self.argumentsCount: int = None
-        self.variablesCount: int = None
-        self.variablesName: List[str] = []
-        self.variables: List = []
 
     @property
     def name(self):
