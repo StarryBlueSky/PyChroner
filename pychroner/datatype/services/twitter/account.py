@@ -36,10 +36,16 @@ class Account(BaseDataType):
     def getHandler(self) -> twispy.handler.API:
         return twispy.handler.API(self.ck, self.cs, self.at, self.ats)
 
-    def getTweepyHandler(self) -> tweepy.API:
+    def getTweepyHandler(self, **kwargs) -> tweepy.API:
         if not tweepy:
             raise Exception("tweepy is not found.")
         auth = tweepy.OAuthHandler(self.ck, self.cs)
         auth.set_access_token(self.at, self.ats)
 
-        return tweepy.API(auth)
+        return tweepy.API(auth, **kwargs)
+
+    def getTwispyHandler(self) -> twispy.handler.API:
+        import twispy
+        if not twispy:
+            raise Exception("twispy is not found.")
+        return twispy.handler.API(self.ck, self.cs, self.at, self.ats)
