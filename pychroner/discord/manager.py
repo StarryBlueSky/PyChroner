@@ -33,7 +33,7 @@ def apply(ws: WebSocket, plugins: List[Plugin], pluginType: PluginType, pluginAp
         raise DiscordEventPluginNeedsExtraArgs(f"Plugin \"{pluginApi.plugin.meta.name}\" needs (pluginApi, {', '.join(default_args)}) arguments.")
 
     async def do(*args):
-        [asyncio.run_coroutine_threadsafe(wrap(plugin, pluginApi, *args), ws.loop) for plugin in plugins]
+        [asyncio.run_coroutine_threadsafe(wrap(plugin, pluginApi, *args), ws.loop) for plugin in plugins if plugin.meta.discordAccountName == ws.account.key]
 
     setattr(ws.client, getattr(DiscordEventFunction, pluginType.name).value, do)
 
